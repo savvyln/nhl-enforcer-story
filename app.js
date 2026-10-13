@@ -1,3 +1,6 @@
+/* =====================================================================
+   DATA PAYLOAD
+   ===================================================================== */
 const ALL_TEAMS = [
   { abbr: "ANA", hasFights: true }, { abbr: "BOS", hasFights: true },
   { abbr: "BUF", hasFights: true }, { abbr: "CAR", hasFights: true },
@@ -18,14 +21,14 @@ const ALL_TEAMS = [
 ];
 
 const FIGHTS = [
-  { id: 1, players: "D. Nurse vs J. Gadjovich", x: -200, y: 100, teamAbbr: "FLA" },
-  { id: 2, players: "N. Hague vs T. Frederic", x: 150, y: -120, teamAbbr: "VGK" },
-  { id: 3, players: "D. Pastrnak vs M. Tkachuk", x: 220, y: 80, teamAbbr: "BOS" },
-  { id: 4, players: "E. Kane vs A. Englund", x: -180, y: -60, teamAbbr: "EDM" },
-  { id: 5, players: "M. Martin vs L. Schenn", x: 50, y: 140, teamAbbr: "NYI" },
-  { id: 6, players: "A. Matthews vs S. Stamkos", x: -50, y: -130, teamAbbr: "TOR" },
-  { id: 7, players: "L. O'Connor vs R. Colton", x: 180, y: 0, teamAbbr: "COL" },
-  { id: 8, players: "N. Hague vs D. Nurse", x: -250, y: 0, teamAbbr: "VGK" }
+  { id: 1, players: "D. Nurse vs J. Gadjovich", x: -220, y: 80, teamAbbr: "FLA" },
+  { id: 2, players: "N. Hague vs T. Frederic", x: 160, y: -100, teamAbbr: "VGK" },
+  { id: 3, players: "D. Pastrnak vs M. Tkachuk", x: 200, y: 90, teamAbbr: "BOS" },
+  { id: 4, players: "E. Kane vs A. Englund", x: -150, y: -70, teamAbbr: "EDM" },
+  { id: 5, players: "M. Martin vs L. Schenn", x: 80, y: 120, teamAbbr: "NYI" },
+  { id: 6, players: "A. Matthews vs S. Stamkos", x: -80, y: -110, teamAbbr: "TOR" },
+  { id: 7, players: "L. O'Connor vs R. Colton", x: 190, y: 0, teamAbbr: "COL" },
+  { id: 8, players: "N. Hague vs D. Nurse", x: -240, y: -20, teamAbbr: "VGK" }
 ];
 
 let svg, width, height, gRink, gNodes, gFights;
@@ -36,12 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initGraphic() {
-  const container = document.querySelector(".sticky-graphic");
-  width = container.clientWidth || 1000;
-  height = container.clientHeight || 800;
+  const container = document.getElementById("graphic-container");
+  width = container.clientWidth || window.innerWidth;
+  height = container.clientHeight || window.innerHeight;
 
   svg = d3.select("#story-canvas")
-    .attr("viewBox", `-${width/2} -${height/2} ${width} ${height}`);
+    .attr("viewBox", `-${width/2} -${height/2} ${width} ${height}`)
+    .style("pointer-events", "auto"); // Ensure SVG can receive clicks
 
   gRink = svg.append("g").attr("class", "rink-layer").style("opacity", 0);
   gNodes = svg.append("g").attr("class", "nodes-layer");
@@ -49,13 +53,14 @@ function initGraphic() {
 
   drawRink(gRink);
 
+  // Pre-calculate positions for the initial tight circle cluster
   const simulation = d3.forceSimulation(ALL_TEAMS)
     .force("charge", d3.forceManyBody().strength(-30))
     .force("center", d3.forceCenter(0, 0))
-    .force("collide", d3.forceCollide().radius(28))
+    .force("collide", d3.forceCollide().radius(30))
     .stop();
 
-  for (let i = 0; i < 150; ++i) simulation.tick();
+  for (let i = 0; i < 120; ++i) simulation.tick();
 
   const nodes = gNodes.selectAll(".team-node")
     .data(ALL_TEAMS)
@@ -64,14 +69,16 @@ function initGraphic() {
     .attr("class", "team-node")
     .attr("transform", d => `translate(${d.x}, ${d.y})`);
 
-  nodes.append("circle").attr("class", "node-bg").attr("r", 24);
+  nodes.append("circle")
+    .attr("class", "node-bg")
+    .attr("r", 26);
 
   nodes.append("image")
     .attr("href", d => `https://assets.nhle.com/logos/nhl/svg/${d.abbr}_light.svg`)
-    .attr("width", 36)
-    .attr("height", 36)
-    .attr("x", -18)
-    .attr("y", -18);
+    .attr("width", 38)
+    .attr("height", 38)
+    .attr("x", -19)
+    .attr("y", -19);
 }
 
 function drawRink(g) {
@@ -96,7 +103,7 @@ function setupScrollObserver() {
         triggerTransition(parseInt(entry.target.getAttribute("data-step")));
       }
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.5 }); // Triggers when the text box is halfway up the screen
 
   steps.forEach(step => observer.observe(step));
 }
@@ -107,20 +114,25 @@ function triggerTransition(step) {
   if (step === 1) {
     gRink.transition(t).style("opacity", 0);
     gFights.transition(t).style("opacity", 0);
+    
     gNodes.transition(t).style("opacity", 1);
-    gNodes.selectAll(".team-node").transition(t).style("opacity", 1).attr("transform", d => `translate(${d.x}, ${d.y})`);
+    gNodes.selectAll(".team-node").transition(t)
+      .style("opacity", 1)
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
   } 
   else if (step === 2) {
     gRink.transition(t).style("opacity", 0);
     gFights.transition(t).style("opacity", 0);
+    
     gNodes.transition(t).style("opacity", 1);
-    gNodes.selectAll(".team-node").transition(t).style("opacity", d => d.hasFights ? 1 : 0.05); 
+    gNodes.selectAll(".team-node").transition(t)
+      .style("opacity", d => d.hasFights ? 1 : 0.05); 
   } 
   else if (step === 3 || step === 4) {
     gNodes.transition(t).style("opacity", 0); 
     gRink.transition(t).style("opacity", step === 4 ? 0.3 : 1); 
-    gFights.transition(t).style("opacity", step === 4 ? 0.3 : 1);
 
+    gFights.transition(t).style("opacity", step === 4 ? 0.4 : 1);
     const fights = gFights.selectAll(".team-node").data(FIGHTS, d => d.id);
     
     const fightEnter = fights.enter().append("g")
@@ -133,22 +145,22 @@ function triggerTransition(step) {
         
         if (!isFlipped) {
           el.classed("flipped", true);
-          el.select(".node-bg").transition().duration(300).attr("r", 75).style("stroke", "#000").style("fill", "#fff");
-          el.select("image").transition().duration(100).style("opacity", 0);
+          el.select(".node-bg").transition().duration(300).attr("r", 85).style("stroke", "#2c2c2c");
+          el.select("image").transition().duration(150).style("opacity", 0);
           el.select(".node-details").text(d.players).transition().delay(200).duration(300).style("opacity", 1);
         } else {
           el.classed("flipped", false);
-          el.select(".node-bg").transition().duration(300).attr("r", 24).style("stroke", "#ddd").style("fill", "#fff");
-          el.select(".node-details").transition().duration(100).style("opacity", 0);
+          el.select(".node-bg").transition().duration(300).attr("r", 26).style("stroke", "#cccccc");
+          el.select(".node-details").transition().duration(150).style("opacity", 0);
           el.select("image").transition().delay(200).duration(300).style("opacity", 1);
         }
       });
 
-    fightEnter.append("circle").attr("class", "node-bg").attr("r", 24);
+    fightEnter.append("circle").attr("class", "node-bg").attr("r", 26);
     
     fightEnter.append("image")
       .attr("href", d => `https://assets.nhle.com/logos/nhl/svg/${d.teamAbbr}_light.svg`)
-      .attr("width", 36).attr("height", 36).attr("x", -18).attr("y", -18);
+      .attr("width", 38).attr("height", 38).attr("x", -19).attr("y", -19);
 
     fightEnter.append("text").attr("class", "node-details").attr("y", 4);
 
