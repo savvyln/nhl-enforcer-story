@@ -2,13 +2,13 @@
    NEUTRAL PUDDING-STYLE PALETTE
    ===================================================================== */
 :root {
-  --bg-neutral: #f4f4f2;
+  --bg-neutral: #f9f9f7;
   --text-dark: #222222;
   --text-light: #555555;
   --card-bg: rgba(255, 255, 255, 0.95);
-  --rink-line: #cccccc;
-  --rink-blue: #a3b8c7;
-  --rink-red: #d3a4a4;
+  --rink-line: #dddddd;
+  --rink-blue: #93b6d4;
+  --rink-red: #d99c9c;
   --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -47,42 +47,34 @@ body {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 1200px;
+  max-width: 600px; /* Centered narrow column for reading */
   margin: 0 auto;
   padding: 0 1rem;
-  /* Push the first card down so the initial graphic is visible */
   margin-top: -100vh; 
 }
 
 .scroll-text {
-  max-width: 400px;
-  padding-bottom: 80vh; /* Extra space at the bottom */
+  padding-bottom: 80vh; 
 }
 
 /* TEXT CARDS */
 .step {
-  margin-top: 100vh; /* Forces 1 card on screen at a time */
+  margin-top: 100vh; 
   margin-bottom: 20vh;
-  padding: 1.5rem 2rem;
+  padding: 2rem 2.5rem;
   background-color: var(--card-bg);
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  font-size: 1.1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-size: 1.15rem;
   color: var(--text-dark);
-  border-left: 4px solid var(--text-dark);
   transition: opacity 0.3s ease;
+  text-align: center;
+  border-top: 4px solid var(--text-dark);
 }
 
-.step.is-active {
-  opacity: 1;
-}
-
-.step p {
-  margin: 0 0 1rem 0;
-}
-.step p:last-child {
-  margin-bottom: 0;
-}
+.step.is-active { opacity: 1; }
+.step p { margin: 0 0 1.25rem 0; }
+.step p:last-child { margin-bottom: 0; }
+.step strong { font-weight: 700; }
 
 /* SVG ELEMENT STYLING */
 .team-node {
@@ -90,19 +82,12 @@ body {
   transition: transform 0.2s ease;
 }
 .team-node:hover {
-  transform: scale(1.1);
+  transform: scale(1.15);
 }
-.node-circle {
-  stroke: #ffffff;
-  stroke-width: 2px;
-}
-.node-text {
-  font-size: 10px;
-  font-weight: bold;
+.node-bg {
   fill: #ffffff;
-  text-anchor: middle;
-  dominant-baseline: central;
-  pointer-events: none;
+  stroke: #dddddd;
+  stroke-width: 1px;
 }
 .node-details {
   font-size: 11px;
