@@ -1,7 +1,3 @@
-/* =====================================================================
-   DATA PAYLOAD
-   ===================================================================== */
-// 32 Teams mapped to their official NHL SVG logos
 const ALL_TEAMS = [
   { abbr: "ANA", hasFights: true }, { abbr: "BOS", hasFights: true },
   { abbr: "BUF", hasFights: true }, { abbr: "CAR", hasFights: true },
@@ -21,20 +17,18 @@ const ALL_TEAMS = [
   { abbr: "WPG", hasFights: true }, { abbr: "WSH", hasFights: true }
 ];
 
-// Curated playoff fights from the dataset to plot on the rink
 const FIGHTS = [
-  { id: 1, players: "D. Nurse vs J. Gadjovich", x: -200, y: 100, teamAbbr: "FLA" }, //[cite: 9]
-  { id: 2, players: "N. Hague vs T. Frederic", x: 150, y: -120, teamAbbr: "VGK" }, //[cite: 9]
-  { id: 3, players: "D. Pastrnak vs M. Tkachuk", x: 220, y: 80, teamAbbr: "BOS" }, //[cite: 6]
-  { id: 4, players: "E. Kane vs A. Englund", x: -180, y: -60, teamAbbr: "EDM" }, //[cite: 6]
-  { id: 5, players: "M. Martin vs L. Schenn", x: 50, y: 140, teamAbbr: "NYI" }, //[cite: 10]
-  { id: 6, players: "A. Matthews vs S. Stamkos", x: -50, y: -130, teamAbbr: "TOR" }, //[cite: 13]
-  { id: 7, players: "L. O'Connor vs R. Colton", x: 180, y: 0, teamAbbr: "COL" }, //[cite: 12]
-  { id: 8, players: "N. Hague vs D. Nurse", x: -250, y: 0, teamAbbr: "VGK" } //[cite: 13]
+  { id: 1, players: "D. Nurse vs J. Gadjovich", x: -200, y: 100, teamAbbr: "FLA" },
+  { id: 2, players: "N. Hague vs T. Frederic", x: 150, y: -120, teamAbbr: "VGK" },
+  { id: 3, players: "D. Pastrnak vs M. Tkachuk", x: 220, y: 80, teamAbbr: "BOS" },
+  { id: 4, players: "E. Kane vs A. Englund", x: -180, y: -60, teamAbbr: "EDM" },
+  { id: 5, players: "M. Martin vs L. Schenn", x: 50, y: 140, teamAbbr: "NYI" },
+  { id: 6, players: "A. Matthews vs S. Stamkos", x: -50, y: -130, teamAbbr: "TOR" },
+  { id: 7, players: "L. O'Connor vs R. Colton", x: 180, y: 0, teamAbbr: "COL" },
+  { id: 8, players: "N. Hague vs D. Nurse", x: -250, y: 0, teamAbbr: "VGK" }
 ];
 
-let svg, width, height;
-let gRink, gNodes, gFights;
+let svg, width, height, gRink, gNodes, gFights;
 
 document.addEventListener("DOMContentLoaded", () => {
   initGraphic();
@@ -55,7 +49,6 @@ function initGraphic() {
 
   drawRink(gRink);
 
-  // Initial Circle Pack Simulation for ALL teams
   const simulation = d3.forceSimulation(ALL_TEAMS)
     .force("charge", d3.forceManyBody().strength(-30))
     .force("center", d3.forceCenter(0, 0))
@@ -71,12 +64,8 @@ function initGraphic() {
     .attr("class", "team-node")
     .attr("transform", d => `translate(${d.x}, ${d.y})`);
 
-  // Background circle for logos
-  nodes.append("circle")
-    .attr("class", "node-bg")
-    .attr("r", 24);
+  nodes.append("circle").attr("class", "node-bg").attr("r", 24);
 
-  // Pull official NHL SVGs
   nodes.append("image")
     .attr("href", d => `https://assets.nhle.com/logos/nhl/svg/${d.abbr}_light.svg`)
     .attr("width", 36)
@@ -118,28 +107,20 @@ function triggerTransition(step) {
   if (step === 1) {
     gRink.transition(t).style("opacity", 0);
     gFights.transition(t).style("opacity", 0);
-    
     gNodes.transition(t).style("opacity", 1);
-    gNodes.selectAll(".team-node").transition(t)
-      .style("opacity", 1)
-      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+    gNodes.selectAll(".team-node").transition(t).style("opacity", 1).attr("transform", d => `translate(${d.x}, ${d.y})`);
   } 
   else if (step === 2) {
     gRink.transition(t).style("opacity", 0);
     gFights.transition(t).style("opacity", 0);
-    
     gNodes.transition(t).style("opacity", 1);
-    gNodes.selectAll(".team-node").transition(t)
-      .style("opacity", d => d.hasFights ? 1 : 0.05); // Fade non-fighters
+    gNodes.selectAll(".team-node").transition(t).style("opacity", d => d.hasFights ? 1 : 0.05); 
   } 
   else if (step === 3 || step === 4) {
-    gNodes.transition(t).style("opacity", 0); // Hide original cluster
-    
-    // Draw rink
+    gNodes.transition(t).style("opacity", 0); 
     gRink.transition(t).style("opacity", step === 4 ? 0.3 : 1); 
-
-    // Plot interactive fight nodes
     gFights.transition(t).style("opacity", step === 4 ? 0.3 : 1);
+
     const fights = gFights.selectAll(".team-node").data(FIGHTS, d => d.id);
     
     const fightEnter = fights.enter().append("g")
@@ -152,12 +133,12 @@ function triggerTransition(step) {
         
         if (!isFlipped) {
           el.classed("flipped", true);
-          el.select(".node-bg").transition().duration(300).attr("r", 70).style("stroke", "#000");
+          el.select(".node-bg").transition().duration(300).attr("r", 75).style("stroke", "#000").style("fill", "#fff");
           el.select("image").transition().duration(100).style("opacity", 0);
           el.select(".node-details").text(d.players).transition().delay(200).duration(300).style("opacity", 1);
         } else {
           el.classed("flipped", false);
-          el.select(".node-bg").transition().duration(300).attr("r", 24).style("stroke", "#ddd");
+          el.select(".node-bg").transition().duration(300).attr("r", 24).style("stroke", "#ddd").style("fill", "#fff");
           el.select(".node-details").transition().duration(100).style("opacity", 0);
           el.select("image").transition().delay(200).duration(300).style("opacity", 1);
         }
