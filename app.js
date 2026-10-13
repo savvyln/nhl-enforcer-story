@@ -1,6 +1,3 @@
-/* =====================================================================
-   DATA PAYLOAD
-   ===================================================================== */
 const DATA = {
   timeline: [
     { season: "2021-22", bouts: 9 },
@@ -21,24 +18,19 @@ const DATA = {
     { d: "M 600 225 Q 350 370 100 225", speed: "22.87 MPH" }
   ],
   allFights: [
-    { date: "04/24/26", matchup: "V. Podkolzin (EDM) vs. J. Viel (ANA)", winner: "Vasily Podkolzin" },
-    { date: "04/21/26", matchup: "M. Kastelic (BOS) vs. L. Stanley (BUF)", winner: "Mark Kastelic" },
-    { date: "06/09/25", matchup: "D. Nurse (EDM) vs. J. Gadjovich (FLA)", winner: "Jonah Gadjovich" },
-    { date: "05/12/25", matchup: "N. Hague (VGK) vs. T. Frederic (EDM)", winner: "Nicolas Hague" },
-    { date: "05/08/24", matchup: "D. Pastrnak (BOS) vs. M. Tkachuk (FLA)", winner: "Matthew Tkachuk" },
-    { date: "04/26/24", matchup: "E. Kane (EDM) vs. A. Englund (LAK)", winner: "Evander Kane" },
-    { date: "05/10/23", matchup: "N. Hague (VGK) vs. D. Nurse (EDM)", winner: "Nicolas Hague" },
-    { date: "05/07/23", matchup: "S. Noesen (CAR) vs. E. Haula (NJD)", winner: "Stefan Noesen" },
-    { date: "06/20/22", matchup: "L. O'Connor (COL) vs. R. Colton (TBL)", winner: "Logan O'Connor" },
-    { date: "06/09/22", matchup: "S. Stamkos (TBL) vs. A. Lafrenière (NYR)", winner: "Steven Stamkos" },
-    { date: "06/21/21", matchup: "A. Pelech (NYI) vs. Y. Gourde (TBL)", winner: "Adam Pelech" },
-    { date: "06/21/21", matchup: "M. Martin (NYI) vs. L. Schenn (TBL)", winner: "Matt Martin" }
+    { date: "04/24/26", matchup: "V. Podkolzin (EDM) vs. J. Viel (ANA)", winner: "Vasily Podkolzin[cite: 12]" },
+    { date: "04/21/26", matchup: "M. Kastelic (BOS) vs. L. Stanley (BUF)", winner: "Mark Kastelic[cite: 12]" },
+    { date: "06/09/25", matchup: "D. Nurse (EDM) vs. J. Gadjovich (FLA)", winner: "Jonah Gadjovich[cite: 10]" },
+    { date: "05/12/25", matchup: "N. Hague (VGK) vs. T. Frederic (EDM)", winner: "Nicolas Hague[cite: 10]" },
+    { date: "05/08/24", matchup: "D. Pastrnak (BOS) vs. M. Tkachuk (FLA)", winner: "Matthew Tkachuk[cite: 7]" },
+    { date: "04/26/24", matchup: "E. Kane (EDM) vs. A. Englund (LAK)", winner: "Evander Kane[cite: 7]" },
+    { date: "05/10/23", matchup: "N. Hague (VGK) vs. D. Nurse (EDM)", winner: "Nicolas Hague[cite: 15]" },
+    { date: "05/07/23", matchup: "S. Noesen (CAR) vs. E. Haula (NJD)", winner: "Stefan Noesen[cite: 15]" },
+    { date: "06/20/22", matchup: "L. O'Connor (COL) vs. R. Colton (TBL)", winner: "Logan O'Connor[cite: 13]" },
+    { date: "06/09/22", matchup: "S. Stamkos (TBL) vs. A. Lafrenière (NYR)", winner: "Steven Stamkos[cite: 13]" }
   ]
 };
 
-/* =====================================================================
-   APP INITIALIZATION
-   ===================================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   initTimelineChart();
   initHeavyweightSlider();
@@ -58,7 +50,7 @@ function setupObserver() {
         renderStepGraphic(stepIndex);
       }
     });
-  }, { threshold: 0.5 }); // Adjusted threshold for full-height items
+  }, { threshold: 0.5 });
 
   steps.forEach(step => observer.observe(step));
 }
@@ -79,16 +71,13 @@ function renderStepGraphic(step) {
   else if (step === 4) transformToRink();
 }
 
-/* =====================================================================
-   STEP 1: D3 TIMELINE CHART (With Axis Labels)
-   ===================================================================== */
 let timelineSvg, xTimeScale, yTimeScale, lineGen;
 
 function initTimelineChart() {
   const container = document.getElementById("view-timeline");
   const width = container.clientWidth || 550;
   const height = container.clientHeight - 100 || 300;
-  const margin = { top: 20, right: 30, bottom: 50, left: 50 }; // Increased margin for labels
+  const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 
   timelineSvg = d3.select("#svg-timeline")
     .attr("width", "100%")
@@ -103,14 +92,12 @@ function initTimelineChart() {
     .domain([0, 12])
     .range([height - margin.bottom, margin.top]);
 
-  // X-Axis
   timelineSvg.append("g")
     .attr("transform", `translate(0, ${height - margin.bottom})`)
     .call(d3.axisBottom(xTimeScale))
     .attr("color", "#8b949e")
     .selectAll("text").style("font-size", "12px");
     
-  // X-Axis Label
   timelineSvg.append("text")
     .attr("x", width / 2)
     .attr("y", height - 10)
@@ -118,13 +105,11 @@ function initTimelineChart() {
     .style("fill", "#8b949e")
     .text("Playoff Season");
 
-  // Y-Axis
   timelineSvg.append("g")
     .attr("transform", `translate(${margin.left}, 0)`)
     .call(d3.axisLeft(yTimeScale).ticks(5))
     .attr("color", "#8b949e");
     
-  // Y-Axis Label
   timelineSvg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 15)
@@ -163,9 +148,6 @@ function animateTimeline() {
     .attr("stroke-dashoffset", 0);
 }
 
-/* =====================================================================
-   STEP 2: HEAVYWEIGHT SLIDER SNAP
-   ===================================================================== */
 function initHeavyweightSlider() {
   const slider = document.getElementById("guess-slider");
   const valDisplay = document.getElementById("slider-val");
@@ -190,9 +172,6 @@ function initHeavyweightSlider() {
   slider.addEventListener("touchend", snapToZero);
 }
 
-/* =====================================================================
-   STEPS 3 & 4: SCATTERPLOT -> RINK MAP MORPH
-   ===================================================================== */
 let morphSvg, rinkGroup, scatterAxesGroup, dotsGroup, edgeTracersGroup;
 let xScatter, yScatter;
 
@@ -209,7 +188,6 @@ function initMorphCanvas() {
   xScatter = d3.scaleLinear().domain([0, 30]).range([80, 640]);
   yScatter = d3.scaleLinear().domain([0, 45]).range([380, 50]);
 
-  // Scatter Axes
   scatterAxesGroup.append("g")
     .attr("class", "x-axis")
     .attr("transform", "translate(0, 380)")
@@ -237,7 +215,6 @@ function initMorphCanvas() {
     .style("text-anchor", "middle")
     .text("Total Penalty Minutes (PIM)");
 
-  // Scatterplot Points
   const dots = dotsGroup.selectAll(".player-dot")
     .data(DATA.actualFighters).enter()
     .append("g").attr("class", "player-dot")
@@ -302,9 +279,6 @@ function transformToRink() {
   });
 }
 
-/* =====================================================================
-   STEP 5: POPULATE DATA TABLE
-   ===================================================================== */
 function populateFightTable() {
   const tbody = document.getElementById("fight-table-body");
   DATA.allFights.forEach(fight => {
