@@ -1,0 +1,157 @@
+<!-- DESIGNER: CONFIGURE PAGE METADATA AND HERO BANNER -->
+<header class="hero">
+  <div class="hero-content">
+    <span class="hero-tag">NHL DATA STORYTELLING</span>
+    <h1>The Disappearing Playoff Enforcer</h1>
+    <p>A deep dive into speed, skill, and the fading post-season brawl.</p>
+  </div>
+</header>
+
+<main id="scrolly">
+  <!-- SCROLLABLE TEXT PANELS (LEFT COLUMN) -->
+  <article class="scroll-text">
+    
+    <!-- STEP 1: THE ICEBREAKER -->
+    <section class="step active" data-step="1">
+      <!-- DESIGNER: EDIT STEP 1 COPY HERE -->
+      <span class="step-num">01 / DECLINE</span>
+      <h2>The Icebreaker</h2>
+      <p>
+        There is a spectrum of hockey fans: those that hate fighting, and those that love it. For the fight fanatics, the ultimate stage is the post-season.
+      </p>
+      <p>
+        Yet over the last 5 years, across hundreds of intense playoff matchups, fans have witnessed just <strong>29 total fights</strong>. The numbers dropped precipitously from 10 fights in 2022-23 down to 2 in 2024-25.
+      </p>
+    </section>
+
+    <!-- STEP 2: THE HEAVYWEIGHT MIRAGE -->
+    <section class="step" data-step="2">
+      <!-- DESIGNER: EDIT STEP 2 COPY HERE -->
+      <span class="step-num">02 / THE MYTH</span>
+      <h2>The Heavyweight Mirage</h2>
+      <p>
+        The modern NHL still has feared fighters like Mathieu Olivier, Ryan Reaves, and Nicolas Deslauriers. But when the playoffs arrive, where are they?
+      </p>
+      <p>
+        Try guessing how many fights the league's consensus toughest enforcers logged in our playoff dataset between 2021 and 2026.
+      </p>
+    </section>
+
+    <!-- STEP 3: THE ACCIDENTAL GLADIATORS -->
+    <section class="step" data-step="3">
+      <!-- DESIGNER: EDIT STEP 3 COPY HERE -->
+      <span class="step-num">03 / THE FIGHTERS</span>
+      <h2>The Accidental Gladiators</h2>
+      <p>
+        If the dedicated heavyweights aren't throwing punches, who is? 
+      </p>
+      <p>
+        Modern post-season bouts aren't staged brawls between enforcers. They are spontaneous clashes between elite scorers and top contributors whose emotions boil over in the heat of battle.
+      </p>
+    </section>
+
+    <!-- STEP 4: THE SPEED TRAP (NHL EDGE) -->
+    <section class="step" data-step="4">
+      <!-- DESIGNER: EDIT STEP 4 COPY HERE -->
+      <span class="step-num">04 / THE REALITY</span>
+      <h2>The Speed Trap</h2>
+      <p>
+        Why did the traditional enforcer vanish? <em>Speed</em>. Modern post-season hockey operates at an endurance sprint where seconds decide games.
+      </p>
+      <p>
+        With all-time bursts reaching <strong>24.94 MPH</strong> and defensemen racking up over <strong>4.15 miles</strong> in a single evening, a team cannot afford a roster spot for someone who can only drop the mitts.
+      </p>
+    </section>
+
+  </article>
+
+  <!-- STICKY VISUAL CONTAINER (RIGHT COLUMN) -->
+  <figure class="sticky-canvas">
+    <div id="graphic-container">
+      
+      <!-- STEP 1 GRAPHIC: D3 Line Chart -->
+      <div id="view-timeline" class="viz-view active">
+        <h3 class="canvas-title">Playoff Bouts Per Season (2021–2026)</h3>
+        <svg id="svg-timeline"></svg>
+      </div>
+
+      <!-- STEP 2 GRAPHIC: Heavyweight Slider / Mugshot Stamp -->
+      <div id="view-heavyweights" class="viz-view">
+        <h3 class="canvas-title">Top Regular Season Fighters</h3>
+        <div class="interactive-slider-box">
+          <label id="slider-label" for="guess-slider">Guess Playoff Fights: <span id="slider-val">12</span></label>
+          <input type="range" id="guess-slider" min="0" max="25" value="12" />
+          <span class="slider-hint">Drag the slider and release...</span>
+        </div>
+        <div class="mugshot-grid">
+          <!-- DESIGNER: CONFIGURE PLAYER MUGSHOTS & TEAMS -->
+          <div class="player-card">
+            <div class="mug-wrapper">
+              <img src="https://assets.nhle.com/mugs/nhl/latest/8480884.png" alt="Mathieu Olivier" />
+              <div class="stamp">0 BOUTS</div>
+            </div>
+            <div class="player-info">
+              <strong>M. Olivier</strong>
+              <span>CBJ</span>
+            </div>
+          </div>
+
+          <div class="player-card">
+            <div class="mug-wrapper">
+              <img src="https://assets.nhle.com/mugs/nhl/latest/8471817.png" alt="Ryan Reaves" />
+              <div class="stamp">0 BOUTS</div>
+            </div>
+            <div class="player-info">
+              <strong>R. Reaves</strong>
+              <span>SJS / TOR</span>
+            </div>
+          </div>
+
+          <div class="player-card">
+            <div class="mug-wrapper">
+              <img src="https://assets.nhle.com/mugs/nhl/latest/8475204.png" alt="Nicolas Deslauriers" />
+              <div class="stamp">0 BOUTS</div>
+            </div>
+            <div class="player-info">
+              <strong>N. Deslauriers</strong>
+              <span>PHI</span>
+            </div>
+          </div>
+
+          <div class="player-card">
+            <div class="mug-wrapper">
+              <img src="https://assets.nhle.com/mugs/nhl/latest/8482684.png" alt="Arber Xhekaj" />
+              <div class="stamp">0 BOUTS</div>
+            </div>
+            <div class="player-info">
+              <strong>A. Xhekaj</strong>
+              <span>MTL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEPS 3 & 4 GRAPHIC: D3 Scatterplot & Rink Map -->
+      <div id="view-rink-scatter" class="viz-view">
+        <h3 id="rink-chart-title" class="canvas-title">Scorers Who Dropped The Gloves</h3>
+        <div class="svg-wrapper">
+          <svg id="svg-morph" viewBox="0 0 700 450" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+        <div id="edge-callout" class="edge-callout-card">
+          <!-- DESIGNER: CUSTOMIZE NHL EDGE METRIC CARDS -->
+          <div class="stat-pill">
+            <span class="label">ALL-TIME TOP SPEED</span>
+            <span class="val">24.94 MPH</span>
+            <span class="sub">Beck Malenstyn</span>
+          </div>
+          <div class="stat-pill">
+            <span class="label">SINGLE-GAME DISTANCE</span>
+            <span class="val">4.15 MI</span>
+            <span class="sub">Jakob Chychrun</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </figure>
+</main>

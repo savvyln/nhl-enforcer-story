@@ -1,0 +1,371 @@
+/* =====================================================================
+   DESIGNER CUSTOMIZATION VARIABLES
+   ===================================================================== */
+:root {
+  --bg-color: #0b0e14;
+  --card-bg: rgba(22, 27, 34, 0.85);
+  --ice-bg: #141b24;
+  --ice-marking-red: #c53030;
+  --ice-marking-blue: #2b6cb0;
+  --text-main: #f0f6fc;
+  --text-muted: #8b949e;
+  --accent-red: #ff3344;
+  --accent-cyan: #38bdf8;
+  --accent-gold: #f59e0b;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-headline: "Impact", "Arial Black", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* HERO SECTION */
+.hero {
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: radial-gradient(circle at center, #1b263b 0%, var(--bg-color) 75%);
+  border-bottom: 1px solid #21262d;
+  padding: 2rem;
+}
+
+.hero-tag {
+  letter-spacing: 3px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+.hero h1 {
+  font-family: var(--font-headline);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0.5rem 0;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* SCROLLYTELLING CONTAINER */
+#scrolly {
+  display: flex;
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.scroll-text {
+  width: 40%;
+  padding-right: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.step {
+  min-height: 85vh;
+  margin-bottom: 25vh;
+  padding: 2.5rem;
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  border-left: 4px solid #30363d;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.step.active {
+  border-left-color: var(--accent-red);
+  transform: translateX(6px);
+}
+
+.step-num {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--accent-cyan);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.step h2 {
+  font-family: var(--font-headline);
+  font-size: 2rem;
+  text-transform: uppercase;
+  margin-top: 0;
+}
+
+/* STICKY GRAPHIC CANVAS */
+.sticky-canvas {
+  width: 60%;
+  height: 80vh;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 10vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* Older browser graceful fallback */
+@supports not (position: sticky) {
+  .sticky-canvas {
+    position: relative;
+    top: auto;
+    width: 100%;
+  }
+}
+
+#graphic-container {
+  width: 100%;
+  height: 100%;
+  background: var(--card-bg);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.canvas-title {
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.viz-view {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.viz-view.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* VIEW 1: TIMELINE */
+#svg-timeline {
+  width: 100%;
+  height: 100%;
+}
+
+.line-path {
+  fill: none;
+  stroke: var(--accent-red);
+  stroke-width: 4px;
+}
+
+.point-circle {
+  fill: var(--accent-cyan);
+  stroke: #ffffff;
+  stroke-width: 2px;
+}
+
+/* VIEW 2: HEAVYWEIGHT SLIDER & STAMPS */
+.interactive-slider-box {
+  background: #111620;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border: 1px solid #21262d;
+}
+
+#slider-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+#slider-val {
+  color: var(--accent-cyan);
+  font-size: 1.3rem;
+}
+
+.slider-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+input[type="range"] {
+  width: 80%;
+  accent-color: var(--accent-red);
+  cursor: pointer;
+}
+
+.mugshot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  flex: 1;
+  align-items: center;
+}
+
+.player-card {
+  text-align: center;
+}
+
+.mug-wrapper {
+  position: relative;
+  background: #1f2937;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #374151;
+  aspect-ratio: 1;
+}
+
+.mug-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.4s ease;
+}
+
+.player-info {
+  margin-top: 0.5rem;
+}
+
+.player-info strong {
+  display: block;
+  font-size: 0.85rem;
+}
+
+.player-info span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-20deg) scale(2);
+  color: var(--accent-red);
+  border: 3px solid var(--accent-red);
+  padding: 0.2rem 0.6rem;
+  font-family: var(--font-headline);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Stamped state */
+.mug-wrapper.stamped img {
+  filter: grayscale(100%) brightness(40%);
+}
+
+.mug-wrapper.stamped .stamp {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(-15deg) scale(1);
+}
+
+/* VIEWS 3 & 4: RINK & SCATTER */
+.svg-wrapper {
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+#svg-morph {
+  width: 100%;
+  height: 100%;
+}
+
+.edge-callout-card {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.edge-callout-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stat-pill {
+  background: #111620;
+  border: 1px solid #30363d;
+  border-left: 3px solid var(--accent-cyan);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-pill .label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.stat-pill .val {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+.stat-pill .sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* RESPONSIVE LAYOUT */
+@media (max-width: 900px) {
+  #scrolly {
+    flex-direction: column;
+  }
+  .scroll-text {
+    width: 100%;
+    padding-right: 0;
+  }
+  .sticky-canvas {
+    width: 100%;
+    height: 60vh;
+    top: 5vh;
+    margin-bottom: 2rem;
+  }
+  .mugshot-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
