@@ -1,322 +1,227 @@
-const DATA = {
-  timeline: [
-    { season: "2021-22", bouts: 9 },
-    { season: "2022-23", bouts: 10 },
-    { season: "2023-24", bouts: 4 },
-    { season: "2024-25", bouts: 2 },
-    { season: "2025-26", bouts: 4 }
-  ],
-  actualFighters: [
-    { name: "Matthew Tkachuk", team: "FLA", points: 24, pim: 35, rinkX: 520, rinkY: 180 },
-    { name: "Steven Stamkos", team: "TBL", points: 19, pim: 22, rinkX: 490, rinkY: 280 },
-    { name: "Evander Kane", team: "EDM", points: 13, pim: 37, rinkX: 180, rinkY: 225 },
-    { name: "Brandon Hagel", team: "TBL", points: 18, pim: 26, rinkX: 540, rinkY: 330 },
-    { name: "Tom Wilson", team: "WSH", points: 8, pim: 28, rinkX: 230, rinkY: 140 }
-  ],
-  edgeRinkPaths: [
-    { d: "M 100 225 Q 350 80 600 225", speed: "24.94 MPH" },
-    { d: "M 600 225 Q 350 370 100 225", speed: "22.87 MPH" }
-  ],
-  allFights: [
-    { date: "04/24/26", matchup: "V. Podkolzin (EDM) vs. J. Viel (ANA)", winner: "Vasily Podkolzin" },
-    { date: "04/21/26", matchup: "M. Kastelic (BOS) vs. L. Stanley (BUF)", winner: "Mark Kastelic" },
-    { date: "06/09/25", matchup: "D. Nurse (EDM) vs. J. Gadjovich (FLA)", winner: "Jonah Gadjovich" },
-    { date: "05/12/25", matchup: "N. Hague (VGK) vs. T. Frederic (EDM)", winner: "Nicolas Hague" },
-    { date: "05/08/24", matchup: "D. Pastrnak (BOS) vs. M. Tkachuk (FLA)", winner: "Matthew Tkachuk" },
-    { date: "04/26/24", matchup: "E. Kane (EDM) vs. A. Englund (LAK)", winner: "Evander Kane" },
-    { date: "05/10/23", matchup: "N. Hague (VGK) vs. D. Nurse (EDM)", winner: "Nicolas Hague" },
-    { date: "05/07/23", matchup: "S. Noesen (CAR) vs. E. Haula (NJD)", winner: "Stefan Noesen" },
-    { date: "06/20/22", matchup: "L. O'Connor (COL) vs. R. Colton (TBL)", winner: "Logan O'Connor" },
-    { date: "06/09/22", matchup: "S. Stamkos (TBL) vs. A. Lafrenière (NYR)", winner: "Steven Stamkos" }
-  ]
-};
+/* =====================================================================
+   DATA PAYLOAD
+   ===================================================================== */
+// A selection of all 32 teams for the initial cluster. 
+// "hasFights" indicates they were involved in a post-season fight 2021-2026.
+const ALL_TEAMS = [
+  { abbr: "ANA", color: "#F47A38", hasFights: true },
+  { abbr: "BOS", color: "#FFB81C", hasFights: true },
+  { abbr: "BUF", color: "#002654", hasFights: true },
+  { abbr: "CAR", color: "#CE1126", hasFights: true },
+  { abbr: "CBJ", color: "#002654", hasFights: false },
+  { abbr: "CGY", color: "#C8102E", hasFights: true },
+  { abbr: "CHI", color: "#CF0A2C", hasFights: false },
+  { abbr: "COL", color: "#6F263D", hasFights: true },
+  { abbr: "DAL", color: "#006847", hasFights: true },
+  { abbr: "DET", color: "#CE1126", hasFights: false },
+  { abbr: "EDM", color: "#041E42", hasFights: true },
+  { abbr: "FLA", color: "#041E42", hasFights: true },
+  { abbr: "LAK", color: "#111111", hasFights: true },
+  { abbr: "MIN", color: "#154734", hasFights: true },
+  { abbr: "MTL", color: "#AF1E2D", hasFights: true },
+  { abbr: "NJD", color: "#CE1126", hasFights: true },
+  { abbr: "NSH", color: "#FFB81C", hasFights: false },
+  { abbr: "NYI", color: "#00539B", hasFights: true },
+  { abbr: "NYR", color: "#0038A8", hasFights: true },
+  { abbr: "OTT", color: "#E31837", hasFights: true },
+  { abbr: "PHI", color: "#F74902", hasFights: true },
+  { abbr: "PIT", color: "#FCB514", hasFights: true },
+  { abbr: "SEA", color: "#001628", hasFights: false },
+  { abbr: "SJS", color: "#006D75", hasFights: true },
+  { abbr: "STL", color: "#002F87", hasFights: true },
+  { abbr: "TBL", color: "#002868", hasFights: true },
+  { abbr: "TOR", color: "#00205B", hasFights: true },
+  { abbr: "UTA", color: "#71AFE5", hasFights: false },
+  { abbr: "VAN", color: "#00205B", hasFights: true },
+  { abbr: "VGK", color: "#B4975A", hasFights: true },
+  { abbr: "WPG", color: "#041E42", hasFights: true },
+  { abbr: "WSH", color: "#C8102E", hasFights: true }
+];
+
+// Fight coordinates mapped to the ice rink (Center is 0,0)
+const FIGHTS = [
+  { id: 1, matchup: "EDM vs FLA", players: "Nurse vs Gadjovich", x: -200, y: 100, team1: "EDM", team2: "FLA", color: "#041E42" },
+  { id: 2, matchup: "VGK vs EDM", players: "Hague vs Frederic", x: 150, y: -120, team1: "VGK", team2: "EDM", color: "#B4975A" },
+  { id: 3, matchup: "BOS vs FLA", players: "Pastrnak vs Tkachuk", x: 220, y: 80, team1: "BOS", team2: "FLA", color: "#FFB81C" },
+  { id: 4, matchup: "EDM vs LAK", players: "Kane vs Englund", x: -180, y: -60, team1: "EDM", team2: "LAK", color: "#041E42" },
+  { id: 5, matchup: "NYI vs TBL", players: "Martin vs Schenn", x: 50, y: 140, team1: "NYI", team2: "TBL", color: "#00539B" },
+  { id: 6, matchup: "TOR vs TBL", players: "Matthews vs Stamkos", x: -50, y: -130, team1: "TOR", team2: "TBL", color: "#00205B" },
+  { id: 7, matchup: "COL vs TBL", players: "O'Connor vs Colton", x: 180, y: 0, team1: "COL", team2: "TBL", color: "#6F263D" },
+  { id: 8, matchup: "WSH vs CAR", players: "Ovechkin vs Svechnikov", x: -250, y: 0, team1: "WSH", team2: "CAR", color: "#C8102E" }
+];
+
+/* =====================================================================
+   D3 & SCROLLYTELLING LOGIC
+   ===================================================================== */
+let svg, width, height;
+let gRink, gNodes;
 
 document.addEventListener("DOMContentLoaded", () => {
-  try {
-    initTimelineChart();
-    initHeavyweightSlider();
-    initMorphCanvas();
-    populateFightTable();
-    setupObserver();
-  } catch (error) {
-    console.error("Initialization error:", error);
-  }
+  initGraphic();
+  setupScrollObserver();
 });
 
-function setupObserver() {
+function initGraphic() {
+  const container = document.querySelector(".sticky-graphic");
+  width = container.clientWidth;
+  height = container.clientHeight;
+
+  svg = d3.select("#story-canvas")
+    .attr("viewBox", `-${width/2} -${height/2} ${width} ${height}`);
+
+  gRink = svg.append("g").attr("class", "rink-layer").style("opacity", 0);
+  gNodes = svg.append("g").attr("class", "nodes-layer");
+
+  drawRink(gRink);
+
+  // Initial State: Circle pack of all 32 teams
+  // Random clustering around center
+  const simulation = d3.forceSimulation(ALL_TEAMS)
+    .force("charge", d3.forceManyBody().strength(-15))
+    .force("center", d3.forceCenter(0, 0))
+    .force("collide", d3.forceCollide().radius(22))
+    .stop();
+
+  // Run simulation statically to get initial positions
+  for (let i = 0; i < 120; ++i) simulation.tick();
+
+  const nodes = gNodes.selectAll(".team-node")
+    .data(ALL_TEAMS)
+    .enter()
+    .append("g")
+    .attr("class", "team-node")
+    .attr("transform", d => `translate(${d.x}, ${d.y})`)
+    .attr("id", d => `node-${d.abbr}`);
+
+  nodes.append("circle")
+    .attr("class", "node-circle")
+    .attr("r", 20)
+    .attr("fill", d => d.color);
+
+  nodes.append("text")
+    .attr("class", "node-text")
+    .text(d => d.abbr);
+}
+
+function drawRink(g) {
+  // Simple to-scale aesthetic rink outline
+  g.append("rect")
+    .attr("x", -300).attr("y", -150)
+    .attr("width", 600).attr("height", 300)
+    .attr("rx", 60).attr("ry", 60)
+    .attr("class", "rink-line");
+
+  // Center Red Line
+  g.append("line").attr("x1", 0).attr("y1", -150).attr("x2", 0).attr("y2", 150).attr("class", "rink-line rink-red").attr("stroke-width", 4);
+  
+  // Center Circle
+  g.append("circle").attr("cx", 0).attr("cy", 0).attr("r", 45).attr("class", "rink-line rink-blue");
+
+  // Blue Lines
+  g.append("line").attr("x1", -100).attr("y1", -150).attr("x2", -100).attr("y2", 150).attr("class", "rink-line rink-blue").attr("stroke-width", 4);
+  g.append("line").attr("x1", 100).attr("y1", -150).attr("x2", 100).attr("y2", 150).attr("class", "rink-line rink-blue").attr("stroke-width", 4);
+
+  // Goal creases
+  g.append("path").attr("d", "M -260 -20 A 20 20 0 0 1 -260 20 Z").attr("class", "rink-line rink-red");
+  g.append("path").attr("d", "M 260 -20 A 20 20 0 0 0 260 20 Z").attr("class", "rink-line rink-red");
+}
+
+/* --- SCROLL TRIGGERS --- */
+function setupScrollObserver() {
   const steps = document.querySelectorAll(".step");
-  if (!steps.length) return;
   
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        steps.forEach(s => s.classList.remove("active"));
-        entry.target.classList.add("active");
+        steps.forEach(s => s.classList.remove("is-active"));
+        entry.target.classList.add("is-active");
+        
         const stepIndex = parseInt(entry.target.getAttribute("data-step"));
-        renderStepGraphic(stepIndex);
+        triggerTransition(stepIndex);
       }
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.5 }); // Triggers when text box is half-way up the screen
 
   steps.forEach(step => observer.observe(step));
 }
 
-function renderStepGraphic(step) {
-  const timelineView = document.getElementById("view-timeline");
-  const heavyView = document.getElementById("view-heavyweights");
-  const rinkScatterView = document.getElementById("view-rink-scatter");
-  const logView = document.getElementById("view-data-log");
-
-  if(timelineView) timelineView.classList.toggle("active", step === 1);
-  if(heavyView) heavyView.classList.toggle("active", step === 2);
-  if(rinkScatterView) rinkScatterView.classList.toggle("active", step === 3 || step === 4);
-  if(logView) logView.classList.toggle("active", step === 5);
-
-  if (step === 1) animateTimeline();
-  else if (step === 3) transformToScatter();
-  else if (step === 4) transformToRink();
-}
-
-let timelineSvg, xTimeScale, yTimeScale, lineGen;
-
-function initTimelineChart() {
-  const container = document.getElementById("view-timeline");
-  if (!container) return;
-  
-  // Safe math bounds to prevent negative SVG dimensions
-  const width = Math.max(container.clientWidth, 550);
-  const height = Math.max(container.clientHeight - 100, 300);
-  const margin = { top: 20, right: 30, bottom: 50, left: 50 };
-
-  timelineSvg = d3.select("#svg-timeline")
-    .attr("width", "100%")
-    .attr("height", "100%")
-    .attr("viewBox", `0 0 ${width} ${height}`);
-
-  xTimeScale = d3.scalePoint()
-    .domain(DATA.timeline.map(d => d.season))
-    .range([margin.left, width - margin.right]);
-
-  yTimeScale = d3.scaleLinear()
-    .domain([0, 12])
-    .range([height - margin.bottom, margin.top]);
-
-  timelineSvg.append("g")
-    .attr("transform", `translate(0, ${height - margin.bottom})`)
-    .call(d3.axisBottom(xTimeScale))
-    .attr("color", "#8b949e")
-    .selectAll("text").style("font-size", "12px");
-    
-  timelineSvg.append("text")
-    .attr("x", width / 2)
-    .attr("y", height - 10)
-    .style("text-anchor", "middle")
-    .style("fill", "#8b949e")
-    .text("Playoff Season");
-
-  timelineSvg.append("g")
-    .attr("transform", `translate(${margin.left}, 0)`)
-    .call(d3.axisLeft(yTimeScale).ticks(5))
-    .attr("color", "#8b949e");
-    
-  timelineSvg.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 15)
-    .attr("x", -(height / 2))
-    .style("text-anchor", "middle")
-    .style("fill", "#8b949e")
-    .text("Total Bouts");
-
-  lineGen = d3.line()
-    .x(d => xTimeScale(d.season))
-    .y(d => yTimeScale(d.bouts))
-    .curve(d3.curveMonotoneX);
-
-  timelineSvg.append("path")
-    .datum(DATA.timeline)
-    .attr("class", "line-path")
-    .attr("d", lineGen);
-
-  timelineSvg.selectAll(".point-circle")
-    .data(DATA.timeline)
-    .enter()
-    .append("circle")
-    .attr("class", "point-circle")
-    .attr("cx", d => xTimeScale(d.season))
-    .attr("cy", d => yTimeScale(d.bouts))
-    .attr("r", 6);
-}
-
-function animateTimeline() {
-  if (!timelineSvg) return;
-  const path = timelineSvg.select(".line-path");
-  if(path.empty()) return;
-  
-  const length = path.node().getTotalLength();
-  path.attr("stroke-dasharray", `${length} ${length}`)
-    .attr("stroke-dashoffset", length)
-    .transition().duration(1600).ease(d3.easeCubicOut)
-    .attr("stroke-dashoffset", 0);
-}
-
-function initHeavyweightSlider() {
-  const slider = document.getElementById("guess-slider");
-  const valDisplay = document.getElementById("slider-val");
-  const wrappers = document.querySelectorAll(".mug-wrapper");
-  
-  if(!slider || !valDisplay) return;
-
-  slider.addEventListener("input", (e) => { valDisplay.textContent = e.target.value; });
-
-  const snapToZero = () => {
-    let current = parseInt(slider.value);
-    const interval = setInterval(() => {
-      if (current <= 0) {
-        clearInterval(interval);
-        slider.value = 0; valDisplay.textContent = 0;
-        wrappers.forEach(w => w.classList.add("stamped"));
-      } else {
-        current -= 1; slider.value = current; valDisplay.textContent = current;
-      }
-    }, 20);
-  };
-
-  slider.addEventListener("mouseup", snapToZero);
-  slider.addEventListener("touchend", snapToZero);
-}
-
-let morphSvg, rinkGroup, scatterAxesGroup, dotsGroup, edgeTracersGroup;
-let xScatter, yScatter;
-
-function initMorphCanvas() {
-  morphSvg = d3.select("#svg-morph");
-  if (morphSvg.empty()) return;
-
-  rinkGroup = morphSvg.append("g").attr("class", "rink-layer").style("opacity", 0);
-  scatterAxesGroup = morphSvg.append("g").attr("class", "axes-layer");
-  dotsGroup = morphSvg.append("g").attr("class", "dots-layer");
-  edgeTracersGroup = morphSvg.append("g").attr("class", "tracers-layer");
-
-  drawRink(rinkGroup);
-
-  xScatter = d3.scaleLinear().domain([0, 30]).range([80, 640]);
-  yScatter = d3.scaleLinear().domain([0, 45]).range([380, 50]);
-
-  scatterAxesGroup.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", "translate(0, 380)")
-    .call(d3.axisBottom(xScatter))
-    .attr("color", "#8b949e");
-
-  scatterAxesGroup.append("text")
-    .attr("class", "x-label")
-    .attr("x", 360).attr("y", 420)
-    .attr("fill", "#8b949e")
-    .style("text-anchor", "middle")
-    .text("Total Playoff Points");
-
-  scatterAxesGroup.append("g")
-    .attr("class", "y-axis")
-    .attr("transform", "translate(80, 0)")
-    .call(d3.axisLeft(yScatter))
-    .attr("color", "#8b949e");
-
-  scatterAxesGroup.append("text")
-    .attr("class", "y-label")
-    .attr("x", -215).attr("y", 30)
-    .attr("transform", "rotate(-90)")
-    .attr("fill", "#8b949e")
-    .style("text-anchor", "middle")
-    .text("Total Penalty Minutes (PIM)");
-
-  const dots = dotsGroup.selectAll(".player-dot")
-    .data(DATA.actualFighters).enter()
-    .append("g").attr("class", "player-dot")
-    .attr("transform", d => `translate(${xScatter(d.points)}, ${yScatter(d.pim)})`);
-
-  dots.append("circle")
-    .attr("r", 9)
-    .attr("fill", "var(--accent-red)")
-    .attr("stroke", "#ffffff")
-    .attr("stroke-width", 2);
-
-  dots.append("text")
-    .attr("y", -14)
-    .attr("text-anchor", "middle")
-    .attr("fill", "var(--text-main)")
-    .style("font-size", "11px")
-    .style("font-weight", "600")
-    .text(d => `${d.name} (${d.team})`);
-}
-
-function drawRink(g) {
-  g.append("rect").attr("x", 50).attr("y", 50).attr("width", 600).attr("height", 350).attr("rx", 75).attr("ry", 75).attr("fill", "var(--ice-bg)").attr("stroke", "#475569").attr("stroke-width", 4);
-  g.append("line").attr("x1", 350).attr("y1", 50).attr("x2", 350).attr("y2", 400).attr("stroke", "var(--ice-marking-red)").attr("stroke-width", 4);
-  g.append("circle").attr("cx", 350).attr("cy", 225).attr("r", 50).attr("fill", "none").attr("stroke", "var(--ice-marking-blue)").attr("stroke-width", 3);
-  [250, 450].forEach(x => { g.append("line").attr("x1", x).attr("y1", 50).attr("x2", x).attr("y2", 400).attr("stroke", "var(--ice-marking-blue)").attr("stroke-width", 4); });
-}
-
-function transformToScatter() {
-  if(!scatterAxesGroup || !rinkGroup) return;
+function triggerTransition(step) {
   const t = d3.transition().duration(1000).ease(d3.easeCubicInOut);
-  
-  const title = document.getElementById("rink-chart-title");
-  if(title) title.textContent = "Scorers Who Dropped The Gloves";
-  
-  const legend = document.getElementById("scatter-legend");
-  if(legend) legend.style.opacity = 1;
-  
-  const callout = document.getElementById("edge-callout");
-  if(callout) callout.classList.remove("visible");
 
-  scatterAxesGroup.transition(t).style("opacity", 1);
-  rinkGroup.transition(t).style("opacity", 0);
-  edgeTracersGroup.selectAll("*").remove();
+  if (step === 1) {
+    // Show all teams clustered
+    gRink.transition(t).style("opacity", 0);
+    gNodes.selectAll(".team-node").transition(t).style("opacity", 1)
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+    
+    // Clear fight nodes if scrolling up
+    gNodes.selectAll(".fight-node").remove();
+  } 
+  else if (step === 2) {
+    // Filter down: Fade out teams with no playoff fights
+    gRink.transition(t).style("opacity", 0);
+    gNodes.selectAll(".team-node")
+      .transition(t)
+      .style("opacity", d => d.hasFights ? 1 : 0.1);
+      
+    gNodes.selectAll(".fight-node").remove();
+  } 
+  else if (step === 3 || step === 4) {
+    // Draw the Rink, map the fights
+    gRink.transition(t).style("opacity", 1);
+    
+    // Hide the original cluster
+    gNodes.selectAll(".team-node").transition(t).style("opacity", 0);
 
-  dotsGroup.selectAll(".player-dot").transition(t).attr("transform", d => `translate(${xScatter(d.points)}, ${yScatter(d.pim)})`);
-}
+    // Bind fight data to new interactive nodes
+    const fights = gNodes.selectAll(".fight-node").data(FIGHTS, d => d.id);
+    
+    const fightEnter = fights.enter().append("g")
+      .attr("class", "fight-node team-node")
+      .attr("transform", d => `translate(0, 0)`) // Start center, explode out
+      .style("opacity", 0)
+      .on("click", function(event, d) {
+        // Interactive Flip reveal
+        const el = d3.select(this);
+        const isFlipped = el.classed("flipped");
+        
+        if (!isFlipped) {
+          el.classed("flipped", true);
+          el.select(".node-circle").transition().duration(300).attr("r", 55).attr("fill", "#ffffff").attr("stroke", d.color).attr("stroke-width", 3);
+          el.select(".node-text").transition().duration(100).style("opacity", 0);
+          el.select(".node-details").text(d.players).transition().delay(200).duration(300).style("opacity", 1);
+        } else {
+          el.classed("flipped", false);
+          el.select(".node-circle").transition().duration(300).attr("r", 20).attr("fill", d.color).attr("stroke-width", 2);
+          el.select(".node-details").transition().duration(100).style("opacity", 0);
+          el.select(".node-text").transition().delay(200).duration(300).style("opacity", 1);
+        }
+      });
 
-function transformToRink() {
-  if(!scatterAxesGroup || !rinkGroup) return;
-  const t = d3.transition().duration(1200).ease(d3.easeCubicInOut);
-  
-  const title = document.getElementById("rink-chart-title");
-  if(title) title.textContent = "The Modern Game: Speed & Distance";
-  
-  const legend = document.getElementById("scatter-legend");
-  if(legend) legend.style.opacity = 0;
-  
-  const callout = document.getElementById("edge-callout");
-  if(callout) callout.classList.add("visible");
+    fightEnter.append("circle")
+      .attr("class", "node-circle")
+      .attr("r", 20)
+      .attr("fill", d => d.color);
 
-  scatterAxesGroup.transition(t).style("opacity", 0);
-  rinkGroup.transition(t).style("opacity", 1);
+    fightEnter.append("text")
+      .attr("class", "node-text")
+      .text(d => d.team1);
 
-  dotsGroup.selectAll(".player-dot").transition(t).attr("transform", d => `translate(${d.rinkX}, ${d.rinkY})`);
+    fightEnter.append("text")
+      .attr("class", "node-details")
+      .attr("y", 0); // vertically centered
 
-  edgeTracersGroup.selectAll("*").remove();
-  DATA.edgeRinkPaths.forEach((pathData, idx) => {
-    const path = edgeTracersGroup.append("path")
-      .attr("d", pathData.d).attr("fill", "none")
-      .attr("stroke", idx === 0 ? "var(--accent-cyan)" : "var(--accent-gold)")
-      .attr("stroke-width", 3).attr("stroke-dasharray", "8, 6").style("opacity", 0.9);
-
-    const length = path.node().getTotalLength();
-    path.attr("stroke-dasharray", `${length} ${length}`).attr("stroke-dashoffset", length)
-      .transition().delay(1200 + (idx * 300)).duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
-  });
-}
-
-function populateFightTable() {
-  const tbody = document.getElementById("fight-table-body");
-  if(!tbody) return;
-  DATA.allFights.forEach(fight => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${fight.date}</td>
-      <td><strong>${fight.matchup}</strong></td>
-      <td>${fight.winner}</td>
-    `;
-    tbody.appendChild(tr);
-  });
+    // Move to ice coordinates
+    fightEnter.merge(fights)
+      .transition(t)
+      .style("opacity", 1)
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+      
+    if (step === 4) {
+      // Keep rink view, prepare for conclusion text
+      gRink.transition(t).style("opacity", 0.4); // dim rink slightly to emphasize text
+    } else {
+      gRink.transition(t).style("opacity", 1);
+    }
+  }
 }
