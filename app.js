@@ -18,29 +18,35 @@ const DATA = {
     { d: "M 600 225 Q 350 370 100 225", speed: "22.87 MPH" }
   ],
   allFights: [
-    { date: "04/24/26", matchup: "V. Podkolzin (EDM) vs. J. Viel (ANA)", winner: "Vasily Podkolzin[cite: 12]" },
-    { date: "04/21/26", matchup: "M. Kastelic (BOS) vs. L. Stanley (BUF)", winner: "Mark Kastelic[cite: 12]" },
-    { date: "06/09/25", matchup: "D. Nurse (EDM) vs. J. Gadjovich (FLA)", winner: "Jonah Gadjovich[cite: 10]" },
-    { date: "05/12/25", matchup: "N. Hague (VGK) vs. T. Frederic (EDM)", winner: "Nicolas Hague[cite: 10]" },
-    { date: "05/08/24", matchup: "D. Pastrnak (BOS) vs. M. Tkachuk (FLA)", winner: "Matthew Tkachuk[cite: 7]" },
-    { date: "04/26/24", matchup: "E. Kane (EDM) vs. A. Englund (LAK)", winner: "Evander Kane[cite: 7]" },
-    { date: "05/10/23", matchup: "N. Hague (VGK) vs. D. Nurse (EDM)", winner: "Nicolas Hague[cite: 15]" },
-    { date: "05/07/23", matchup: "S. Noesen (CAR) vs. E. Haula (NJD)", winner: "Stefan Noesen[cite: 15]" },
-    { date: "06/20/22", matchup: "L. O'Connor (COL) vs. R. Colton (TBL)", winner: "Logan O'Connor[cite: 13]" },
-    { date: "06/09/22", matchup: "S. Stamkos (TBL) vs. A. Lafrenière (NYR)", winner: "Steven Stamkos[cite: 13]" }
+    { date: "04/24/26", matchup: "V. Podkolzin (EDM) vs. J. Viel (ANA)", winner: "Vasily Podkolzin" },
+    { date: "04/21/26", matchup: "M. Kastelic (BOS) vs. L. Stanley (BUF)", winner: "Mark Kastelic" },
+    { date: "06/09/25", matchup: "D. Nurse (EDM) vs. J. Gadjovich (FLA)", winner: "Jonah Gadjovich" },
+    { date: "05/12/25", matchup: "N. Hague (VGK) vs. T. Frederic (EDM)", winner: "Nicolas Hague" },
+    { date: "05/08/24", matchup: "D. Pastrnak (BOS) vs. M. Tkachuk (FLA)", winner: "Matthew Tkachuk" },
+    { date: "04/26/24", matchup: "E. Kane (EDM) vs. A. Englund (LAK)", winner: "Evander Kane" },
+    { date: "05/10/23", matchup: "N. Hague (VGK) vs. D. Nurse (EDM)", winner: "Nicolas Hague" },
+    { date: "05/07/23", matchup: "S. Noesen (CAR) vs. E. Haula (NJD)", winner: "Stefan Noesen" },
+    { date: "06/20/22", matchup: "L. O'Connor (COL) vs. R. Colton (TBL)", winner: "Logan O'Connor" },
+    { date: "06/09/22", matchup: "S. Stamkos (TBL) vs. A. Lafrenière (NYR)", winner: "Steven Stamkos" }
   ]
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  initTimelineChart();
-  initHeavyweightSlider();
-  initMorphCanvas();
-  populateFightTable();
-  setupObserver();
+  try {
+    initTimelineChart();
+    initHeavyweightSlider();
+    initMorphCanvas();
+    populateFightTable();
+    setupObserver();
+  } catch (error) {
+    console.error("Initialization error:", error);
+  }
 });
 
 function setupObserver() {
   const steps = document.querySelectorAll(".step");
+  if (!steps.length) return;
+  
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -61,10 +67,10 @@ function renderStepGraphic(step) {
   const rinkScatterView = document.getElementById("view-rink-scatter");
   const logView = document.getElementById("view-data-log");
 
-  timelineView.classList.toggle("active", step === 1);
-  heavyView.classList.toggle("active", step === 2);
-  rinkScatterView.classList.toggle("active", step === 3 || step === 4);
-  logView.classList.toggle("active", step === 5);
+  if(timelineView) timelineView.classList.toggle("active", step === 1);
+  if(heavyView) heavyView.classList.toggle("active", step === 2);
+  if(rinkScatterView) rinkScatterView.classList.toggle("active", step === 3 || step === 4);
+  if(logView) logView.classList.toggle("active", step === 5);
 
   if (step === 1) animateTimeline();
   else if (step === 3) transformToScatter();
@@ -75,8 +81,11 @@ let timelineSvg, xTimeScale, yTimeScale, lineGen;
 
 function initTimelineChart() {
   const container = document.getElementById("view-timeline");
-  const width = container.clientWidth || 550;
-  const height = container.clientHeight - 100 || 300;
+  if (!container) return;
+  
+  // Safe math bounds to prevent negative SVG dimensions
+  const width = Math.max(container.clientWidth, 550);
+  const height = Math.max(container.clientHeight - 100, 300);
   const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 
   timelineSvg = d3.select("#svg-timeline")
@@ -139,9 +148,11 @@ function initTimelineChart() {
 }
 
 function animateTimeline() {
+  if (!timelineSvg) return;
   const path = timelineSvg.select(".line-path");
+  if(path.empty()) return;
+  
   const length = path.node().getTotalLength();
-
   path.attr("stroke-dasharray", `${length} ${length}`)
     .attr("stroke-dashoffset", length)
     .transition().duration(1600).ease(d3.easeCubicOut)
@@ -152,6 +163,8 @@ function initHeavyweightSlider() {
   const slider = document.getElementById("guess-slider");
   const valDisplay = document.getElementById("slider-val");
   const wrappers = document.querySelectorAll(".mug-wrapper");
+  
+  if(!slider || !valDisplay) return;
 
   slider.addEventListener("input", (e) => { valDisplay.textContent = e.target.value; });
 
@@ -177,6 +190,7 @@ let xScatter, yScatter;
 
 function initMorphCanvas() {
   morphSvg = d3.select("#svg-morph");
+  if (morphSvg.empty()) return;
 
   rinkGroup = morphSvg.append("g").attr("class", "rink-layer").style("opacity", 0);
   scatterAxesGroup = morphSvg.append("g").attr("class", "axes-layer");
@@ -243,10 +257,17 @@ function drawRink(g) {
 }
 
 function transformToScatter() {
+  if(!scatterAxesGroup || !rinkGroup) return;
   const t = d3.transition().duration(1000).ease(d3.easeCubicInOut);
-  document.getElementById("rink-chart-title").textContent = "Scorers Who Dropped The Gloves";
-  document.getElementById("scatter-legend").style.opacity = 1;
-  document.getElementById("edge-callout").classList.remove("visible");
+  
+  const title = document.getElementById("rink-chart-title");
+  if(title) title.textContent = "Scorers Who Dropped The Gloves";
+  
+  const legend = document.getElementById("scatter-legend");
+  if(legend) legend.style.opacity = 1;
+  
+  const callout = document.getElementById("edge-callout");
+  if(callout) callout.classList.remove("visible");
 
   scatterAxesGroup.transition(t).style("opacity", 1);
   rinkGroup.transition(t).style("opacity", 0);
@@ -256,10 +277,17 @@ function transformToScatter() {
 }
 
 function transformToRink() {
+  if(!scatterAxesGroup || !rinkGroup) return;
   const t = d3.transition().duration(1200).ease(d3.easeCubicInOut);
-  document.getElementById("rink-chart-title").textContent = "The Modern Game: Speed & Distance";
-  document.getElementById("scatter-legend").style.opacity = 0;
-  document.getElementById("edge-callout").classList.add("visible");
+  
+  const title = document.getElementById("rink-chart-title");
+  if(title) title.textContent = "The Modern Game: Speed & Distance";
+  
+  const legend = document.getElementById("scatter-legend");
+  if(legend) legend.style.opacity = 0;
+  
+  const callout = document.getElementById("edge-callout");
+  if(callout) callout.classList.add("visible");
 
   scatterAxesGroup.transition(t).style("opacity", 0);
   rinkGroup.transition(t).style("opacity", 1);
@@ -281,6 +309,7 @@ function transformToRink() {
 
 function populateFightTable() {
   const tbody = document.getElementById("fight-table-body");
+  if(!tbody) return;
   DATA.allFights.forEach(fight => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
