@@ -8,52 +8,44 @@
 </head>
 <body>
 
-  <header class="hero">
-    <div class="hero-content">
-      <span class="hero-tag">NHL DATA STORYTELLING</span>
-      <h1>The Disappearing Playoff Enforcer</h1>
-      <p>A deep dive into speed, skill, and the fading post-season brawl.</p>
-    </div>
-  </header>
+  <!-- FULL-SCREEN UNBOXED GRAPHIC (BACKGROUND) -->
+  <div class="sticky-graphic">
+    <svg id="story-canvas"></svg>
+  </div>
 
+  <!-- SCROLLING TEXT CARDS (FOREGROUND) -->
   <main id="scrolly">
     <article class="scroll-text">
       
-      <section class="step active" data-step="1">
-        <span class="step-num">01 / DECLINE</span>
-        <h2>The Icebreaker</h2>
-        <p>There is a spectrum of hockey fans: those that hate fighting, and those that love it. For the fight fanatics, the ultimate stage is the post-season.</p>
-        <p>Yet over the last 5 years, across hundreds of intense playoff matchups, fans have witnessed a precipitous drop in total fights. The numbers plummeted from 10 fights in 2022-23 down to just 2 in 2024-25.</p>
+      <!-- STEP 1: ALL TEAMS -> FILTER -->
+      <section class="step" data-step="1">
+        <p>There is a spectrum of hockey fans. Those that hate fighting, and those that love it. We’re focusing in on those that love it.</p>
+        <p>For these hockey fight fanatics, the best time of year is playoffs. Over the past 5 years, <strong>16 teams</strong> per season have faced off in over <strong>425 games</strong>.</p>
       </section>
 
+      <!-- STEP 1B: THE DROP IN FIGHTS -->
       <section class="step" data-step="2">
-        <span class="step-num">02 / THE MYTH</span>
-        <h2>The Heavyweight Mirage</h2>
-        <p>The modern NHL still has feared fighters like Mathieu Olivier, Ryan Reaves, and Nicolas Deslauriers. But when the playoffs arrive, where are they?</p>
-        <p>Try guessing how many fights the league's consensus toughest enforcers logged in our playoff dataset between 2021 and 2026.</p>
+        <p>And in those 425+ games, fight fans have witnessed just <strong>29 fights</strong>.</p>
+        <p>Dance, Donnybrook, Drop the mitts, fisticuffs, have a go, puttin’ on the foil, snarl, tilt — whatever you call it, the quintessential playoff brawl is vanishing before our eyes.</p>
       </section>
 
+      <!-- STEP 2: THE RINK & INTERACTIVE LOGOS -->
       <section class="step" data-step="3">
-        <span class="step-num">03 / THE FIGHTERS</span>
-        <h2>The Accidental Gladiators</h2>
-        <p>If the dedicated heavyweights aren't throwing punches, who is?</p>
-        <p>Modern post-season bouts aren't staged brawls between enforcers. They are spontaneous clashes between elite scorers and top contributors whose emotions boil over in the heat of battle.</p>
+        <p>So, where is the action happening, and who is involved?</p>
+        <p>This map plots the locations of recent post-season bouts on the ice. <strong>Click on any team logo below</strong> to flip it and reveal the players who actually dropped the mitts.</p>
       </section>
 
+      <!-- STEP 3: THE HEAVYWEIGHT MIRAGE -->
       <section class="step" data-step="4">
-        <span class="step-num">04 / THE REALITY</span>
-        <h2>The Speed Trap</h2>
-        <p>Why did the traditional enforcer vanish? <em>Speed</em>. Modern post-season hockey operates at an endurance sprint where seconds decide games.</p>
-        <p>With all-time bursts reaching <strong>24.94 MPH</strong>[cite: 3] and defensemen racking up over <strong>4.15 miles</strong>[cite: 3] in a single evening, a team cannot afford a roster spot for someone who can only drop the mitts.</p>
-      </section>
-
-      <section class="step" data-step="5">
-        <span class="step-num">05 / DATA EXPLORATION</span>
-        <h2>The Complete Fight Log</h2>
-        <p>Explore the full list of recorded post-season bouts between 2021 and 2026.</p>
-        <p>You'll notice the absence of heavyweights and the prominence of skilled players stepping up in critical moments.</p>
+        <p>If you clicked through the fights above, you likely noticed a glaring absence: <strong>The Heavyweights</strong>.</p>
+        <p>The modern NHL still has feared, dedicated enforcers like Mathieu Olivier, Ryan Reaves, and Nicolas Deslauriers. But when the playoffs arrive, they stay quiet.</p>
+        <p>None of the league's top five regular-season enforcers recorded a single playoff bout between 2021 and 2026. The modern post-season fight is no longer a staged bout between policemen; it is a spontaneous clash between highly skilled stars.</p>
       </section>
 
     </article>
+  </main>
 
-    <figure class="sticky-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
