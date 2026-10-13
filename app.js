@@ -1,5 +1,5 @@
 /* =====================================================================
-   DATA PAYLOAD (Derived from provided post-season logs & Edge stats)
+   DATA PAYLOAD
    ===================================================================== */
 const DATA = {
   timeline: [
@@ -14,22 +14,36 @@ const DATA = {
     { name: "Steven Stamkos", team: "TBL", points: 19, pim: 22, rinkX: 490, rinkY: 280 },
     { name: "Evander Kane", team: "EDM", points: 13, pim: 37, rinkX: 180, rinkY: 225 },
     { name: "Brandon Hagel", team: "TBL", points: 18, pim: 26, rinkX: 540, rinkY: 330 },
-    { name: "Tom Wilson", team: "WSH", points: 8, pim: 28, rinkX: 230, rinkY: 140 },
-    { name: "Vasily Podkolzin", team: "EDM", points: 6, pim: 15, rinkX: 350, rinkY: 225 }
+    { name: "Tom Wilson", team: "WSH", points: 8, pim: 28, rinkX: 230, rinkY: 140 }
   ],
   edgeRinkPaths: [
     { d: "M 100 225 Q 350 80 600 225", speed: "24.94 MPH" },
     { d: "M 600 225 Q 350 370 100 225", speed: "22.87 MPH" }
+  ],
+  allFights: [
+    { date: "04/24/26", matchup: "V. Podkolzin (EDM) vs. J. Viel (ANA)", winner: "Vasily Podkolzin" },
+    { date: "04/21/26", matchup: "M. Kastelic (BOS) vs. L. Stanley (BUF)", winner: "Mark Kastelic" },
+    { date: "06/09/25", matchup: "D. Nurse (EDM) vs. J. Gadjovich (FLA)", winner: "Jonah Gadjovich" },
+    { date: "05/12/25", matchup: "N. Hague (VGK) vs. T. Frederic (EDM)", winner: "Nicolas Hague" },
+    { date: "05/08/24", matchup: "D. Pastrnak (BOS) vs. M. Tkachuk (FLA)", winner: "Matthew Tkachuk" },
+    { date: "04/26/24", matchup: "E. Kane (EDM) vs. A. Englund (LAK)", winner: "Evander Kane" },
+    { date: "05/10/23", matchup: "N. Hague (VGK) vs. D. Nurse (EDM)", winner: "Nicolas Hague" },
+    { date: "05/07/23", matchup: "S. Noesen (CAR) vs. E. Haula (NJD)", winner: "Stefan Noesen" },
+    { date: "06/20/22", matchup: "L. O'Connor (COL) vs. R. Colton (TBL)", winner: "Logan O'Connor" },
+    { date: "06/09/22", matchup: "S. Stamkos (TBL) vs. A. Lafrenière (NYR)", winner: "Steven Stamkos" },
+    { date: "06/21/21", matchup: "A. Pelech (NYI) vs. Y. Gourde (TBL)", winner: "Adam Pelech" },
+    { date: "06/21/21", matchup: "M. Martin (NYI) vs. L. Schenn (TBL)", winner: "Matt Martin" }
   ]
 };
 
 /* =====================================================================
-   APP INITIALIZATION & INTERSECTION OBSERVER (SCROLLAMA REPLACEMENT)
+   APP INITIALIZATION
    ===================================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   initTimelineChart();
   initHeavyweightSlider();
   initMorphCanvas();
+  populateFightTable();
   setupObserver();
 });
 
@@ -44,7 +58,7 @@ function setupObserver() {
         renderStepGraphic(stepIndex);
       }
     });
-  }, { threshold: 0.55 });
+  }, { threshold: 0.5 }); // Adjusted threshold for full-height items
 
   steps.forEach(step => observer.observe(step));
 }
@@ -53,31 +67,28 @@ function renderStepGraphic(step) {
   const timelineView = document.getElementById("view-timeline");
   const heavyView = document.getElementById("view-heavyweights");
   const rinkScatterView = document.getElementById("view-rink-scatter");
+  const logView = document.getElementById("view-data-log");
 
-  // Step visibility toggles
   timelineView.classList.toggle("active", step === 1);
   heavyView.classList.toggle("active", step === 2);
-  rinkScatterView.classList.toggle("active", step >= 3);
+  rinkScatterView.classList.toggle("active", step === 3 || step === 4);
+  logView.classList.toggle("active", step === 5);
 
-  if (step === 1) {
-    animateTimeline();
-  } else if (step === 3) {
-    transformToScatter();
-  } else if (step === 4) {
-    transformToRink();
-  }
+  if (step === 1) animateTimeline();
+  else if (step === 3) transformToScatter();
+  else if (step === 4) transformToRink();
 }
 
 /* =====================================================================
-   STEP 1: D3 TIMELINE CHART
+   STEP 1: D3 TIMELINE CHART (With Axis Labels)
    ===================================================================== */
 let timelineSvg, xTimeScale, yTimeScale, lineGen;
 
 function initTimelineChart() {
   const container = document.getElementById("view-timeline");
   const width = container.clientWidth || 550;
-  const height = container.clientHeight - 80 || 320;
-  const margin = { top: 20, right: 30, bottom: 40, left: 40 };
+  const height = container.clientHeight - 100 || 300;
+  const margin = { top: 20, right: 30, bottom: 50, left: 50 }; // Increased margin for labels
 
   timelineSvg = d3.select("#svg-timeline")
     .attr("width", "100%")
@@ -97,14 +108,30 @@ function initTimelineChart() {
     .attr("transform", `translate(0, ${height - margin.bottom})`)
     .call(d3.axisBottom(xTimeScale))
     .attr("color", "#8b949e")
-    .selectAll("text")
-    .style("font-size", "12px");
+    .selectAll("text").style("font-size", "12px");
+    
+  // X-Axis Label
+  timelineSvg.append("text")
+    .attr("x", width / 2)
+    .attr("y", height - 10)
+    .style("text-anchor", "middle")
+    .style("fill", "#8b949e")
+    .text("Playoff Season");
 
   // Y-Axis
   timelineSvg.append("g")
     .attr("transform", `translate(${margin.left}, 0)`)
     .call(d3.axisLeft(yTimeScale).ticks(5))
     .attr("color", "#8b949e");
+    
+  // Y-Axis Label
+  timelineSvg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 15)
+    .attr("x", -(height / 2))
+    .style("text-anchor", "middle")
+    .style("fill", "#8b949e")
+    .text("Total Bouts");
 
   lineGen = d3.line()
     .x(d => xTimeScale(d.season))
@@ -132,9 +159,7 @@ function animateTimeline() {
 
   path.attr("stroke-dasharray", `${length} ${length}`)
     .attr("stroke-dashoffset", length)
-    .transition()
-    .duration(1600)
-    .ease(d3.easeCubicOut)
+    .transition().duration(1600).ease(d3.easeCubicOut)
     .attr("stroke-dashoffset", 0);
 }
 
@@ -146,23 +171,17 @@ function initHeavyweightSlider() {
   const valDisplay = document.getElementById("slider-val");
   const wrappers = document.querySelectorAll(".mug-wrapper");
 
-  slider.addEventListener("input", (e) => {
-    valDisplay.textContent = e.target.value;
-  });
+  slider.addEventListener("input", (e) => { valDisplay.textContent = e.target.value; });
 
-  // Snap to 0 on release to reinforce that none had playoff fights
   const snapToZero = () => {
     let current = parseInt(slider.value);
     const interval = setInterval(() => {
       if (current <= 0) {
         clearInterval(interval);
-        slider.value = 0;
-        valDisplay.textContent = 0;
+        slider.value = 0; valDisplay.textContent = 0;
         wrappers.forEach(w => w.classList.add("stamped"));
       } else {
-        current -= 1;
-        slider.value = current;
-        valDisplay.textContent = current;
+        current -= 1; slider.value = current; valDisplay.textContent = current;
       }
     }, 20);
   };
@@ -180,7 +199,6 @@ let xScatter, yScatter;
 function initMorphCanvas() {
   morphSvg = d3.select("#svg-morph");
 
-  // Group Layers
   rinkGroup = morphSvg.append("g").attr("class", "rink-layer").style("opacity", 0);
   scatterAxesGroup = morphSvg.append("g").attr("class", "axes-layer");
   dotsGroup = morphSvg.append("g").attr("class", "dots-layer");
@@ -188,7 +206,6 @@ function initMorphCanvas() {
 
   drawRink(rinkGroup);
 
-  // Scatter Scale Setups
   xScatter = d3.scaleLinear().domain([0, 30]).range([80, 640]);
   yScatter = d3.scaleLinear().domain([0, 45]).range([380, 50]);
 
@@ -201,11 +218,10 @@ function initMorphCanvas() {
 
   scatterAxesGroup.append("text")
     .attr("class", "x-label")
-    .attr("x", 360)
-    .attr("y", 420)
+    .attr("x", 360).attr("y", 420)
     .attr("fill", "#8b949e")
     .style("text-anchor", "middle")
-    .text("Playoff Points");
+    .text("Total Playoff Points");
 
   scatterAxesGroup.append("g")
     .attr("class", "y-axis")
@@ -215,19 +231,16 @@ function initMorphCanvas() {
 
   scatterAxesGroup.append("text")
     .attr("class", "y-label")
-    .attr("x", -215)
-    .attr("y", 30)
+    .attr("x", -215).attr("y", 30)
     .attr("transform", "rotate(-90)")
     .attr("fill", "#8b949e")
     .style("text-anchor", "middle")
-    .text("Playoff Penalty Minutes (PIM)");
+    .text("Total Penalty Minutes (PIM)");
 
-  // Initial Circles (Scatterplot Coordinates)
+  // Scatterplot Points
   const dots = dotsGroup.selectAll(".player-dot")
-    .data(DATA.actualFighters)
-    .enter()
-    .append("g")
-    .attr("class", "player-dot")
+    .data(DATA.actualFighters).enter()
+    .append("g").attr("class", "player-dot")
     .attr("transform", d => `translate(${xScatter(d.points)}, ${yScatter(d.pim)})`);
 
   dots.append("circle")
@@ -245,98 +258,62 @@ function initMorphCanvas() {
     .text(d => `${d.name} (${d.team})`);
 }
 
-/* RINK SVG GENERATOR (NHL-RINK standard proportion logic) */
 function drawRink(g) {
-  // Rink Boards
-  g.append("rect")
-    .attr("x", 50)
-    .attr("y", 50)
-    .attr("width", 600)
-    .attr("height", 350)
-    .attr("rx", 75)
-    .attr("ry", 75)
-    .attr("fill", "var(--ice-bg)")
-    .attr("stroke", "#475569")
-    .attr("stroke-width", 4);
-
-  // Center Red Line
-  g.append("line")
-    .attr("x1", 350).attr("y1", 50)
-    .attr("x2", 350).attr("y2", 400)
-    .attr("stroke", "var(--ice-marking-red)")
-    .attr("stroke-width", 4);
-
-  // Center Ice Circle
-  g.append("circle")
-    .attr("cx", 350).attr("cy", 225)
-    .attr("r", 50)
-    .attr("fill", "none")
-    .attr("stroke", "var(--ice-marking-blue)")
-    .attr("stroke-width", 3);
-
-  // Blue Lines
-  [250, 450].forEach(x => {
-    g.append("line")
-      .attr("x1", x).attr("y1", 50)
-      .attr("x2", x).attr("y2", 400)
-      .attr("stroke", "var(--ice-marking-blue)")
-      .attr("stroke-width", 4);
-  });
+  g.append("rect").attr("x", 50).attr("y", 50).attr("width", 600).attr("height", 350).attr("rx", 75).attr("ry", 75).attr("fill", "var(--ice-bg)").attr("stroke", "#475569").attr("stroke-width", 4);
+  g.append("line").attr("x1", 350).attr("y1", 50).attr("x2", 350).attr("y2", 400).attr("stroke", "var(--ice-marking-red)").attr("stroke-width", 4);
+  g.append("circle").attr("cx", 350).attr("cy", 225).attr("r", 50).attr("fill", "none").attr("stroke", "var(--ice-marking-blue)").attr("stroke-width", 3);
+  [250, 450].forEach(x => { g.append("line").attr("x1", x).attr("y1", 50).attr("x2", x).attr("y2", 400).attr("stroke", "var(--ice-marking-blue)").attr("stroke-width", 4); });
 }
 
-/* MORPH TRANSITION: VIEW 3 (SCATTERPLOT) */
 function transformToScatter() {
   const t = d3.transition().duration(1000).ease(d3.easeCubicInOut);
-
   document.getElementById("rink-chart-title").textContent = "Scorers Who Dropped The Gloves";
+  document.getElementById("scatter-legend").style.opacity = 1;
   document.getElementById("edge-callout").classList.remove("visible");
 
-  // Show Axes, Hide Rink & Tracers
   scatterAxesGroup.transition(t).style("opacity", 1);
   rinkGroup.transition(t).style("opacity", 0);
   edgeTracersGroup.selectAll("*").remove();
 
-  // Morph Dots back to Scatter Coordinates
-  dotsGroup.selectAll(".player-dot")
-    .transition(t)
-    .attr("transform", d => `translate(${xScatter(d.points)}, ${yScatter(d.pim)})`);
+  dotsGroup.selectAll(".player-dot").transition(t).attr("transform", d => `translate(${xScatter(d.points)}, ${yScatter(d.pim)})`);
 }
 
-/* MORPH TRANSITION: VIEW 4 (NHL EDGE RINK) */
 function transformToRink() {
   const t = d3.transition().duration(1200).ease(d3.easeCubicInOut);
-
   document.getElementById("rink-chart-title").textContent = "The Modern Game: Speed & Distance";
+  document.getElementById("scatter-legend").style.opacity = 0;
   document.getElementById("edge-callout").classList.add("visible");
 
-  // Hide Axes, Reveal Rink
   scatterAxesGroup.transition(t).style("opacity", 0);
   rinkGroup.transition(t).style("opacity", 1);
 
-  // Morph Dots to Spatial Rink Coordinates
-  dotsGroup.selectAll(".player-dot")
-    .transition(t)
-    .attr("transform", d => `translate(${d.rinkX}, ${d.rinkY})`);
+  dotsGroup.selectAll(".player-dot").transition(t).attr("transform", d => `translate(${d.rinkX}, ${d.rinkY})`);
 
-  // Animate Edge Speed Tracers
   edgeTracersGroup.selectAll("*").remove();
-
   DATA.edgeRinkPaths.forEach((pathData, idx) => {
     const path = edgeTracersGroup.append("path")
-      .attr("d", pathData.d)
-      .attr("fill", "none")
+      .attr("d", pathData.d).attr("fill", "none")
       .attr("stroke", idx === 0 ? "var(--accent-cyan)" : "var(--accent-gold)")
-      .attr("stroke-width", 3)
-      .attr("stroke-dasharray", "8, 6")
-      .style("opacity", 0.9);
+      .attr("stroke-width", 3).attr("stroke-dasharray", "8, 6").style("opacity", 0.9);
 
     const length = path.node().getTotalLength();
-    path.attr("stroke-dasharray", `${length} ${length}`)
-      .attr("stroke-dashoffset", length)
-      .transition()
-      .delay(1200 + (idx * 300))
-      .duration(2000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset", 0);
+    path.attr("stroke-dasharray", `${length} ${length}`).attr("stroke-dashoffset", length)
+      .transition().delay(1200 + (idx * 300)).duration(2000).ease(d3.easeLinear).attr("stroke-dashoffset", 0);
+  });
+}
+
+/* =====================================================================
+   STEP 5: POPULATE DATA TABLE
+   ===================================================================== */
+function populateFightTable() {
+  const tbody = document.getElementById("fight-table-body");
+  DATA.allFights.forEach(fight => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${fight.date}</td>
+      <td><strong>${fight.matchup}</strong></td>
+      <td>${fight.winner}</td>
+    `;
+    tbody.appendChild(tr);
   });
 }
