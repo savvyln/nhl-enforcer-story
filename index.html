@@ -4,13 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Disappearing Playoff Enforcer</title>
-  
-  <!-- This links your CSS file. Ensure your CSS file is named exactly "styles.css" -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- DESIGNER: CONFIGURE PAGE METADATA AND HERO BANNER -->
   <header class="hero">
     <div class="hero-content">
       <span class="hero-tag">NHL DATA STORYTELLING</span>
@@ -20,70 +17,59 @@
   </header>
 
   <main id="scrolly">
-    <!-- SCROLLABLE TEXT PANELS (LEFT COLUMN) -->
     <article class="scroll-text">
       
-      <!-- STEP 1: THE ICEBREAKER -->
       <section class="step active" data-step="1">
         <span class="step-num">01 / DECLINE</span>
         <h2>The Icebreaker</h2>
-        <p>
-          There is a spectrum of hockey fans: those that hate fighting, and those that love it. For the fight fanatics, the ultimate stage is the post-season.
-        </p>
-        <p>
-          Yet over the last 5 years, across hundreds of intense playoff matchups, fans have witnessed just <strong>29 total fights</strong>. The numbers dropped precipitously from 10 fights in 2022-23 down to 2 in 2024-25.
-        </p>
+        <p>There is a spectrum of hockey fans: those that hate fighting, and those that love it. For the fight fanatics, the ultimate stage is the post-season.</p>
+        <p>Yet over the last 5 years, across hundreds of intense playoff matchups, fans have witnessed a precipitous drop in total fights. The numbers plummeted from 10 fights in 2022-23 down to just 2 in 2024-25.</p>
       </section>
 
-      <!-- STEP 2: THE HEAVYWEIGHT MIRAGE -->
       <section class="step" data-step="2">
         <span class="step-num">02 / THE MYTH</span>
         <h2>The Heavyweight Mirage</h2>
-        <p>
-          The modern NHL still has feared fighters like Mathieu Olivier, Ryan Reaves, and Nicolas Deslauriers. But when the playoffs arrive, where are they?
-        </p>
-        <p>
-          Try guessing how many fights the league's consensus toughest enforcers logged in our playoff dataset between 2021 and 2026.
-        </p>
+        <p>The modern NHL still has feared fighters like Mathieu Olivier, Ryan Reaves, and Nicolas Deslauriers. But when the playoffs arrive, where are they?</p>
+        <p>Try guessing how many fights the league's consensus toughest enforcers logged in our playoff dataset between 2021 and 2026.</p>
       </section>
 
-      <!-- STEP 3: THE ACCIDENTAL GLADIATORS -->
       <section class="step" data-step="3">
         <span class="step-num">03 / THE FIGHTERS</span>
         <h2>The Accidental Gladiators</h2>
-        <p>
-          If the dedicated heavyweights aren't throwing punches, who is? 
-        </p>
-        <p>
-          Modern post-season bouts aren't staged brawls between enforcers. They are spontaneous clashes between elite scorers and top contributors whose emotions boil over in the heat of battle.
-        </p>
+        <p>If the dedicated heavyweights aren't throwing punches, who is?</p>
+        <p>Modern post-season bouts aren't staged brawls between enforcers. They are spontaneous clashes between elite scorers and top contributors whose emotions boil over in the heat of battle.</p>
       </section>
 
-      <!-- STEP 4: THE SPEED TRAP (NHL EDGE) -->
       <section class="step" data-step="4">
         <span class="step-num">04 / THE REALITY</span>
         <h2>The Speed Trap</h2>
-        <p>
-          Why did the traditional enforcer vanish? <em>Speed</em>. Modern post-season hockey operates at an endurance sprint where seconds decide games.
-        </p>
-        <p>
-          With all-time bursts reaching <strong>24.94 MPH</strong> and defensemen racking up over <strong>4.15 miles</strong> in a single evening, a team cannot afford a roster spot for someone who can only drop the mitts.
-        </p>
+        <p>Why did the traditional enforcer vanish? <em>Speed</em>. Modern post-season hockey operates at an endurance sprint where seconds decide games.</p>
+        <p>With all-time bursts reaching <strong>24.94 MPH</strong> and defensemen racking up over <strong>4.15 miles</strong> in a single evening, a team cannot afford a roster spot for someone who can only drop the mitts.</p>
+      </section>
+
+      <section class="step" data-step="5">
+        <span class="step-num">05 / DATA EXPLORATION</span>
+        <h2>The Complete Fight Log</h2>
+        <p>Explore the full list of recorded post-season bouts from the Data Visualization project between 2021 and 2026.</p>
+        <p>You'll notice the absence of heavyweights and the prominence of skilled players stepping up in critical moments.</p>
       </section>
 
     </article>
 
-    <!-- STICKY VISUAL CONTAINER (RIGHT COLUMN) -->
     <figure class="sticky-canvas">
       <div id="graphic-container">
         
-        <!-- STEP 1 GRAPHIC: D3 Line Chart -->
+        <!-- STEP 1 GRAPHIC -->
         <div id="view-timeline" class="viz-view active">
           <h3 class="canvas-title">Playoff Bouts Per Season (2021–2026)</h3>
+          <div class="chart-legend">
+             <div class="legend-item"><div class="legend-color" style="background: var(--accent-red);"></div><span>Total Fights Recorded</span></div>
+             <div class="legend-item"><div class="legend-color" style="background: var(--accent-cyan);"></div><span>Season Data Point</span></div>
+          </div>
           <svg id="svg-timeline"></svg>
         </div>
 
-        <!-- STEP 2 GRAPHIC: Heavyweight Slider / Mugshot Stamp -->
+        <!-- STEP 2 GRAPHIC -->
         <div id="view-heavyweights" class="viz-view">
           <h3 class="canvas-title">Top Regular Season Fighters</h3>
           <div class="interactive-slider-box">
@@ -97,50 +83,40 @@
                 <img src="https://assets.nhle.com/mugs/nhl/latest/8480884.png" alt="Mathieu Olivier" />
                 <div class="stamp">0 BOUTS</div>
               </div>
-              <div class="player-info">
-                <strong>M. Olivier</strong>
-                <span>CBJ</span>
-              </div>
+              <div class="player-info"><strong>M. Olivier</strong><span>CBJ</span></div>
             </div>
-
             <div class="player-card">
               <div class="mug-wrapper">
                 <img src="https://assets.nhle.com/mugs/nhl/latest/8471817.png" alt="Ryan Reaves" />
                 <div class="stamp">0 BOUTS</div>
               </div>
-              <div class="player-info">
-                <strong>R. Reaves</strong>
-                <span>SJS / TOR</span>
-              </div>
+              <div class="player-info"><strong>R. Reaves</strong><span>SJS / TOR</span></div>
             </div>
-
             <div class="player-card">
               <div class="mug-wrapper">
                 <img src="https://assets.nhle.com/mugs/nhl/latest/8475204.png" alt="Nicolas Deslauriers" />
                 <div class="stamp">0 BOUTS</div>
               </div>
-              <div class="player-info">
-                <strong>N. Deslauriers</strong>
-                <span>PHI</span>
-              </div>
+              <div class="player-info"><strong>N. Deslauriers</strong><span>PHI</span></div>
             </div>
-
             <div class="player-card">
               <div class="mug-wrapper">
                 <img src="https://assets.nhle.com/mugs/nhl/latest/8482684.png" alt="Arber Xhekaj" />
                 <div class="stamp">0 BOUTS</div>
               </div>
-              <div class="player-info">
-                <strong>A. Xhekaj</strong>
-                <span>MTL</span>
-              </div>
+              <div class="player-info"><strong>A. Xhekaj</strong><span>MTL</span></div>
             </div>
           </div>
         </div>
 
-        <!-- STEPS 3 & 4 GRAPHIC: D3 Scatterplot & Rink Map -->
+        <!-- STEPS 3 & 4 GRAPHIC -->
         <div id="view-rink-scatter" class="viz-view">
           <h3 id="rink-chart-title" class="canvas-title">Scorers Who Dropped The Gloves</h3>
+          <div id="scatter-legend" class="chart-legend">
+             <div class="legend-item"><div class="legend-color" style="background: var(--accent-red);"></div><span>Player</span></div>
+             <div class="legend-item"><span>X-Axis: Playoff Points</span></div>
+             <div class="legend-item"><span>Y-Axis: Playoff Penalty Minutes</span></div>
+          </div>
           <div class="svg-wrapper">
             <svg id="svg-morph" viewBox="0 0 700 450" preserveAspectRatio="xMidYMid meet"></svg>
           </div>
@@ -158,15 +134,30 @@
           </div>
         </div>
 
+        <!-- STEP 5: FULL FIGHT LOG -->
+        <div id="view-data-log" class="viz-view">
+          <h3 class="canvas-title">All Playoff Fights (2021–2026)</h3>
+          <div class="data-table-container">
+            <table class="fight-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Matchup</th>
+                  <th>Voted Winner</th>
+                </tr>
+              </thead>
+              <tbody id="fight-table-body">
+                <!-- Javascript will populate this -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </figure>
   </main>
 
-  <!-- External Library: D3.js required for charts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-  
-  <!-- This links your JavaScript file. Ensure your JS file is named exactly "app.js" -->
   <script src="app.js"></script>
-  
 </body>
 </html>
