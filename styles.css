@@ -2,12 +2,12 @@
    NEUTRAL PUDDING-STYLE PALETTE
    ===================================================================== */
 :root {
-  --bg-neutral: #f9f9f7;
-  --text-dark: #222222;
+  --bg-neutral: #f4f4f0;
+  --text-dark: #2c2c2c;
   --text-light: #555555;
-  --card-bg: rgba(255, 255, 255, 0.95);
-  --rink-line: #dddddd;
-  --rink-blue: #93b6d4;
+  --card-bg: rgba(255, 255, 255, 0.96);
+  --rink-line: #dcdcdc;
+  --rink-blue: #a5c2d9;
   --rink-red: #d99c9c;
   --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -19,12 +19,12 @@ body {
   color: var(--text-dark);
   font-family: var(--font-main);
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
-/* STICKY BACKGROUND GRAPHIC */
-.sticky-graphic {
-  position: -webkit-sticky;
-  position: sticky;
+/* FULL-SCREEN BACKGROUND GRAPHIC */
+#graphic-container {
+  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
@@ -33,7 +33,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  background-color: var(--bg-neutral);
 }
 
 #story-canvas {
@@ -47,34 +47,43 @@ body {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 600px; /* Centered narrow column for reading */
+  max-width: 600px; /* Narrow, readable column */
   margin: 0 auto;
   padding: 0 1rem;
-  margin-top: -100vh; 
+  /* Allows clicks to pass through the invisible container to the SVG */
+  pointer-events: none; 
 }
 
 .scroll-text {
   padding-bottom: 80vh; 
+  padding-top: 50vh;
 }
 
 /* TEXT CARDS */
 .step {
-  margin-top: 100vh; 
-  margin-bottom: 20vh;
-  padding: 2rem 2.5rem;
+  margin-bottom: 85vh; /* Paces out the scrolling */
+  padding: 2.5rem 3rem;
   background-color: var(--card-bg);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eaeaea;
+  border-top: 4px solid var(--text-dark);
   font-size: 1.15rem;
   color: var(--text-dark);
-  transition: opacity 0.3s ease;
-  text-align: center;
-  border-top: 4px solid var(--text-dark);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  text-align: left;
+  opacity: 0.2;
+  /* Re-enables clicks/highlighting on the text cards */
+  pointer-events: auto; 
 }
 
-.step.is-active { opacity: 1; }
+.step.is-active { 
+  opacity: 1; 
+  transform: translateY(-5px);
+}
+
 .step p { margin: 0 0 1.25rem 0; }
 .step p:last-child { margin-bottom: 0; }
-.step strong { font-weight: 700; }
+.step strong { font-weight: 700; color: #000; }
 
 /* SVG ELEMENT STYLING */
 .team-node {
@@ -86,8 +95,9 @@ body {
 }
 .node-bg {
   fill: #ffffff;
-  stroke: #dddddd;
-  stroke-width: 1px;
+  stroke: #cccccc;
+  stroke-width: 2px;
+  transition: all 0.3s ease;
 }
 .node-details {
   font-size: 11px;
@@ -96,6 +106,7 @@ body {
   font-weight: bold;
   opacity: 0;
   pointer-events: none;
+  font-family: var(--font-main);
 }
 
 /* RINK LINES */
@@ -106,3 +117,7 @@ body {
 }
 .rink-red { stroke: var(--rink-red); }
 .rink-blue { stroke: var(--rink-blue); }
+
+@media (max-width: 768px) {
+  .step { padding: 1.5rem 2rem; font-size: 1rem; }
+}
