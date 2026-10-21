@@ -121,7 +121,7 @@ body:has(dialog[open]) { overflow: hidden; }
 
 .step h2 {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(1.9rem, 3.2vw, 2.6rem);
   line-height: 1.05;
   margin: 0 0 1.25rem;
