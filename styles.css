@@ -74,8 +74,8 @@ body:has(dialog[open]) { overflow: hidden; }
   color: var(--accent);
   margin-top: 0; margin-bottom: 1rem;
 }
-.hero-sub { max-width: 36rem; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; }
-.hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; }
+.hero-sub { max-width: 16ch; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; }
+.hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0 2rem 0 0; }
 
 /* =====================================================================
    SCROLLYTELLING LAYOUT
