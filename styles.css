@@ -87,7 +87,7 @@ body:has(dialog[open]) { overflow: hidden; }
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: clamp(1.5rem, 4rem, 4rem);
   max-width: 1360px;
-  margin: 0 auto;
+  margin: 2rem;
   padding: 0 clamp(1rem, 3vw, 2.5rem);
 }
 
