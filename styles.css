@@ -60,17 +60,6 @@ body:has(dialog[open]) { overflow: hidden; }
 }
 .hero-inner { position: relative; z-index: 1; max-width: 1360px; margin: 0 auto; }
 
-.hero-dots {
-  position: absolute; z-index: 0;
-  top: 0; right: 0; bottom: 0; width: min(58%, 46rem);
-  background:
-    radial-gradient(circle at 74% 50%, var(--aqua) 0 31%, transparent 31.4%),
-    radial-gradient(var(--navy) 36%, transparent 39%) 0 0 / 20px 20px;
-  -webkit-mask-image: linear-gradient(to left, #000 25%, transparent 100%);
-          mask-image: linear-gradient(to left, #000 25%, transparent 100%);
-  opacity: 0.9;
-}
-
 .hero h1 {
   font-family: var(--font-display);
   font-weight: 700;
