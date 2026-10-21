@@ -82,7 +82,7 @@ body:has(dialog[open]) { overflow: hidden; }
 }
 .hero-lede {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 200;
   font-size: clamp(1.5rem, 3.2vw, 2.3rem);
   line-height: 1.15;
   color: var(--accent);
@@ -121,7 +121,7 @@ body:has(dialog[open]) { overflow: hidden; }
 
 .step h2 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 200;
   font-size: clamp(1.9rem, 3.2vw, 2.6rem);
   line-height: 1.05;
   margin: 0 0 1.25rem;
@@ -214,7 +214,7 @@ body:has(dialog[open]) { overflow: hidden; }
 /* ---- chart marks ---- */
 .chart text { font-family: var(--font-ui); }
 .baseline, .lane-line { stroke: var(--navy); stroke-width: 1.5; }
-.col-count { font-family: var(--font-display) !important; font-weight: 700; font-size: 30px; fill: var(--navy); }
+.col-count { font-family: var(--font-display) !important; font-weight: 400; font-size: 30px; fill: var(--navy); }
 .col-label { font-size: 14px; fill: var(--muted); }
 
 /* Fight discs: solid navy with an aqua ring inside, in the manner of Wyman's pictogram discs */
