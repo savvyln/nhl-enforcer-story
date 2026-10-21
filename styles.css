@@ -58,18 +58,8 @@ body:has(dialog[open]) { overflow: hidden; }
   padding: clamp(3rem, 9vw, 7rem) clamp(1rem, 5vw, 4rem) clamp(2.5rem, 6vw, 4.5rem);
   border-bottom: 4px solid var(--navy);
 }
-.hero-inner { position: relative; z-index: 1; max-width: 1360px; margin: 0 auto; }
+.hero-inner { position: relative; z-index: relative; max-width: 1360px; margin: 0 auto; }
 
-.hero-dots {
-  position: absolute; z-index: 0;
-  top: 0; right: 0; bottom: 0; width: min(58%, 46rem);
-  background:
-    radial-gradient(circle at 74% 50%, var(--aqua) 0 31%, transparent 31.4%),
-    radial-gradient(var(--navy) 36%, transparent 39%) 0 0 / 20px 20px;
-  -webkit-mask-image: linear-gradient(to left, #000 25%, transparent 100%);
-          mask-image: linear-gradient(to left, #000 25%, transparent 100%);
-  opacity: 0.9;
-}
 
 .hero h1 {
   font-family: var(--font-display);
@@ -78,7 +68,7 @@ body:has(dialog[open]) { overflow: hidden; }
   line-height: 1;
   letter-spacing: -0.005em;
   margin-bottom: 1.25rem;
-  max-width: 16ch;
+  max-width: auto;
    text-align: center;
 }
 .hero-lede {
@@ -90,7 +80,7 @@ body:has(dialog[open]) { overflow: hidden; }
   margin-top: 0; margin-bottom: 1rem;
     text-align: center;
 }
-.hero-sub { max-width: 40rem; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; text-align: center; }
+.hero-sub { max-width: auto; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; text-align: center; }
 .hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; text-align: center; }
 
 /* =====================================================================
