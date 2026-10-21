@@ -84,7 +84,7 @@ body:has(dialog[open]) { overflow: hidden; }
    ===================================================================== */
 #scrolly {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-columns: minmax(5fr, 5fr) minmax(7fr, 7fr);
   gap: clamp(1.5rem, 4rem, 4rem);
   max-width: 1360px;
   margin: 2rem;
@@ -136,8 +136,8 @@ body:has(dialog[open]) { overflow: hidden; }
   top: 3vh;
   height: min(94vh, 880px);
   align-self: start;
-  margin: 0;
-  padding: 0 7px 7px 0;      /* room for the hard card shadow */
+  margin: 20px;
+  padding: 20px 7px 7px 0;      /* room for the hard card shadow */
 }
 
 /* =====================================================================
