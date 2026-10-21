@@ -73,7 +73,7 @@ body:has(dialog[open]) { overflow: hidden; }
 
 .hero h1 {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 200;
   font-size: clamp(2.5rem, 7.4vw, 6.2rem);
   line-height: 1;
   letter-spacing: -0.005em;
@@ -88,7 +88,7 @@ body:has(dialog[open]) { overflow: hidden; }
   color: var(--accent);
   margin-top: 0; margin-bottom: 1rem;
 }
-.hero-sub { max-width: 36rem; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; }
+.hero-sub { max-width: 40rem; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; }
 .hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; }
 
 /* =====================================================================
