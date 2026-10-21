@@ -6,11 +6,14 @@
   <title>The Disappearing Playoff Enforcer</title>
   <meta name="description" content="Playoff fights in the NHL have nearly vanished. An interactive look at who still fights, and when, from 2021-22 to 2025-26.">
   <meta property="og:title" content="The Disappearing Playoff Enforcer">
-  <meta property="og:description" content="Thirteen playoff fights in 2022-23. Two in 2024-25. Click a team on the rink to see who dropped the mitts.">
+  <meta property="og:description" content="Thirteen playoff fights in 2022-23. Two in 2024-25. Click any fight to see the trading cards.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap">
+  <!-- Pressio (titles and headers) comes from an Adobe Fonts kit. Add your site's domain in the kit's web project settings or it will not load. -->
+  <link rel="stylesheet" href="https://use.typekit.net/eip6bzg.css">
+  <!-- Newsreader (body text) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap">
   <link rel="stylesheet" href="styles.css">
 
   <!-- d3 first, then the story. Both are deferred, so they run in this order after the page is parsed. -->
@@ -20,10 +23,13 @@
 <body>
 
 <header class="hero">
+  <div class="hero-dots" aria-hidden="true"></div>
+  <div class="hero-inner">
   <h1>The Disappearing Playoff Enforcer</h1>
   <p class="hero-lede">Thirteen playoff fights in 2022-23. Two in 2024-25.</p>
   <p class="hero-sub">A look at the fading post-season brawl, and the players who still drop the mitts.</p>
   <p class="hero-note">Fight counts from HockeyFights.com's NHL postseason logs, 2021-22 through 2025-26.</p>
+  </div>
 </header>
 
 <noscript><p class="noscript">This story is interactive and needs JavaScript turned on.</p></noscript>
@@ -48,7 +54,7 @@
         Dance, donnybrook, drop the mitts, fisticuffs, have a go, puttin' on the foil, snarl, tilt: whatever you call it, the quintessential playoff brawl is vanishing before our eyes.
       </p>
       <p class="aside">
-        Each dot is one fight. Hover, tap, or tab to a dot to see who fought, and click it for the fan vote and video link. This project has full details on <span data-stat="total"></span> of the <span data-stat="listedTotal"></span>; the <span data-stat="pending"></span> hollow dots are 2022-23 fights that are listed but not yet collected.
+        Each dot is one fight. Hover, tap, or tab to a dot to see who fought, and click it to flip up both players' trading cards. This project has full details on <span data-stat="total"></span> of the <span data-stat="listedTotal"></span>; the <span data-stat="pending"></span> hollow dots are 2022-23 fights that are listed but not yet collected.
       </p>
     </section>
 
@@ -104,7 +110,7 @@
     <section class="step" data-step="6" aria-labelledby="s6">
       <h2 id="s6">Every fight, logged</h2>
       <p>
-        Open any fight for the fan vote and a link to the video. If you picked a team on the rink, the list shows only its fights.
+        Open any fight for the fan vote, then use View trading cards to see both players side by side. If you picked a team on the rink, the list shows only its fights.
       </p>
     </section>
 
@@ -135,7 +141,7 @@
         <!-- View 1: decline -->
         <div id="view-decline" class="viz-view active">
           <svg id="svg-decline" class="chart" role="img" aria-label="Unit chart: playoff fights per season. 9, 13, 4, 2, 4."></svg>
-          <p class="legend"><span class="key key-solid"></span> Fight in this dataset <span class="key key-hollow"></span> Listed by HockeyFights.com, not yet collected</p>
+          <p class="legend"><span class="key key-solid"></span> Fight in this dataset <span class="key key-hollow"></span> Listed by HockeyFights.com, not yet collected. Click a collected fight for its trading cards.</p>
         </div>
 
         <!-- View 2: rink -->
@@ -162,6 +168,7 @@
           </div>
           <div id="enforcer-cards" class="enforcer-cards"></div>
           <p id="guess-result" class="guess-result" aria-live="polite"></p>
+          <p class="pim-note">*PIM = the player's total playoff penalty minutes across the five postseasons, 2021-22 to 2025-26.</p>
         </div>
 
         <!-- View 4: regulars -->
@@ -174,7 +181,7 @@
         <!-- View 5: clock -->
         <div id="view-clock" class="viz-view">
           <svg id="svg-clock" class="chart" role="img" aria-label="Chart of when each fight happened, by period and minute elapsed. Most are in the third period."></svg>
-          <p class="legend">Each dot is one fight. Click a dot for details.</p>
+          <p class="legend">Each disc is one fight. Click a disc to see both players' trading cards.</p>
         </div>
 
         <!-- Views 6 and 7: log -->
@@ -186,8 +193,6 @@
           <ol id="log-list" class="log-list"></ol>
         </div>
 
-        <!-- Fight details, opened by clicking a dot -->
-        <aside id="fight-card" class="fight-card" hidden aria-live="polite"></aside>
       </div>
 
       <!-- Status of the team picked on the rink -->
@@ -201,8 +206,25 @@
 
 <footer class="site-foot">
   <p><strong>Sources.</strong> Fight data: HockeyFights.com NHL postseason fight logs, 2021-22 to 2025-26. Skater statistics: spreadsheets supplied by the author for the same five postseasons, limited here to skaters with at least five playoff games. Fan votes and ratings were read in October 2026 and change as people keep voting.</p>
-  <p>Fight times are minutes elapsed in the period. Team logos belong to their teams and load from the NHL's public asset host.</p>
+  <p>*PIM = the player's total playoff penalty minutes across the five postseasons, 2021-22 to 2025-26. Card frames use approximate team colors until real card images are linked. Fight times are minutes elapsed in the period. Team logos belong to their teams and load from the NHL's public asset host.</p>
 </footer>
+
+<!-- Trading card reveal: opened by clicking a fight disc or a log row's View trading cards button -->
+<dialog id="card-modal" class="card-modal" aria-labelledby="card-modal-title">
+  <div class="modal-body">
+    <button type="button" class="modal-close" aria-label="Close trading cards">&times;</button>
+    <header class="modal-head">
+      <h2 id="card-modal-title"></h2>
+      <p id="card-modal-sub"></p>
+    </header>
+    <div id="card-pair" class="card-pair"></div>
+    <footer class="modal-foot">
+      <p id="card-vote"></p>
+      <p><a id="card-video" href="#" target="_blank" rel="noopener">Watch the video on HockeyFights.com</a></p>
+      <p id="pim-note" class="pim-note"></p>
+    </footer>
+  </div>
+</dialog>
 
 <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 

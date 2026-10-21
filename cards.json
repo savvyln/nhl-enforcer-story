@@ -1,0 +1,226 @@
+{
+ "2021-22_CAR_Steven-Lorentz": {
+  "pos": "C",
+  "pim": "21"
+ },
+ "2021-22_CGY_Matthew-Tkachuk": {
+  "pos": "L",
+  "pim": "158"
+ },
+ "2021-22_CGY_Rasmus-Andersson": {
+  "pos": "D",
+  "pim": "41"
+ },
+ "2021-22_COL_Logan-O-Connor": {
+  "pos": "R",
+  "pim": "31"
+ },
+ "2021-22_DAL_John-Klingberg": {
+  "pos": "D",
+  "pim": "28"
+ },
+ "2021-22_DAL_Michael-Raffl": {
+  "pos": "L",
+  "pim": "19"
+ },
+ "2021-22_FLA_Aaron-Ekblad": {
+  "pos": "D",
+  "pim": "85"
+ },
+ "2021-22_NYR_Alexis-Lafreniere": {
+  "pos": "L",
+  "pim": "17"
+ },
+ "2021-22_NYR_Frank-Vatrano": {
+  "pos": "R",
+  "pim": "13"
+ },
+ "2021-22_NYR_Jacob-Trouba": {
+  "pos": "D",
+  "pim": "57"
+ },
+ "2021-22_TBL_Brandon-Hagel": {
+  "pos": "L",
+  "pim": "45"
+ },
+ "2021-22_TBL_Jan-Rutta": {
+  "pos": "D",
+  "pim": "17"
+ },
+ "2021-22_TBL_Ross-Colton": {
+  "pos": "C",
+  "pim": "35"
+ },
+ "2021-22_TBL_Steven-Stamkos": {
+  "pos": "C",
+  "pim": "36"
+ },
+ "2021-22_TOR_Morgan-Rielly": {
+  "pos": "D",
+  "pim": "27"
+ },
+ "2021-22_WSH_Anthony-Mantha": {
+  "pos": "R",
+  "pim": "35"
+ },
+ "2022-23_BOS_Derek-Forbort": {
+  "pos": "D",
+  "pim": "31"
+ },
+ "2022-23_CAR_Stefan-Noesen": {
+  "pos": "R",
+  "pim": "42"
+ },
+ "2022-23_EDM_Brett-Kulak": {
+  "pos": "D",
+  "pim": "49"
+ },
+ "2022-23_EDM_Darnell-Nurse": {
+  "pos": "D",
+  "pim": "94"
+ },
+ "2022-23_EDM_Klim-Kostin": {
+  "pos": "C",
+  "pim": "9"
+ },
+ "2022-23_FLA_Brandon-Montour": {
+  "pos": "D",
+  "pim": "57"
+ },
+ "2022-23_NJD_Erik-Haula": {
+  "pos": "L",
+  "pim": "25"
+ },
+ "2022-23_NJD_Kevin-Bahl": {
+  "pos": "D",
+  "pim": "31"
+ },
+ "2022-23_NJD_Michael-McLeod": {
+  "pos": "C",
+  "pim": "15"
+ },
+ "2022-23_NYR_Barclay-Goodrow": {
+  "pos": "C",
+  "pim": "47"
+ },
+ "2022-23_NYR_Braden-Schneider": {
+  "pos": "D",
+  "pim": "31"
+ },
+ "2022-23_TBL_Nikita-Kucherov": {
+  "pos": "R",
+  "pim": "39"
+ },
+ "2022-23_TBL_Steven-Stamkos": {
+  "pos": "C",
+  "pim": "36"
+ },
+ "2022-23_TOR_Auston-Matthews": {
+  "pos": "C",
+  "pim": "11"
+ },
+ "2022-23_TOR_Ryan-O-Reilly": {
+  "pos": "C",
+  "pim": "7"
+ },
+ "2022-23_VGK_Brett-Howden": {
+  "pos": "C",
+  "pim": "41"
+ },
+ "2022-23_VGK_Keegan-Kolesar": {
+  "pos": "R",
+  "pim": "64"
+ },
+ "2022-23_VGK_Nicolas-Hague": {
+  "pos": "D",
+  "pim": "46"
+ },
+ "2022-23_VGK_Zach-Whitecloud": {
+  "pos": "D",
+  "pim": "31"
+ },
+ "2022-23_WPG_Brenden-Dillon": {
+  "pos": "D",
+  "pim": "13"
+ },
+ "2023-24_BOS_David-Pastrnak": {
+  "pos": "R",
+  "pim": "37"
+ },
+ "2023-24_CAR_Stefan-Noesen": {
+  "pos": "R",
+  "pim": "42"
+ },
+ "2023-24_COL_Miles-Wood": {
+  "pos": "L",
+  "pim": "27"
+ },
+ "2023-24_EDM_Evander-Kane": {
+  "pos": "L",
+  "pim": "164"
+ },
+ "2023-24_FLA_Matthew-Tkachuk": {
+  "pos": "L",
+  "pim": "158"
+ },
+ "2023-24_LAK_Andreas-Englund": {
+  "pos": "D",
+  "pim": "9"
+ },
+ "2023-24_NYI_Kyle-MacLean": {
+  "pos": "C",
+  "pim": "5"
+ },
+ "2023-24_WPG_Adam-Lowry": {
+  "pos": "C",
+  "pim": "25"
+ },
+ "2024-25_EDM_Darnell-Nurse": {
+  "pos": "D",
+  "pim": "94"
+ },
+ "2024-25_EDM_Trent-Frederic": {
+  "pos": "C",
+  "pim": "71"
+ },
+ "2024-25_FLA_Jonah-Gadjovich": {
+  "pos": "L",
+  "pim": "33"
+ },
+ "2024-25_VGK_Nicolas-Hague": {
+  "pos": "D",
+  "pim": "46"
+ },
+ "2025-26_ANA_Jeff-Viel": {
+  "pos": "L",
+  "pim": "17"
+ },
+ "2025-26_BOS_Mark-Kastelic": {
+  "pos": "C",
+  "pim": "11"
+ },
+ "2025-26_BUF_Logan-Stanley": {
+  "pos": "D",
+  "pim": "67"
+ },
+ "2025-26_CAR_Jordan-Staal": {
+  "pos": "C",
+  "pim": "33"
+ },
+ "2025-26_EDM_Vasily-Podkolzin": {
+  "pos": "R",
+  "pim": "35"
+ },
+ "2025-26_MTL_Juraj-Slafkovsky": {
+  "pos": "L",
+  "pim": "13"
+ },
+ "2025-26_OTT_Brady-Tkachuk": {
+  "pos": "L",
+  "pim": "19"
+ },
+ "2025-26_TBL_Brandon-Hagel": {
+  "pos": "L",
+  "pim": "45"
+ }
+}
