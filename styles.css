@@ -64,11 +64,11 @@ body:has(dialog[open]) { overflow: hidden; }
 .hero h1 {
   font-family: var(--font-display);
   font-weight: 200;
-  font-size: clamp(2.5rem, 7.4vw, 6.2rem);
+  font-size: 4rem;
   line-height: 1;
   letter-spacing: -0.005em;
   margin-bottom: 1.25rem;
-  max-width: auto;
+  max-width: 100%;
    text-align: center;
 }
 .hero-lede {
