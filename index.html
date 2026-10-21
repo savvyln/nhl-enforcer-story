@@ -1,62 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Disappearing Playoff Enforcer</title>
+  <meta name="description" content="Playoff fights in the NHL have nearly vanished. An interactive look at who still fights, and when, from 2021-22 to 2025-26.">
+  <meta property="og:title" content="The Disappearing Playoff Enforcer">
+  <meta property="og:description" content="Thirteen playoff fights in 2022-23. Two in 2024-25. Click a team on the rink to see who dropped the mitts.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- d3 first, then the story. Both are deferred, so they run in this order after the page is parsed. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
-  <!-- FULL-SCREEN BACKGROUND GRAPHIC -->
-  <div id="graphic-container">
-    <svg id="story-canvas"></svg>
-  </div>
+<body>
 
+<header class="hero">
+  <h1>The Disappearing Playoff Enforcer</h1>
+  <p class="hero-lede">Thirteen playoff fights in 2022-23. Two in 2024-25.</p>
+  <p class="hero-sub">A look at the fading post-season brawl, and the players who still drop the mitts.</p>
+  <p class="hero-note">Fight counts from HockeyFights.com's NHL postseason logs, 2021-22 through 2025-26.</p>
+</header>
 
-  <!-- FOREGROUND SCROLLING TEXT CARDS -->
-  <main id="scrolly">
-    <article class="scroll-text">
-      <!-- INTRO: ALL TEAMS -->
-      <section class="step" data-step="1">
-         <p><strong>The Disappearing Playoff Enforcer</strong></p>
-      </section>
-      
-      <!-- STEP 1: ALL TEAMS -->
-      <section class="step" data-step="1">
-        <p>There is a spectrum of hockey fans. Those that hate fighting, and those that love it. We’re focusing in on those that love it.</p>
-        <p>For these hockey fight fanatics, the best time of year is playoffs. Over the past 5 years, <strong>16 teams</strong> per season have faced off in over <strong>425 games</strong>.</p>
-        <p>And in those 425+ games, fight fans have witnessed just <strong>29 fights</strong>. Dance, Donnybrook, Drop the mitts, fisticuffs, have a go, puttin’ on the foil, snarl, tilt — whatever you call it, the quintessential playoff brawl is vanishing before our eyes.</p>
-      </section>
+<noscript><p class="noscript">This story is interactive and needs JavaScript turned on.</p></noscript>
 
-      <!-- STEP 2: FILTER NON-FIGHTERS -->
-      <section class="step" data-step="2">
-        <p>While all 32 franchises battled through the regular seasons, only a select few dropped the gloves when the post-season pressure mounted.</p>
-        <p>As the game speeds up, the frequency of these clashes has plummeted from 13 fights in 2022-23 down to just 2 in 2024-25.</p>
-      </section>
+<main id="scrolly">
 
-      <!-- STEP 3: THE RINK & INTERACTIVE LOGOS -->
-      <section class="step" data-step="3">
-        <p>So, where is the action happening, and who is involved?</p>
-        <p>This map plots the locations of recent post-season bouts on the ice. <strong>Click on any team logo below</strong> to flip it and reveal the players who actually dropped the mitts.</p>
-      </section>
+  <!-- SCROLLING TEXT -->
+  <article class="scroll-text">
 
-      <!-- STEP 4: THE ENFORCER CONCEPT -->
-      <section class="step" data-step="4">
-        <p>If you clicked through the fights above, you likely noticed a glaring absence: <strong>The Heavyweights</strong>.</p>
-        <p>The modern NHL still has feared, dedicated enforcers like Mathieu Olivier, Ryan Reaves, Nicolas Deslauriers, and Arber Xhekaj. But when the playoffs arrive, they stay quiet.</p>
-        <p>None of the league's top regular-season enforcers recorded a single playoff bout between 2021 and 2026. The modern post-season fight is no longer a staged bout between policemen; it is a spontaneous clash between highly skilled stars.</p>
-      </section>
+    <section class="step" data-step="1" aria-labelledby="s1">
+      <h2 id="s1">The icebreaker</h2>
+      <p>
+        There is a spectrum of hockey fans: those who hate fighting, and those who love it. We're focusing on those who love it.
+      </p>
+      <p>
+        For these fight fanatics, the best time of year is the playoffs. Sixteen teams a season face off across the five postseasons from 2021-22 to 2025-26, in hundreds of games.
+      </p>
+      <p>
+        In all of them, fight fans have witnessed just <strong><span data-stat="listedTotal"></span> fights</strong>. Nine in the first year, thirteen in the second, then four, two, and four.
+      </p>
+      <p>
+        Dance, donnybrook, drop the mitts, fisticuffs, have a go, puttin' on the foil, snarl, tilt: whatever you call it, the quintessential playoff brawl is vanishing before our eyes.
+      </p>
+      <p class="aside">
+        Each dot is one fight. Hover, tap, or tab to a dot to see who fought, and click it for the fan vote and video link. This project has full details on <span data-stat="total"></span> of the <span data-stat="listedTotal"></span>; the <span data-stat="pending"></span> hollow dots are 2022-23 fights that are listed but not yet collected.
+      </p>
+    </section>
 
-        <!-- STEP 5: PLAYER BREAKDOWN-->
-      <section class="step" data-step="4">
-        <p>So who <strong>actually</strong> doing the fighting?</p>
-        <p>Of these 29 fights, more [PLAYER POSITION TYPES] are spitting chiclets and passing blows.</p>
-        <p>What compels them to fight?</p>
-      </section>
-    </article>
-  </main>
+    <section class="step" data-step="2" aria-labelledby="s2">
+      <h2 id="s2">Who dropped the mitts</h2>
+      <p>
+        So who is involved? This rink puts every team that took part in a playoff fight on the ice. <strong>Click any team logo</strong> to flip it and reveal the players who actually dropped the mitts.
+      </p>
+      <p>
+        The bigger the logo, the more fights that team was in. Your pick carries through the charts that follow.
+      </p>
+      <p class="aside">
+        Position on the rink does not show where fights happened, because that data is not collected yet. Eastern teams sit left of center ice and Western teams sit right.
+      </p>
+    </section>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-  <script src="app.js"></script>
+    <section class="step" data-step="3" aria-labelledby="s3">
+      <h2 id="s3">The heavyweight mirage</h2>
+      <p>
+        If you clicked through the teams, you likely noticed a glaring absence: the heavyweights.
+      </p>
+      <p>
+        The modern NHL still has feared, dedicated enforcers like Mathieu Olivier, Ryan Reaves, Nicolas Deslauriers, and Arber Xhekaj. But when the playoffs arrive, they stay quiet.
+      </p>
+      <p>
+        Try guessing how many fights these four logged in our playoff dataset between 2021 and 2026. Set your guess on the slider, then lock it in.
+      </p>
+    </section>
+
+    <section class="step" data-step="4" aria-labelledby="s4">
+      <h2 id="s4">The accidental gladiators</h2>
+      <p>
+        If the dedicated heavyweights aren't throwing punches, who is? The modern post-season fight is no longer a staged bout between policemen. It is a spontaneous clash between everyday players whose emotions boil over.
+      </p>
+      <p>
+        The <span data-stat="nF"></span> skaters in the log play a median of <span data-stat="fToi" data-fmt="1"></span> minutes a night, against <span data-stat="bToi" data-fmt="1"></span> for all skaters. Defensemen make up <span data-stat="fD" data-fmt="pct"></span> of the fighters and <span data-stat="bD" data-fmt="pct"></span> of everyone. Only <span data-stat="fUnder"></span> average under 12 minutes, the shaded zone where the classic enforcer lived, and only <span data-stat="fStars"></span> average 0.8 points a game or more, so they are not all stars either.
+      </p>
+      <p>
+        What does set them apart is penalties: a median of <span data-stat="fPim" data-fmt="2"></span> penalty minutes per game, against <span data-stat="bPim" data-fmt="2"></span> for skaters who never appear in the log.
+      </p>
+    </section>
+
+    <section class="step" data-step="5" aria-labelledby="s5">
+      <h2 id="s5">Fights come late</h2>
+      <p>
+        <span data-stat="third"></span> of the <span data-stat="total"></span> fights happened in the third period, and <span data-stat="late"></span> of those in the last four minutes of regulation. Only <span data-stat="first"></span> came in the first period and <span data-stat="second"></span> in the second.
+      </p>
+      <p>
+        One reading is that tempers fray as games get decided. The log does not record the score, so this page cannot confirm that.
+      </p>
+    </section>
+
+    <section class="step" data-step="6" aria-labelledby="s6">
+      <h2 id="s6">Every fight, logged</h2>
+      <p>
+        Open any fight for the fan vote and a link to the video. If you picked a team on the rink, the list shows only its fights.
+      </p>
+    </section>
+
+    <section class="step" data-step="7" aria-labelledby="s7">
+      <h2 id="s7">What this can't tell you</h2>
+      <p>
+        <strong>It is incomplete.</strong> Three 2022-23 fights are not in this dataset yet, so the analysis covers <span data-stat="total"></span> fights, not <span data-stat="listedTotal"></span>.
+      </p>
+      <p>
+        <strong>Fan votes are opinions.</strong> The "winner" and rating on each fight come from site visitors, not from the league.
+      </p>
+      <p>
+        <strong>It counts fights, not causes.</strong> Rule changes, how rosters are built, and a faster game are all common explanations for the decline. None is tested here, and the log does not show who started a fight or where on the ice it happened.
+      </p>
+    </section>
+
+  </article>
+
+  <!-- STICKY CHART PANEL -->
+  <figure class="sticky-canvas">
+    <div id="panel" class="panel">
+      <header class="panel-head">
+        <h3 id="panel-title" aria-live="polite">Playoff fights per season, one dot per fight</h3>
+      </header>
+
+      <div class="views">
+
+        <!-- View 1: decline -->
+        <div id="view-decline" class="viz-view active">
+          <svg id="svg-decline" class="chart" role="img" aria-label="Unit chart: playoff fights per season. 9, 13, 4, 2, 4."></svg>
+          <p class="legend"><span class="key key-solid"></span> Fight in this dataset <span class="key key-hollow"></span> Listed by HockeyFights.com, not yet collected</p>
+        </div>
+
+        <!-- View 2: rink -->
+        <div id="view-rink" class="viz-view">
+          <div class="rink-scroll">
+            <div class="rink-stage">
+              <svg id="svg-rink" class="rink-svg" role="img" aria-label="Outline of an NHL rink. Team logos sit on it, Eastern Conference teams left of center ice and Western Conference teams right."></svg>
+              <div id="rink-teams" class="rink-teams"></div>
+            </div>
+          </div>
+          <p class="chart-note">Logo size shows how many fights a team was in. Position shows conference, not where fights happened.</p>
+          <div id="rink-detail" class="rink-detail" aria-live="polite"></div>
+        </div>
+
+        <!-- View 3: mirage -->
+        <div id="view-mirage" class="viz-view">
+          <div class="guess-box">
+            <label for="guess">Your guess: <output id="guess-out" for="guess">8</output> fights</label>
+            <input id="guess" type="range" min="0" max="20" value="8">
+            <div class="guess-actions">
+              <button id="lock-guess" type="button" class="btn">Lock in my guess</button>
+              <button id="reset-guess" type="button" class="btn btn-quiet" hidden>Try again</button>
+            </div>
+          </div>
+          <div id="enforcer-cards" class="enforcer-cards"></div>
+          <p id="guess-result" class="guess-result" aria-live="polite"></p>
+        </div>
+
+        <!-- View 4: regulars -->
+        <div id="view-regulars" class="viz-view">
+          <svg id="svg-regulars" class="chart" role="img" aria-label="Scatter plot of average ice time against penalty minutes per game. Skaters who fought are highlighted and spread across the full range of ice time."></svg>
+          <p class="legend"><span class="key key-red"></span> Skater with a fight in the log <span class="key key-grey"></span> All other skaters</p>
+          <p id="regulars-note" class="chart-note"></p>
+        </div>
+
+        <!-- View 5: clock -->
+        <div id="view-clock" class="viz-view">
+          <svg id="svg-clock" class="chart" role="img" aria-label="Chart of when each fight happened, by period and minute elapsed. Most are in the third period."></svg>
+          <p class="legend">Each dot is one fight. Click a dot for details.</p>
+        </div>
+
+        <!-- Views 6 and 7: log -->
+        <div id="view-log" class="viz-view">
+          <div class="log-controls">
+            <div id="season-chips" class="chips" role="group" aria-label="Filter by season"></div>
+            <p id="log-count" class="log-count" aria-live="polite"></p>
+          </div>
+          <ol id="log-list" class="log-list"></ol>
+        </div>
+
+        <!-- Fight details, opened by clicking a dot -->
+        <aside id="fight-card" class="fight-card" hidden aria-live="polite"></aside>
+      </div>
+
+      <!-- Status of the team picked on the rink -->
+      <footer class="panel-foot">
+        <p id="filter-status" class="filter-status" aria-live="polite">No team selected. Pick one on the rink to highlight its fights in every chart.</p>
+        <button id="clear-team" type="button" class="btn btn-quiet btn-small" hidden>Clear team</button>
+      </footer>
+    </div>
+  </figure>
+</main>
+
+<footer class="site-foot">
+  <p><strong>Sources.</strong> Fight data: HockeyFights.com NHL postseason fight logs, 2021-22 to 2025-26. Skater statistics: spreadsheets supplied by the author for the same five postseasons, limited here to skaters with at least five playoff games. Fan votes and ratings were read in October 2026 and change as people keep voting.</p>
+  <p>Fight times are minutes elapsed in the period. Team logos belong to their teams and load from the NHL's public asset host.</p>
+</footer>
+
+<div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+
 </body>
 </html>
