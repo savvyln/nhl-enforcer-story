@@ -79,6 +79,7 @@ body:has(dialog[open]) { overflow: hidden; }
   letter-spacing: -0.005em;
   margin-bottom: 1.25rem;
   max-width: 16ch;
+   text-align: center;
 }
 .hero-lede {
   font-family: var(--font-display);
@@ -87,9 +88,10 @@ body:has(dialog[open]) { overflow: hidden; }
   line-height: 1.15;
   color: var(--accent);
   margin-top: 0; margin-bottom: 1rem;
+    text-align: center;
 }
-.hero-sub { max-width: 40rem; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; }
-.hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; }
+.hero-sub { max-width: 40rem; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; text-align: center; }
+.hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; text-align: center; }
 
 /* =====================================================================
    SCROLLYTELLING LAYOUT
