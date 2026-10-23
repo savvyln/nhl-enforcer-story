@@ -423,7 +423,7 @@ function buildRegulars() {
 let clockDots;
 function buildClock() {
   const svg = d3.select("#svg-clock");
-  const W = 760, H = 440, m = { t: 16, r: 24, b: 48, l: 74 };
+  const W = 760, H = 440, m = { t: 16, r: 24, b: 48, l: 88 };
   const laneH = (H - m.t - m.b) / 3, R = 8;
   svg.attr("viewBox", `0 0 ${W} ${H}`);
   const x = d3.scaleLinear().domain([0, 20]).range([m.l, W - m.r]);
@@ -533,9 +533,16 @@ const VIEWS = [
   { id: "log",      title: "Every fight in the dataset" }
 ];
 
+// Each step gets its own background (see SECTION THEMES in styles.css).
+// "light" keeps the base cream palette, "color" is a saturated light background
+// that needs darker muted text, and "dark" swaps ink and surface colors.
+const TONES = ["light", "dark", "color", "color", "color", "color", "dark"];
+
 function setStep(i) {
   if (i === state.step) return;
   state.step = i;
+  document.body.dataset.step = String(i + 1);
+  document.body.dataset.tone = TONES[i] || "light";
   $$(".step").forEach((s, k) => s.classList.toggle("active", k === i));
   const v = VIEWS[i];
   $$(".viz-view").forEach(el => el.classList.toggle("active", el.id === "view-" + v.id));
@@ -556,9 +563,32 @@ function setupObserver() {
 }
 
 /* ---------------------------------------------------------------------
+   INTRO (taped-up title)
+   The motion is CSS keyframes in styles.css. This file only:
+   1. loads your tape PNGs if they exist (the ice photo is set in styles.css), and
+   2. starts the animation by adding .play to the intro.
+   --------------------------------------------------------------------- */
+function initIntro() {
+  const intro = $(".intro");
+  if (!intro) return;
+
+  // TAPE IMAGE SLOTS: each <li data-tape="images/..."> in index.html tries to load that PNG.
+  // If it loads, the strip switches from flat CSS color to your image (class "has-img").
+  // If the file is missing, nothing happens and the flat color stays.
+  $$(".tape-pile li[data-tape]").forEach(li => {
+    const img = new Image();
+    img.onload = () => { li.style.backgroundImage = `url("${li.dataset.tape}")`; li.classList.add("has-img"); };
+    img.src = li.dataset.tape;
+  });
+
+  intro.classList.add("play");
+}
+
+/* ---------------------------------------------------------------------
    INIT
    --------------------------------------------------------------------- */
 function init() {
+  initIntro();
   if (typeof d3 === "undefined") {
     $("#panel-title").textContent = "The chart library did not load. Check your connection and reload.";
     return;

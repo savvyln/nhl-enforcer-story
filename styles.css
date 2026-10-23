@@ -3,22 +3,41 @@
    Design tokens first: change the look of the whole page here.
 
    Palette: cream, aqua and navy are the three primaries. The brick red
-   accent was sampled from the Lance Wyman reference board and is used
+   accent was sampled from the Seattle Kraken logo and is used
    sparingly, for highlights and the "hit" state only.
 
    Type: Pressio (Adobe Fonts kit) for titles and headers, in Bold 700
    and Regular 400 only. The kit has no italics, so never use them on
    Pressio. Body text stays in Newsreader.
    ===================================================================== */
+/* Registered colors so the section theme can cross-fade instead of snapping. */
+@property --stage-bg   { syntax: "<color>"; inherits: true; initial-value: #e9e0c3; }
+@property --navy       { syntax: "<color>"; inherits: true; initial-value: #001f33; }
+@property --cream      { syntax: "<color>"; inherits: true; initial-value: #e9e0c3; }
+@property --paper      { syntax: "<color>"; inherits: true; initial-value: #f4eedb; }
+@property --muted      { syntax: "<color>"; inherits: true; initial-value: #3d5668; }
+@property --rule       { syntax: "<color>"; inherits: true; initial-value: #00000040; }
+@property --accent     { syntax: "<color>"; inherits: true; initial-value: #e1343d; }
+@property --accent-deep{ syntax: "<color>"; inherits: true; initial-value: #a9272e; }
+@property --aqua-wash  { syntax: "<color>"; inherits: true; initial-value: #99e2e059; }
+
 :root {
   --cream: #e9e0c3;
   --paper: #f4eedb;        /* lighter tint of cream, for panels and card faces */
   --aqua: #99e2e0;
   --navy: #001f33;
-  --accent: #F50030;       /* brick red from the Wyman board */
+  --accent: #e1343d;       /* Kraken red: fills, discs, rink lines, large text (3.3:1 on cream) */
+  --accent-deep: #a9272e;  /* darker Kraken red for small text and text backgrounds (5.3:1 on cream, 4.7:1 on aqua) */
   --muted: #3d5668;        /* navy tint; 5.8:1 on cream */
   --aqua-wash: rgba(153, 226, 224, 0.35);
   --rule: rgba(0, 31, 51, 0.25);
+
+  /* Fixed colors: parts that must not flip with the section theme (logo medallions, rink drawing, tape). */
+  --navy-fixed: #001f33;
+  --paper-fixed: #f4eedb;
+  --red-fixed: #e1343d;
+  --red-deep-fixed: #a9272e;
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 .12  0 0 0 0 .2  0 0 0 .1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 
   --font-display: "pressio", "Arial Narrow", Arial, sans-serif;
   --font-body: "Newsreader", Georgia, "Times New Roman", serif;
@@ -30,18 +49,61 @@
 html { scroll-behavior: smooth; }
 
 body {
+  --stage-bg: #e9e0c3;
   margin: 0;
   color: var(--navy);
   font-family: var(--font-body);
   font-size: 1.1875rem;
   line-height: 1.65;
-  background-color: var(--cream);
+  background-color: var(--stage-bg);
   /* faint paper grain, like card stock */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 .12  0 0 0 0 .2  0 0 0 .1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-image: var(--grain);
+  transition: --stage-bg 0.7s ease;
 }
+
+/* =====================================================================
+   SECTION THEMES
+   app.js sets body[data-step] (1 to 7) and body[data-tone] (light or dark)
+   as each scrolly step becomes active. Each step gets its own background.
+   On dark steps the ink and surface tokens swap inside #scrolly, so text,
+   chart marks and rules flip to cream automatically.
+   ===================================================================== */
+body[data-step="1"] { --stage-bg: #e9e0c3; }   /* cream: the icebreaker */
+body[data-step="2"] { --stage-bg: #001f33; }   /* navy: the rink */
+body[data-step="3"] { --stage-bg: #f2784b; }   /* orange: the mirage */
+body[data-step="4"] { --stage-bg: #a3dc8f; }   /* green: the regulars */
+body[data-step="5"] { --stage-bg: #f4d35e; }   /* yellow: the clock */
+body[data-step="6"] { --stage-bg: #8fb8f0; }   /* sky blue: the log */
+body[data-step="7"] { --stage-bg: #1f4a8f; }   /* deep blue: limits */
+
+#scrolly {
+  color: var(--navy);   /* re-resolve ink here so the dark swap reaches inherited text */
+  transition: --navy 0.7s ease, --cream 0.7s ease, --paper 0.7s ease, --muted 0.7s ease,
+              --rule 0.7s ease, --accent 0.7s ease, --accent-deep 0.7s ease, --aqua-wash 0.7s ease;
+}
+/* colored light backgrounds: darker muted text and accent, neutral wash */
+body[data-tone="color"] #scrolly {
+  --muted: #14293a;
+  --accent: #c4202b;
+  --accent-deep: #8f1d24;
+  --rule: rgba(0, 31, 51, 0.35);
+  --aqua-wash: rgba(255, 255, 255, 0.32);
+}
+/* dark backgrounds: swap ink and surface */
+body[data-tone="dark"] #scrolly {
+  --navy: #e9e0c3;
+  --cream: #001f33;
+  --paper: #0d3550;
+  --muted: #b9cdd0;
+  --rule: rgba(233, 224, 195, 0.32);
+  --accent: #ff7a80;
+  --accent-deep: #ff9a9e;
+  --aqua-wash: rgba(153, 226, 224, 0.16);
+}
+body[data-step="7"][data-tone="dark"] #scrolly { --paper: #2c5fa8; }
 body:has(dialog[open]) { overflow: hidden; }
 
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--accent-deep); outline-offset: 2px; }
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
@@ -50,38 +112,188 @@ body:has(dialog[open]) { overflow: hidden; }
 .noscript { padding: 1rem; background: var(--paper); text-align: center; font-family: var(--font-ui); }
 
 /* =====================================================================
-   HERO: Wyman-style dot grid and a big flat disc
+   HERO
+   Part 1, the intro: one full screen of ice with a taped-up title.
+   Part 2, the title block (h1, lede), which sits below it.
+   Timeline (seconds): strips fly in from 0 to about 1.2, the FIGHTS bar rises 0.9 to 2.0.
+   The plain CSS is the END state, so reduced-motion and no-JS visitors see it as is.
    ===================================================================== */
-.hero {
+.hero { background-color: var(--cream); background-image: var(--grain); border-bottom: 4px solid var(--navy-fixed); }
+
+.intro {
+  /* Fallback ice, used until (or unless) your image loads: soft color pools plus two scratch layers. */
+  --ice-fallback:
+    radial-gradient(ellipse 70% 50% at 15% 85%, rgba(86, 128, 150, 0.45), transparent 70%),
+    radial-gradient(ellipse 60% 45% at 85% 12%, rgba(255, 255, 255, 0.75), transparent 70%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 1000' preserveAspectRatio='xMidYMid slice'><filter id='b'><feGaussianBlur stdDeviation='28'/></filter><g filter='url(%23b)'><ellipse cx='997' cy='742' rx='327' ry='192' fill='%237fa3ba' opacity='0.24' transform='rotate(2 997 742)'/><ellipse cx='1345' cy='776' rx='185' ry='67' fill='%23ffffff' opacity='0.14' transform='rotate(-2 1345 776)'/><ellipse cx='395' cy='544' rx='269' ry='62' fill='%23ffffff' opacity='0.19' transform='rotate(-19 395 544)'/><ellipse cx='1388' cy='389' rx='318' ry='70' fill='%237fa3ba' opacity='0.23' transform='rotate(-22 1388 389)'/><ellipse cx='3' cy='871' rx='174' ry='90' fill='%23ffffff' opacity='0.28' transform='rotate(-13 3 871)'/><ellipse cx='1538' cy='539' rx='296' ry='89' fill='%237fa3ba' opacity='0.16' transform='rotate(28 1538 539)'/><ellipse cx='613' cy='22' rx='228' ry='191' fill='%23ffffff' opacity='0.13' transform='rotate(-12 613 22)'/><ellipse cx='965' cy='3' rx='296' ry='107' fill='%23ffffff' opacity='0.18' transform='rotate(-12 965 3)'/><ellipse cx='1114' cy='185' rx='243' ry='85' fill='%23ffffff' opacity='0.30' transform='rotate(-29 1114 185)'/><ellipse cx='1200' cy='845' rx='125' ry='170' fill='%23ffffff' opacity='0.19' transform='rotate(20 1200 845)'/><ellipse cx='725' cy='708' rx='282' ry='194' fill='%23ffffff' opacity='0.26' transform='rotate(26 725 708)'/><ellipse cx='1507' cy='344' rx='212' ry='133' fill='%23ffffff' opacity='0.14' transform='rotate(15 1507 344)'/></g><g stroke='%23ffffff' stroke-linecap='round'><line x1='1255' y1='932' x2='1595' y2='1199' stroke-width='1.4' opacity='0.57'/><line x1='478' y1='1009' x2='1031' y2='805' stroke-width='1' opacity='0.49'/><line x1='426' y1='481' x2='590' y2='511' stroke-width='1.4' opacity='0.53'/><line x1='675' y1='406' x2='940' y2='608' stroke-width='1' opacity='0.25'/><line x1='1144' y1='1040' x2='1441' y2='1234' stroke-width='0.7' opacity='0.54'/><line x1='401' y1='444' x2='955' y2='835' stroke-width='1.4' opacity='0.39'/><line x1='395' y1='385' x2='819' y2='129' stroke-width='1.9' opacity='0.55'/><line x1='206' y1='490' x2='750' y2='281' stroke-width='1.4' opacity='0.48'/><line x1='1029' y1='812' x2='1283' y2='962' stroke-width='1.4' opacity='0.58'/><line x1='478' y1='114' x2='956' y2='319' stroke-width='1.9' opacity='0.32'/><line x1='751' y1='708' x2='1079' y2='807' stroke-width='1' opacity='0.55'/><line x1='1070' y1='1071' x2='1326' y2='1030' stroke-width='1.4' opacity='0.57'/><line x1='711' y1='730' x2='818' y2='309' stroke-width='1.9' opacity='0.32'/><line x1='840' y1='941' x2='941' y2='561' stroke-width='1' opacity='0.29'/><line x1='1066' y1='657' x2='1598' y2='300' stroke-width='0.7' opacity='0.33'/><line x1='209' y1='132' x2='272' y2='-47' stroke-width='1' opacity='0.30'/><line x1='1435' y1='-99' x2='1918' y2='-315' stroke-width='1.4' opacity='0.59'/><line x1='835' y1='262' x2='1451' y2='541' stroke-width='1' opacity='0.37'/><line x1='1282' y1='671' x2='1456' y2='297' stroke-width='1' opacity='0.59'/><line x1='935' y1='321' x2='1078' y2='-317' stroke-width='1' opacity='0.33'/><line x1='1390' y1='577' x2='1920' y2='1010' stroke-width='1.9' opacity='0.35'/><line x1='1353' y1='91' x2='1675' y2='290' stroke-width='1.4' opacity='0.58'/><line x1='423' y1='1015' x2='704' y2='1059' stroke-width='0.7' opacity='0.51'/><line x1='1306' y1='-84' x2='1572' y2='-185' stroke-width='1.4' opacity='0.54'/><line x1='1126' y1='243' x2='1374' y2='-341' stroke-width='0.7' opacity='0.21'/><line x1='114' y1='239' x2='504' y2='128' stroke-width='1.4' opacity='0.47'/><line x1='1281' y1='59' x2='1805' y2='-306' stroke-width='1' opacity='0.21'/><line x1='1223' y1='413' x2='1759' y2='731' stroke-width='1.9' opacity='0.39'/><line x1='1060' y1='764' x2='1622' y2='1001' stroke-width='1.9' opacity='0.43'/><line x1='1002' y1='467' x2='1669' y2='624' stroke-width='1' opacity='0.37'/><line x1='820' y1='-42' x2='1317' y2='-177' stroke-width='0.7' opacity='0.33'/><line x1='630' y1='-18' x2='877' y2='-128' stroke-width='0.7' opacity='0.48'/><line x1='129' y1='251' x2='705' y2='382' stroke-width='0.7' opacity='0.45'/><line x1='-26' y1='30' x2='17' y2='-181' stroke-width='1.9' opacity='0.55'/><line x1='128' y1='418' x2='263' y2='89' stroke-width='0.7' opacity='0.26'/><line x1='401' y1='582' x2='673' y2='173' stroke-width='1.4' opacity='0.23'/><line x1='301' y1='899' x2='610' y2='1152' stroke-width='1.9' opacity='0.27'/><line x1='1113' y1='686' x2='1473' y2='455' stroke-width='1.9' opacity='0.30'/><line x1='1391' y1='477' x2='1458' y2='121' stroke-width='1' opacity='0.58'/><line x1='630' y1='853' x2='1221' y2='965' stroke-width='1' opacity='0.48'/><line x1='539' y1='903' x2='822' y2='1122' stroke-width='1.4' opacity='0.46'/><line x1='1268' y1='420' x2='1380' y2='177' stroke-width='1' opacity='0.36'/><line x1='65' y1='-60' x2='572' y2='22' stroke-width='1.4' opacity='0.20'/><line x1='699' y1='968' x2='942' y2='888' stroke-width='1' opacity='0.23'/><line x1='1377' y1='943' x2='1898' y2='729' stroke-width='1' opacity='0.21'/><line x1='1424' y1='313' x2='1927' y2='181' stroke-width='1.9' opacity='0.54'/><line x1='165' y1='842' x2='316' y2='768' stroke-width='0.7' opacity='0.43'/><line x1='1016' y1='641' x2='1417' y2='568' stroke-width='1.4' opacity='0.23'/><line x1='1589' y1='462' x2='2079' y2='339' stroke-width='1.9' opacity='0.49'/><line x1='360' y1='454' x2='777' y2='280' stroke-width='1.4' opacity='0.58'/><line x1='1118' y1='184' x2='1223' y2='-79' stroke-width='0.7' opacity='0.40'/><line x1='1229' y1='-43' x2='1885' y2='-188' stroke-width='1' opacity='0.27'/><line x1='765' y1='383' x2='950' y2='313' stroke-width='1' opacity='0.44'/><line x1='1357' y1='157' x2='1572' y2='-373' stroke-width='1' opacity='0.49'/><line x1='1452' y1='269' x2='1661' y2='181' stroke-width='1.9' opacity='0.24'/><line x1='1213' y1='883' x2='1690' y2='645' stroke-width='1.9' opacity='0.59'/><line x1='1033' y1='231' x2='1644' y2='406' stroke-width='0.7' opacity='0.23'/><line x1='1208' y1='356' x2='1660' y2='241' stroke-width='1.9' opacity='0.26'/><line x1='1069' y1='838' x2='1561' y2='500' stroke-width='1.9' opacity='0.42'/><line x1='446' y1='268' x2='604' y2='172' stroke-width='0.7' opacity='0.21'/><line x1='-14' y1='56' x2='74' y2='-76' stroke-width='1.9' opacity='0.25'/><line x1='242' y1='330' x2='498' y2='178' stroke-width='1' opacity='0.45'/><line x1='145' y1='818' x2='752' y2='1060' stroke-width='1.9' opacity='0.44'/><line x1='192' y1='-42' x2='657' y2='67' stroke-width='0.7' opacity='0.25'/><line x1='1346' y1='723' x2='1708' y2='519' stroke-width='1.4' opacity='0.36'/><line x1='267' y1='232' x2='572' y2='59' stroke-width='1' opacity='0.53'/><line x1='1027' y1='990' x2='1535' y2='656' stroke-width='1.9' opacity='0.35'/><line x1='59' y1='376' x2='454' y2='497' stroke-width='1.9' opacity='0.55'/><line x1='959' y1='860' x2='1150' y2='407' stroke-width='1.9' opacity='0.21'/><line x1='1052' y1='632' x2='1201' y2='294' stroke-width='0.7' opacity='0.41'/><line x1='1258' y1='335' x2='1525' y2='488' stroke-width='0.7' opacity='0.23'/><line x1='505' y1='596' x2='796' y2='521' stroke-width='1' opacity='0.23'/><line x1='1181' y1='704' x2='1402' y2='274' stroke-width='1' opacity='0.39'/><line x1='56' y1='45' x2='524' y2='-180' stroke-width='1.9' opacity='0.27'/><line x1='1010' y1='979' x2='1614' y2='868' stroke-width='1.4' opacity='0.30'/><line x1='70' y1='253' x2='257' y2='208' stroke-width='1.9' opacity='0.51'/><line x1='282' y1='-25' x2='480' y2='-342' stroke-width='1' opacity='0.37'/><line x1='799' y1='986' x2='1041' y2='1060' stroke-width='0.7' opacity='0.26'/><line x1='403' y1='566' x2='878' y2='395' stroke-width='1.4' opacity='0.49'/><line x1='4' y1='482' x2='399' y2='797' stroke-width='1' opacity='0.56'/><line x1='946' y1='857' x2='1142' y2='814' stroke-width='1' opacity='0.35'/><line x1='1193' y1='590' x2='1691' y2='377' stroke-width='0.7' opacity='0.35'/><line x1='1284' y1='135' x2='1589' y2='-348' stroke-width='1' opacity='0.36'/><line x1='824' y1='350' x2='874' y2='207' stroke-width='1.9' opacity='0.59'/><line x1='1507' y1='-13' x2='2083' y2='-162' stroke-width='1.4' opacity='0.50'/><line x1='232' y1='312' x2='631' y2='71' stroke-width='1.4' opacity='0.36'/><line x1='1503' y1='-24' x2='2002' y2='110' stroke-width='0.7' opacity='0.26'/><line x1='1545' y1='564' x2='1729' y2='485' stroke-width='1.4' opacity='0.25'/><line x1='42' y1='882' x2='116' y2='486' stroke-width='1.9' opacity='0.55'/><line x1='33' y1='1066' x2='69' y2='872' stroke-width='1.4' opacity='0.44'/><line x1='1327' y1='464' x2='1517' y2='125' stroke-width='0.7' opacity='0.29'/><line x1='617' y1='768' x2='747' y2='857' stroke-width='1' opacity='0.56'/><line x1='152' y1='837' x2='488' y2='690' stroke-width='1' opacity='0.31'/><line x1='699' y1='244' x2='887' y2='284' stroke-width='1.9' opacity='0.21'/><line x1='596' y1='79' x2='1003' y2='333' stroke-width='1' opacity='0.39'/><line x1='31' y1='338' x2='313' y2='245' stroke-width='1.4' opacity='0.33'/><line x1='265' y1='253' x2='434' y2='378' stroke-width='1.9' opacity='0.35'/><line x1='527' y1='473' x2='590' y2='255' stroke-width='0.7' opacity='0.42'/><line x1='1143' y1='60' x2='1496' y2='-82' stroke-width='1' opacity='0.52'/><line x1='-5' y1='501' x2='374' y2='245' stroke-width='1.9' opacity='0.38'/><line x1='1013' y1='1010' x2='1327' y2='415' stroke-width='1.9' opacity='0.32'/><line x1='183' y1='1018' x2='417' y2='587' stroke-width='0.7' opacity='0.57'/><line x1='409' y1='562' x2='557' y2='595' stroke-width='1' opacity='0.43'/><line x1='-28' y1='790' x2='209' y2='965' stroke-width='1.4' opacity='0.39'/><line x1='145' y1='49' x2='581' y2='-185' stroke-width='1' opacity='0.48'/><line x1='906' y1='950' x2='981' y2='788' stroke-width='1.4' opacity='0.42'/><line x1='-84' y1='-48' x2='77' y2='-84' stroke-width='1.9' opacity='0.25'/><line x1='1126' y1='634' x2='1636' y2='463' stroke-width='0.7' opacity='0.22'/><line x1='1117' y1='265' x2='1386' y2='-185' stroke-width='1.4' opacity='0.25'/><line x1='1183' y1='210' x2='1430' y2='-237' stroke-width='1.9' opacity='0.39'/><line x1='288' y1='223' x2='331' y2='208' stroke-width='.8' opacity='0.38'/><line x1='224' y1='237' x2='290' y2='215' stroke-width='.8' opacity='0.30'/><line x1='236' y1='192' x2='353' y2='152' stroke-width='.8' opacity='0.38'/><line x1='285' y1='202' x2='361' y2='178' stroke-width='.8' opacity='0.32'/><line x1='229' y1='207' x2='306' y2='171' stroke-width='.8' opacity='0.44'/><line x1='281' y1='441' x2='370' y2='488' stroke-width='.8' opacity='0.46'/><line x1='343' y1='415' x2='380' y2='429' stroke-width='.8' opacity='0.48'/><line x1='317' y1='409' x2='417' y2='449' stroke-width='.8' opacity='0.35'/><line x1='342' y1='445' x2='376' y2='466' stroke-width='.8' opacity='0.34'/><line x1='354' y1='421' x2='412' y2='447' stroke-width='.8' opacity='0.27'/><line x1='281' y1='437' x2='313' y2='449' stroke-width='.8' opacity='0.54'/><line x1='634' y1='442' x2='697' y2='383' stroke-width='.8' opacity='0.40'/><line x1='648' y1='442' x2='759' y2='386' stroke-width='.8' opacity='0.48'/><line x1='617' y1='486' x2='680' y2='431' stroke-width='.8' opacity='0.41'/><line x1='655' y1='485' x2='701' y2='452' stroke-width='.8' opacity='0.38'/><line x1='684' y1='456' x2='747' y2='404' stroke-width='.8' opacity='0.44'/><line x1='675' y1='463' x2='731' y2='435' stroke-width='.8' opacity='0.29'/><line x1='648' y1='459' x2='740' y2='376' stroke-width='.8' opacity='0.53'/><line x1='935' y1='480' x2='1002' y2='458' stroke-width='.8' opacity='0.43'/><line x1='940' y1='497' x2='1059' y2='459' stroke-width='.8' opacity='0.32'/><line x1='936' y1='488' x2='1023' y2='453' stroke-width='.8' opacity='0.39'/><line x1='917' y1='490' x2='1024' y2='463' stroke-width='.8' opacity='0.52'/><line x1='922' y1='503' x2='1018' y2='477' stroke-width='.8' opacity='0.31'/><line x1='917' y1='517' x2='996' y2='479' stroke-width='.8' opacity='0.51'/><line x1='828' y1='600' x2='869' y2='611' stroke-width='.8' opacity='0.54'/><line x1='855' y1='615' x2='950' y2='618' stroke-width='.8' opacity='0.25'/><line x1='862' y1='612' x2='921' y2='629' stroke-width='.8' opacity='0.38'/><line x1='821' y1='615' x2='916' y2='640' stroke-width='.8' opacity='0.40'/><line x1='1142' y1='614' x2='1228' y2='654' stroke-width='.8' opacity='0.39'/><line x1='1099' y1='638' x2='1148' y2='657' stroke-width='.8' opacity='0.47'/><line x1='1139' y1='623' x2='1184' y2='637' stroke-width='.8' opacity='0.37'/><line x1='1168' y1='622' x2='1236' y2='642' stroke-width='.8' opacity='0.53'/><line x1='1104' y1='636' x2='1155' y2='653' stroke-width='.8' opacity='0.36'/><line x1='963' y1='225' x2='1054' y2='177' stroke-width='.8' opacity='0.25'/><line x1='907' y1='208' x2='970' y2='165' stroke-width='.8' opacity='0.30'/><line x1='929' y1='212' x2='1037' y2='161' stroke-width='.8' opacity='0.27'/><line x1='941' y1='221' x2='1029' y2='175' stroke-width='.8' opacity='0.44'/><line x1='960' y1='208' x2='1064' y2='147' stroke-width='.8' opacity='0.45'/><line x1='969' y1='233' x2='1036' y2='189' stroke-width='.8' opacity='0.31'/><line x1='905' y1='218' x2='1006' y2='155' stroke-width='.8' opacity='0.26'/><line x1='124' y1='197' x2='239' y2='247' stroke-width='.8' opacity='0.32'/><line x1='85' y1='164' x2='152' y2='199' stroke-width='.8' opacity='0.39'/><line x1='122' y1='197' x2='203' y2='253' stroke-width='.8' opacity='0.48'/><line x1='116' y1='183' x2='214' y2='256' stroke-width='.8' opacity='0.45'/><line x1='110' y1='185' x2='210' y2='248' stroke-width='.8' opacity='0.31'/><line x1='107' y1='201' x2='157' y2='226' stroke-width='.8' opacity='0.31'/><line x1='82' y1='167' x2='180' y2='225' stroke-width='.8' opacity='0.43'/><line x1='616' y1='156' x2='712' y2='128' stroke-width='.8' opacity='0.46'/><line x1='612' y1='155' x2='719' y2='121' stroke-width='.8' opacity='0.52'/><line x1='619' y1='155' x2='683' y2='135' stroke-width='.8' opacity='0.36'/><line x1='586' y1='163' x2='641' y2='153' stroke-width='.8' opacity='0.35'/><line x1='1549' y1='393' x2='1581' y2='393' stroke-width='.8' opacity='0.40'/><line x1='1517' y1='420' x2='1596' y2='415' stroke-width='.8' opacity='0.34'/><line x1='1525' y1='405' x2='1585' y2='388' stroke-width='.8' opacity='0.48'/><line x1='1573' y1='434' x2='1662' y2='407' stroke-width='.8' opacity='0.52'/><line x1='1565' y1='392' x2='1682' y2='384' stroke-width='.8' opacity='0.40'/><line x1='1535' y1='409' x2='1587' y2='407' stroke-width='.8' opacity='0.43'/><line x1='1552' y1='431' x2='1678' y2='415' stroke-width='.8' opacity='0.50'/><line x1='980' y1='52' x2='1041' y2='33' stroke-width='.8' opacity='0.35'/><line x1='941' y1='53' x2='1036' y2='27' stroke-width='.8' opacity='0.51'/><line x1='940' y1='91' x2='1036' y2='69' stroke-width='.8' opacity='0.27'/><line x1='925' y1='89' x2='982' y2='74' stroke-width='.8' opacity='0.40'/><line x1='972' y1='76' x2='1050' y2='59' stroke-width='.8' opacity='0.39'/><line x1='936' y1='69' x2='1027' y2='58' stroke-width='.8' opacity='0.29'/><line x1='928' y1='66' x2='1044' y2='44' stroke-width='.8' opacity='0.43'/><line x1='965' y1='196' x2='1005' y2='187' stroke-width='.8' opacity='0.27'/><line x1='927' y1='183' x2='1018' y2='164' stroke-width='.8' opacity='0.26'/><line x1='931' y1='185' x2='977' y2='181' stroke-width='.8' opacity='0.40'/><line x1='954' y1='193' x2='1068' y2='197' stroke-width='.8' opacity='0.30'/><line x1='955' y1='156' x2='1016' y2='151' stroke-width='.8' opacity='0.52'/><line x1='980' y1='197' x2='1088' y2='185' stroke-width='.8' opacity='0.37'/><line x1='1410' y1='972' x2='1450' y2='947' stroke-width='.8' opacity='0.46'/><line x1='1343' y1='1018' x2='1385' y2='991' stroke-width='.8' opacity='0.40'/><line x1='1347' y1='982' x2='1401' y2='941' stroke-width='.8' opacity='0.37'/><line x1='1384' y1='973' x2='1490' y2='922' stroke-width='.8' opacity='0.28'/><line x1='1358' y1='989' x2='1393' y2='970' stroke-width='.8' opacity='0.50'/><line x1='1334' y1='996' x2='1373' y2='965' stroke-width='.8' opacity='0.31'/><line x1='1357' y1='988' x2='1477' y2='939' stroke-width='.8' opacity='0.36'/><line x1='7' y1='677' x2='60' y2='707' stroke-width='.8' opacity='0.28'/><line x1='61' y1='715' x2='151' y2='767' stroke-width='.8' opacity='0.48'/><line x1='9' y1='677' x2='54' y2='690' stroke-width='.8' opacity='0.30'/><line x1='-12' y1='689' x2='60' y2='722' stroke-width='.8' opacity='0.50'/><line x1='1344' y1='706' x2='1428' y2='731' stroke-width='.8' opacity='0.33'/><line x1='1328' y1='717' x2='1368' y2='730' stroke-width='.8' opacity='0.36'/><line x1='1388' y1='742' x2='1459' y2='777' stroke-width='.8' opacity='0.43'/><line x1='1347' y1='736' x2='1414' y2='754' stroke-width='.8' opacity='0.51'/><line x1='1333' y1='705' x2='1388' y2='729' stroke-width='.8' opacity='0.43'/><line x1='377' y1='-9' x2='441' y2='-33' stroke-width='.8' opacity='0.50'/><line x1='338' y1='11' x2='436' y2='-29' stroke-width='.8' opacity='0.43'/><line x1='343' y1='3' x2='431' y2='-13' stroke-width='.8' opacity='0.34'/><line x1='372' y1='21' x2='456' y2='-10' stroke-width='.8' opacity='0.45'/><line x1='370' y1='28' x2='462' y2='7' stroke-width='.8' opacity='0.55'/><line x1='5' y1='12' x2='61' y2='-13' stroke-width='.8' opacity='0.43'/><line x1='19' y1='17' x2='58' y2='-1' stroke-width='.8' opacity='0.31'/><line x1='-15' y1='14' x2='87' y2='-55' stroke-width='.8' opacity='0.34'/><line x1='-4' y1='9' x2='42' y2='-24' stroke-width='.8' opacity='0.52'/><line x1='39' y1='20' x2='92' y2='-17' stroke-width='.8' opacity='0.26'/><line x1='358' y1='305' x2='387' y2='327' stroke-width='.8' opacity='0.37'/><line x1='401' y1='259' x2='502' y2='340' stroke-width='.8' opacity='0.55'/><line x1='342' y1='295' x2='420' y2='339' stroke-width='.8' opacity='0.33'/><line x1='361' y1='297' x2='401' y2='321' stroke-width='.8' opacity='0.45'/><line x1='392' y1='299' x2='454' y2='328' stroke-width='.8' opacity='0.53'/><line x1='379' y1='270' x2='470' y2='329' stroke-width='.8' opacity='0.54'/><line x1='394' y1='265' x2='462' y2='304' stroke-width='.8' opacity='0.49'/><line x1='787' y1='513' x2='846' y2='534' stroke-width='.8' opacity='0.28'/><line x1='773' y1='505' x2='865' y2='531' stroke-width='.8' opacity='0.51'/><line x1='779' y1='501' x2='858' y2='506' stroke-width='.8' opacity='0.54'/><line x1='735' y1='487' x2='844' y2='518' stroke-width='.8' opacity='0.52'/><line x1='757' y1='504' x2='857' y2='538' stroke-width='.8' opacity='0.41'/><line x1='1067' y1='645' x2='1130' y2='694' stroke-width='.8' opacity='0.42'/><line x1='1053' y1='637' x2='1171' y2='683' stroke-width='.8' opacity='0.26'/><line x1='1050' y1='627' x2='1163' y2='677' stroke-width='.8' opacity='0.49'/><line x1='1073' y1='657' x2='1161' y2='698' stroke-width='.8' opacity='0.39'/><line x1='1057' y1='612' x2='1107' y2='637' stroke-width='.8' opacity='0.29'/><line x1='206' y1='318' x2='322' y2='375' stroke-width='.8' opacity='0.33'/><line x1='202' y1='323' x2='288' y2='358' stroke-width='.8' opacity='0.51'/><line x1='210' y1='336' x2='268' y2='351' stroke-width='.8' opacity='0.32'/><line x1='233' y1='322' x2='279' y2='337' stroke-width='.8' opacity='0.36'/><line x1='240' y1='309' x2='350' y2='338' stroke-width='.8' opacity='0.28'/><line x1='243' y1='297' x2='302' y2='312' stroke-width='.8' opacity='0.47'/><line x1='1042' y1='339' x2='1104' y2='379' stroke-width='.8' opacity='0.39'/><line x1='973' y1='364' x2='1070' y2='450' stroke-width='.8' opacity='0.27'/><line x1='1011' y1='370' x2='1040' y2='400' stroke-width='.8' opacity='0.40'/><line x1='1019' y1='362' x2='1059' y2='390' stroke-width='.8' opacity='0.41'/><line x1='967' y1='369' x2='1053' y2='422' stroke-width='.8' opacity='0.37'/><line x1='1010' y1='383' x2='1064' y2='438' stroke-width='.8' opacity='0.52'/><line x1='445' y1='231' x2='483' y2='225' stroke-width='.8' opacity='0.34'/><line x1='445' y1='249' x2='480' y2='250' stroke-width='.8' opacity='0.45'/><line x1='441' y1='231' x2='513' y2='220' stroke-width='.8' opacity='0.31'/><line x1='416' y1='211' x2='452' y2='207' stroke-width='.8' opacity='0.38'/><line x1='413' y1='241' x2='533' y2='254' stroke-width='.8' opacity='0.29'/><line x1='413' y1='246' x2='528' y2='260' stroke-width='.8' opacity='0.34'/><line x1='1581' y1='343' x2='1633' y2='369' stroke-width='.8' opacity='0.45'/><line x1='1556' y1='306' x2='1615' y2='334' stroke-width='.8' opacity='0.32'/><line x1='1550' y1='318' x2='1606' y2='356' stroke-width='.8' opacity='0.53'/><line x1='1603' y1='299' x2='1689' y2='361' stroke-width='.8' opacity='0.51'/><line x1='1588' y1='336' x2='1632' y2='358' stroke-width='.8' opacity='0.43'/><line x1='767' y1='716' x2='836' y2='706' stroke-width='.8' opacity='0.34'/><line x1='748' y1='739' x2='793' y2='731' stroke-width='.8' opacity='0.34'/><line x1='793' y1='742' x2='846' y2='734' stroke-width='.8' opacity='0.48'/><line x1='761' y1='745' x2='800' y2='739' stroke-width='.8' opacity='0.28'/><line x1='778' y1='735' x2='839' y2='722' stroke-width='.8' opacity='0.30'/><line x1='323' y1='408' x2='387' y2='475' stroke-width='.8' opacity='0.46'/><line x1='289' y1='369' x2='349' y2='409' stroke-width='.8' opacity='0.46'/><line x1='278' y1='370' x2='323' y2='402' stroke-width='.8' opacity='0.45'/><line x1='330' y1='414' x2='390' y2='457' stroke-width='.8' opacity='0.46'/><line x1='291' y1='397' x2='398' y2='469' stroke-width='.8' opacity='0.44'/><line x1='325' y1='404' x2='422' y2='472' stroke-width='.8' opacity='0.29'/><line x1='1318' y1='311' x2='1374' y2='317' stroke-width='.8' opacity='0.45'/><line x1='1344' y1='275' x2='1429' y2='289' stroke-width='.8' opacity='0.27'/><line x1='1340' y1='311' x2='1428' y2='315' stroke-width='.8' opacity='0.44'/><line x1='1331' y1='283' x2='1455' y2='318' stroke-width='.8' opacity='0.39'/><line x1='1338' y1='268' x2='1443' y2='282' stroke-width='.8' opacity='0.54'/><line x1='1335' y1='292' x2='1439' y2='310' stroke-width='.8' opacity='0.42'/><line x1='1350' y1='280' x2='1393' y2='282' stroke-width='.8' opacity='0.29'/><line x1='1271' y1='768' x2='1344' y2='787' stroke-width='.8' opacity='0.38'/><line x1='1273' y1='749' x2='1375' y2='773' stroke-width='.8' opacity='0.31'/><line x1='1311' y1='768' x2='1400' y2='805' stroke-width='.8' opacity='0.40'/><line x1='1276' y1='747' x2='1314' y2='762' stroke-width='.8' opacity='0.36'/><line x1='1266' y1='730' x2='1371' y2='776' stroke-width='.8' opacity='0.51'/><line x1='1267' y1='761' x2='1307' y2='778' stroke-width='.8' opacity='0.37'/><line x1='1301' y1='747' x2='1379' y2='791' stroke-width='.8' opacity='0.38'/><line x1='398' y1='831' x2='499' y2='815' stroke-width='.8' opacity='0.46'/><line x1='380' y1='816' x2='476' y2='799' stroke-width='.8' opacity='0.29'/><line x1='356' y1='798' x2='475' y2='787' stroke-width='.8' opacity='0.33'/><line x1='329' y1='828' x2='366' y2='821' stroke-width='.8' opacity='0.40'/><line x1='397' y1='816' x2='514' y2='796' stroke-width='.8' opacity='0.50'/><line x1='338' y1='844' x2='428' y2='838' stroke-width='.8' opacity='0.28'/><line x1='348' y1='796' x2='475' y2='798' stroke-width='.8' opacity='0.37'/><line x1='1264' y1='372' x2='1334' y2='427' stroke-width='.8' opacity='0.44'/><line x1='1282' y1='375' x2='1310' y2='386' stroke-width='.8' opacity='0.40'/><line x1='1306' y1='378' x2='1386' y2='410' stroke-width='.8' opacity='0.42'/><line x1='1299' y1='394' x2='1392' y2='449' stroke-width='.8' opacity='0.42'/><line x1='1262' y1='405' x2='1294' y2='428' stroke-width='.8' opacity='0.50'/><line x1='1301' y1='405' x2='1413' y2='448' stroke-width='.8' opacity='0.46'/><line x1='591' y1='136' x2='644' y2='156' stroke-width='.8' opacity='0.39'/><line x1='640' y1='98' x2='764' y2='133' stroke-width='.8' opacity='0.31'/><line x1='600' y1='123' x2='662' y2='152' stroke-width='.8' opacity='0.33'/><line x1='580' y1='116' x2='626' y2='136' stroke-width='.8' opacity='0.38'/><line x1='635' y1='102' x2='674' y2='123' stroke-width='.8' opacity='0.35'/><line x1='183' y1='310' x2='246' y2='365' stroke-width='.8' opacity='0.48'/><line x1='195' y1='294' x2='253' y2='347' stroke-width='.8' opacity='0.54'/><line x1='210' y1='331' x2='268' y2='393' stroke-width='.8' opacity='0.54'/><line x1='140' y1='297' x2='228' y2='388' stroke-width='.8' opacity='0.47'/><line x1='165' y1='333' x2='194' y2='354' stroke-width='.8' opacity='0.54'/><line x1='193' y1='303' x2='280' y2='380' stroke-width='.8' opacity='0.30'/><line x1='221' y1='829' x2='291' y2='850' stroke-width='.8' opacity='0.38'/><line x1='219' y1='839' x2='306' y2='855' stroke-width='.8' opacity='0.52'/><line x1='273' y1='845' x2='366' y2='881' stroke-width='.8' opacity='0.55'/><line x1='258' y1='862' x2='330' y2='886' stroke-width='.8' opacity='0.42'/><line x1='272' y1='840' x2='330' y2='855' stroke-width='.8' opacity='0.53'/><line x1='1594' y1='990' x2='1642' y2='1035' stroke-width='.8' opacity='0.55'/><line x1='1622' y1='984' x2='1730' y2='1048' stroke-width='.8' opacity='0.54'/><line x1='1589' y1='975' x2='1623' y2='993' stroke-width='.8' opacity='0.53'/><line x1='1580' y1='1000' x2='1653' y2='1055' stroke-width='.8' opacity='0.50'/><line x1='1023' y1='97' x2='1127' y2='63' stroke-width='.8' opacity='0.31'/><line x1='991' y1='106' x2='1096' y2='76' stroke-width='.8' opacity='0.36'/><line x1='1047' y1='123' x2='1115' y2='101' stroke-width='.8' opacity='0.33'/><line x1='986' y1='113' x2='1061' y2='85' stroke-width='.8' opacity='0.27'/><line x1='1045' y1='123' x2='1158' y2='94' stroke-width='.8' opacity='0.37'/><line x1='987' y1='120' x2='1069' y2='96' stroke-width='.8' opacity='0.40'/><line x1='1040' y1='125' x2='1108' y2='96' stroke-width='.8' opacity='0.35'/></g></svg>");
+  /* ICE BACKGROUND SLOT: your ice photo. The path is relative to this stylesheet, so with
+     styles.css next to index.html and the picture at /images/Ice.png it is exactly this.
+     File names are case-sensitive on most servers. If the file is missing or the path is
+     wrong, the drawn ice above shows instead. */
+  --ice-image: url("images/Ice.png");
+
   position: relative;
-  overflow: hidden;
-  padding: clamp(3rem, 9vw, 7rem) clamp(1rem, 5vw, 4rem) clamp(2.5rem, 6vw, 4.5rem);
-  border-bottom: 4px solid var(--navy);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: clip;
+  color: var(--navy-fixed);
+  background-color: #c9dce8;
+  background-image: var(--ice-image), var(--ice-fallback);
+  background-size: cover;
+  background-position: center;
 }
-.hero-inner { position: relative; z-index: relative; max-width: 1360px; margin: 0 auto; }
 
+/* the lockup is a size container: everything inside is sized in cqw, a share of its own width */
+.intro-lockup {
+  container-type: inline-size;
+  width: clamp(15.5rem, min(42vw, 78svh), 38rem);
+  margin-top: -6svh;
+}
+.intro-kicker {
+  display: flex; justify-content: center;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10.5cqw;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
 
+/* ---------------------------------------------------------------------
+   TAPE PILE
+   Flat strips stacked and tilted like the reference video: FIGHTS in navy on top,
+   then dances (aqua), tilts (cream), scraps (red), with donnybrooks (yellow) and
+   trading blows (orange) tucked underneath.
+   Each strip is positioned by its CENTER, in cqw units (a share of the pile width):
+     --x, --y  center position      --w, --h  size      --rot  tilt
+     --fs      word size            --fx, --fy, --fr  where it flies in from (vw, svh, deg)
+     --d       delay before it flies in
+   --------------------------------------------------------------------- */
+.tape-pile {
+  position: relative;
+  container-type: inline-size;
+  width: 87.4%;
+  aspect-ratio: 472 / 232;
+  margin: 4cqw auto 0;
+  padding: 0;
+  list-style: none;
+  filter: drop-shadow(0 0.5cqw 0.9cqw rgba(0, 31, 51, 0.3));
+}
+.tape-pile li {
+  --rot: 0deg; --tape: var(--paper-fixed); --ink: var(--navy-fixed);
+  --x: 50; --y: 20; --w: 60; --h: 20; --fs: 11;
+  --fx: 0vw; --fy: -60svh; --fr: 0deg; --d: 0s;
+  position: absolute;
+  left: calc(var(--x) * 1cqw);
+  top: calc(var(--y) * 1cqw);
+  width: calc(var(--w) * 1cqw);
+  height: calc(var(--h) * 1cqw);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+  font-size: calc(var(--fs) * 1cqw);
+  color: var(--ink);
+  background-color: var(--tape);
+  background-image: var(--grain);
+  overflow: hidden;           /* a word never spills off its strip */
+  transform: translate(-50%, -50%) rotate(var(--rot));
+}
+.tape-pile li.t-donnybrook { --tape: #f4d35e; --x: 20;   --y: 20;   --w: 62; --rot: -5deg;  --fs: 10;  --fx: -45vw; --fy: -45svh; --fr: -30deg; --d: 0.30s; }
+.tape-pile li.t-trading-blows { --tape: #f2784b; --x: 52;   --y: 39;   --w: 66; --rot: 3deg;   --fs: 7.5;   --fx: 55vw;  --fy: 20svh;  --fr: 20deg;  --d: 0.40s; }
+.tape-pile li.t-scrap { --tape: var(--red-deep-fixed); --ink: var(--cream); --x: 70.2; --y: 15.4; --w: 58; --rot: 9deg; --fs: 11; --fx: -4vw; --fy: -70svh; --fr: -25deg; --d: 0s; }
+.tape-pile li.t-tilt { --tape: var(--cream); --ink: var(--red-deep-fixed); --x: 63.2; --y: 32.2; --w: 55; --rot: 13deg; --fs: 11; --fx: 34vw; --fy: -60svh; --fr: 28deg; --d: 0.15s; }
+.tape-pile li.t-dance { --tape: var(--aqua); --x: 45.6; --y: 26.7; --w: 87; --rot: -9deg; --fs: 13; --fx: -70vw; --fy: 8svh; --fr: -12deg; --d: 0.55s; }
+.tape-pile li.t-fights { --tape: var(--navy-fixed); --ink: var(--cream); --x: 52.6; --y: 11.7; --w: 92.6; --h: 23.3; --fs: 16; }
+
+/* ---------------------------------------------------------------------
+   TAPE IMAGE SLOTS (the styling side)
+   When a PNG from index.html loads, app.js adds .has-img to that strip: the flat
+   color switches off and your image is stretched to the strip's box. The pile's
+   drop-shadow follows the PNG's transparent edges.
+   - Word color on image tape: change --ink in the rules below.
+   - Size / position / tilt: change --w, --h, --x, --y, --rot in the strip rules above.
+   - If your art is already angled, set that strip's --rot to 0deg.
+   - To hide the word and let the art speak, add  font-size: 0  to a strip.
+   --------------------------------------------------------------------- */
+.tape-pile li.has-img {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+.tape-pile li.has-img.t-donnybrook    { --ink: var(--navy-fixed); }
+.tape-pile li.has-img.t-trading-blows { --ink: var(--navy-fixed); }
+.tape-pile li.has-img.t-scrap         { --ink: var(--cream); }
+.tape-pile li.has-img.t-tilt          { --ink: var(--red-deep-fixed); }
+.tape-pile li.has-img.t-dance         { --ink: var(--navy-fixed); }
+.tape-pile li.has-img.t-fights        { --ink: var(--cream); }
+
+/* the scroll cue pinned to the bottom of the intro */
+.scroll-cue {
+  position: absolute; left: 50%; bottom: clamp(1rem, 7svh, 4rem); transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  font-family: var(--font-display); font-weight: 700; text-transform: uppercase;
+  font-size: clamp(0.95rem, 1.7vw, 1.35rem); letter-spacing: 0.02em; white-space: nowrap;
+  color: var(--navy-fixed); text-decoration: none;
+}
+.scroll-cue:hover, .scroll-cue:focus-visible { color: var(--red-deep-fixed); }
+html { scroll-behavior: smooth; }
+
+/* ---- the animation (runs only while .intro has the .play class) ---- */
+.intro.play .tape-pile li {
+  animation: pile-in 0.62s cubic-bezier(0.2, 1.1, 0.35, 1) both;
+  animation-delay: var(--d);
+}
+/* the big navy bar rides up from below at a huge size, then shrinks onto the pile */
+.intro.play .tape-pile li.t-fights {
+  animation: fights-in 1.15s both;
+  animation-delay: 0.9s;
+}
+@keyframes pile-in {
+  from { transform: translate(calc(-50% + var(--fx)), calc(-50% + var(--fy))) rotate(calc(var(--rot) + var(--fr))); }
+  to   { transform: translate(-50%, -50%) rotate(var(--rot)); }
+}
+@keyframes fights-in {
+  0%   { transform: translate(-50%, calc(-50% + 75svh)) scale(2.5); animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1); }
+  42%  { transform: translate(-50%, calc(-50% + 36svh)) scale(2.5); animation-timing-function: cubic-bezier(0.25, 1.15, 0.4, 1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Hide the strips until app.js starts the animation, so the end state never flashes. If the
+   script never runs, they appear on their own after 2.5 seconds. */
+.js .intro:not(.play) .tape-pile li { visibility: hidden; animation: unhide 0s 2.5s forwards; }
+@keyframes unhide { to { visibility: visible; } }
+
+/* ---- part 2: the title block below the intro ---- */
+.hero-inner { max-width: 1360px; margin: 0 auto; padding: clamp(3rem, 10svh, 6rem) clamp(1rem, 5vw, 4rem); }
+.hero-copy { max-width: 60rem; }
 .hero h1 {
   font-family: var(--font-display);
-  font-weight: 200;
-  font-size: 4rem;
+  font-weight: 700;
+  font-size: clamp(2.4rem, 7vw, 6rem);
   line-height: 1;
   letter-spacing: -0.005em;
-  margin-bottom: 1.25rem;
-  max-width: 100%;
-   text-align: center;
+  margin: 0 0 1.25rem;
+  max-width: 20ch;
 }
 .hero-lede {
   font-family: var(--font-display);
-  font-weight: 200;
-  font-size: clamp(1.5rem, 3.2vw, 2.3rem);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3.2vw, 2.3rem);
   line-height: 1.15;
   color: var(--accent);
   margin-top: 0; margin-bottom: 1rem;
-    text-align: center;
 }
-.hero-sub { max-width: auto; font-size: 1.3rem; margin-top: 0; margin-bottom: 1rem; text-align: center; }
-.hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; text-align: center; }
+.hero-sub { max-width: 36rem; font-size: 1.3rem; line-height: 1.45; margin-top: 0; margin-bottom: 1rem; }
+.hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; }
 
 /* =====================================================================
    SCROLLYTELLING LAYOUT
@@ -113,7 +325,7 @@ body:has(dialog[open]) { overflow: hidden; }
 
 .step h2 {
   font-family: var(--font-display);
-  font-weight: 200;
+  font-weight: 700;
   font-size: clamp(1.9rem, 3.2vw, 2.6rem);
   line-height: 1.05;
   margin: 0 0 1.25rem;
@@ -131,7 +343,7 @@ body:has(dialog[open]) { overflow: hidden; }
   vertical-align: 0.1em;
   transition: background 0.3s ease;
 }
-.step.active h2::before { background: var(--accent); }
+.step.active h2::before { background: var(--accent-deep); }
 
 .step p { margin: 0 0 1rem; }
 .step .aside { font-size: 1rem; color: var(--muted); border-left: 4px solid var(--aqua); padding-left: 0.9rem; }
@@ -143,36 +355,34 @@ body:has(dialog[open]) { overflow: hidden; }
   height: min(94vh, 880px);
   align-self: start;
   margin: 0;
-  padding: 0 7px 7px 0;      /* room for the hard card shadow */
+  padding: 0;
 }
 
 /* =====================================================================
-   CHART PANEL: styled like a card, with a pill tab for the title
+   CHART PANEL: no box. Charts stand directly on the section background.
+   The title is a strip of tape, to match the hero.
    ===================================================================== */
 .panel {
   height: 100%;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  background: var(--paper);
-  border: 3px solid var(--navy);
-  border-radius: 14px;
-  box-shadow: 7px 7px 0 var(--navy);
   font-family: var(--font-ui);
-  overflow: hidden;
 }
 
-.panel-head { padding: 0.8rem 1.1rem 0; }
+.panel-head { padding: 0.8rem 1.1rem 0; filter: drop-shadow(1px 2px 1.5px rgba(0, 31, 51, 0.35)); }
 .panel-head h3 {
   display: inline-block;
   max-width: 100%;
   margin: 0;
-  padding: 0.25rem 0.95rem;
-  background: var(--aqua);
-  border: 3px solid var(--navy);
-  border-radius: 12px;
+  padding: 0.4rem 1.2rem 0.45rem;
+  background-color: var(--aqua);
+  background-image: linear-gradient(100deg, rgba(255,255,255,0.3), rgba(255,255,255,0) 40%, rgba(255,255,255,0.18) 70%, rgba(255,255,255,0)), var(--grain);
+  color: var(--navy-fixed);
+  transform: rotate(-0.8deg);
+  clip-path: polygon(0 6%, 5px 0, 100% 3%, calc(100% - 5px) 30%, 100% 58%, calc(100% - 6px) 82%, 100% 100%, 4px 97%, 0 78%, 6px 52%, 1px 28%);
   font-family: var(--font-display);
-  font-weight: 200;
-  font-size: 1.05rem;
+  font-weight: 700;
+  font-size: 1.1rem;
   line-height: 1.25;
 }
 
@@ -199,70 +409,70 @@ body:has(dialog[open]) { overflow: hidden; }
 .key-solid { background: var(--navy); }
 .key-hollow { border: 1.5px dashed var(--navy); }
 .key-red { background: var(--accent); }
-.key-grey { background: rgba(0, 31, 51, 0.25); }
+.key-grey { background: color-mix(in srgb, var(--navy) 25%, transparent); }
 
 .pim-note { margin: 0.5rem 0 0; font-size: 0.8rem; color: var(--muted); }
 
 /* ---- chart marks ---- */
 .chart text { font-family: var(--font-ui); }
 .baseline, .lane-line { stroke: var(--navy); stroke-width: 1.5; }
-.col-count { font-family: var(--font-display) !important; font-weight: 400; font-size: 30px; fill: var(--navy); }
+.col-count { font-family: var(--font-display) !important; font-weight: 700; font-size: 30px; fill: var(--navy); }
 .col-label { font-size: 14px; fill: var(--muted); }
 
 /* Fight discs: solid navy with an aqua ring inside, in the manner of Wyman's pictogram discs */
 .fight-dot { cursor: pointer; transition: opacity 0.25s ease; }
 .fight-dot:focus { outline: none; }
-.fight-dot .disc { fill: var(--navy); stroke: var(--paper); stroke-width: 2; transition: fill 0.2s ease; }
+.fight-dot .disc { fill: var(--navy); stroke: var(--stage-bg); stroke-width: 2; transition: fill 0.2s ease; }
 .fight-dot .ring { fill: none; stroke: var(--aqua); stroke-width: 1.8; pointer-events: none; }
 .fight-dot:hover .disc, .fight-dot.hit .disc { fill: var(--accent); }
-.fight-dot:focus-visible .disc { stroke: var(--accent); stroke-width: 3.5; }
+.fight-dot:focus-visible .disc { stroke: var(--accent-deep); stroke-width: 3.5; }
 .fight-dot.pending { cursor: help; }
 .fight-dot.pending .disc { fill: none; stroke: var(--navy); stroke-width: 1.5; stroke-dasharray: 3 3; }
 .fight-dot.pending:hover .disc { fill: none; }
 .fight-dot.dim { opacity: 0.16; }
 
-.axis path, .axis line { stroke: rgba(0, 31, 51, 0.45); }
+.axis path, .axis line { stroke: color-mix(in srgb, var(--navy) 45%, transparent); }
 .axis text { fill: var(--muted); font-size: 12px; }
 .axis-title { fill: var(--muted); font-size: 13px; }
 
 .zone { fill: var(--aqua-wash); }
 .zone-label { fill: var(--navy); font-size: 12px; font-weight: 600; }
 .dot-other { fill: var(--navy); opacity: 0.22; }
-.dot-fighter { fill: var(--accent); stroke: var(--paper); stroke-width: 1.5; cursor: pointer; transition: opacity 0.25s ease; }
+.dot-fighter { fill: var(--accent); stroke: var(--stage-bg); stroke-width: 1.5; cursor: pointer; transition: opacity 0.25s ease; }
 .dot-fighter.dim { opacity: 0.15; }
 .dot-fighter.hit { stroke: var(--navy); stroke-width: 2.5; }
-.dot-label { font-size: 12px; font-weight: 600; fill: var(--navy); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; }
+.dot-label { font-size: 12px; font-weight: 600; fill: var(--navy); paint-order: stroke; stroke: var(--stage-bg); stroke-width: 3px; }
 
 .lane-bg { fill: var(--aqua-wash); }
 .lane-label { font-size: 13px; fill: var(--muted); }
-.final-band { fill: rgba(168, 48, 36, 0.14); }
-.band-label { font-size: 12px; font-weight: 600; fill: var(--accent); }
+.final-band { fill: rgba(225, 52, 61, 0.14); }
+.band-label { font-size: 12px; font-weight: 600; fill: var(--accent-deep); }
 
 /* ---- mirage view ---- */
-.guess-box { background: var(--aqua); border: 3px solid var(--navy); border-radius: 12px; padding: 1rem 1.25rem; text-align: center; }
+.guess-box { background: var(--aqua); color: var(--navy-fixed); border: 3px solid var(--navy-fixed); border-radius: 12px; padding: 1rem 1.25rem; text-align: center; }
 .guess-box label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
-.guess-box output { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; color: var(--accent); }
+.guess-box output { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; color: var(--accent-deep); }
 input[type="range"] { width: 85%; accent-color: var(--accent); cursor: pointer; }
 input[type="range"]:disabled { cursor: default; opacity: 0.6; }
 .guess-actions { margin-top: 0.75rem; }
 
 .enforcer-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1rem; }
-.enf-card { display: flex; gap: 0.8rem; align-items: center; border: 3px solid var(--navy); border-radius: 6px; padding: 0.7rem; background: var(--paper); transition: background 0.3s ease, border-color 0.3s ease; }
+.enf-card { display: flex; gap: 0.8rem; align-items: center; color: var(--navy-fixed); border: 3px solid var(--navy-fixed); border-radius: 6px; padding: 0.7rem; background: var(--paper-fixed); transition: background 0.3s ease, border-color 0.3s ease; }
 .enf-card strong { display: block; }
-.enf-meta { display: block; font-size: 0.8rem; color: var(--muted); }
+.enf-meta { display: block; font-size: 0.8rem; color: #3d5668; }
 .enf-fights { display: block; margin-top: 0.2rem; font-weight: 700; font-size: 0.9rem; }
-.enf-card.revealed { background: var(--aqua); border-color: var(--accent); }
-.enf-card.revealed .enf-fights { color: var(--accent); }
+.enf-card.revealed { background: var(--aqua); color: var(--navy-fixed); border-color: var(--red-deep-fixed); }
+.enf-card.revealed .enf-fights { color: var(--red-deep-fixed); }
 /* oval portrait, echoing the trading card photo mask */
-.monogram { flex: none; width: 3rem; height: 3.8rem; border-radius: 50%; background: var(--aqua); border: 3px solid var(--navy); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
-.enf-card.revealed .monogram { background: var(--paper); }
+.monogram { flex: none; width: 3rem; height: 3.8rem; border-radius: 50%; background: var(--aqua); color: var(--navy-fixed); border: 3px solid var(--navy-fixed); display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
+.enf-card.revealed .monogram { background: var(--paper-fixed); }
 .guess-result { min-height: 3rem; margin: 1rem 0 0; font-size: 1.05rem; font-weight: 600; }
 
 /* ---- buttons ---- */
 .btn { font: 700 0.95rem var(--font-ui); background: var(--navy); color: var(--cream); border: 3px solid var(--navy); border-radius: 999px; padding: 0.4rem 1.1rem; cursor: pointer; }
-.btn:hover { background: var(--accent); border-color: var(--accent); }
+.btn:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
 .btn-quiet { background: transparent; color: var(--navy); }
-.btn-quiet:hover { background: var(--aqua); border-color: var(--navy); color: var(--navy); }
+.btn-quiet:hover { background: var(--aqua); border-color: var(--navy-fixed); color: var(--navy-fixed); }
 .btn-small { font-size: 0.8rem; padding: 0.15rem 0.75rem; border-width: 2px; }
 .btn[hidden] { display: none; }
 
@@ -271,7 +481,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.6; }
 .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .chip { font: 600 0.82rem var(--font-ui); background: transparent; border: 2px solid var(--navy); border-radius: 999px; padding: 0.15rem 0.8rem; cursor: pointer; color: var(--navy); }
 .chip:hover { background: var(--aqua-wash); }
-.chip[aria-pressed="true"] { background: var(--aqua); }
+.chip[aria-pressed="true"] { background: var(--aqua); color: var(--navy-fixed); border-color: var(--navy-fixed); }
 .log-count { margin: 0; font-size: 0.82rem; color: var(--muted); }
 
 .log-list { list-style: none; margin: 0; padding: 0; }
@@ -282,17 +492,17 @@ input[type="range"]:disabled { cursor: default; opacity: 0.6; }
 .log-match { font-weight: 600; }
 .vs { font-weight: 400; color: var(--muted); }
 .log-tags { display: flex; gap: 0.25rem; }
-.tag { font-size: 0.72rem; font-weight: 700; background: var(--aqua); border: 1.5px solid var(--navy); border-radius: 4px; padding: 0 0.4rem; }
+.tag { font-size: 0.72rem; font-weight: 700; background: var(--aqua); color: var(--navy-fixed); border: 1.5px solid var(--navy-fixed); border-radius: 4px; padding: 0 0.4rem; }
 .log-detail { padding: 0.25rem 0.5rem 0.9rem 7.25rem; font-size: 0.88rem; }
 .log-detail p { margin: 0 0 0.4rem; }
-.log-detail a, .modal-foot a { color: var(--accent); font-weight: 600; }
+.log-detail a, .modal-foot a { color: var(--accent-deep); font-weight: 600; }
 .log-detail .view-cards { margin-right: 0.75rem; }
-.vote { height: 8px; background: var(--aqua); border: 1.5px solid var(--navy); border-radius: 4px; overflow: hidden; margin: 0.3rem 0 0.5rem; max-width: 18rem; }
-.vote span { display: block; height: 100%; background: var(--navy); }
+.vote { height: 8px; background: var(--aqua); border: 1.5px solid var(--navy-fixed); border-radius: 4px; overflow: hidden; margin: 0.3rem 0 0.5rem; max-width: 18rem; }
+.vote span { display: block; height: 100%; background: var(--navy-fixed); }
 .log-empty { padding: 1.5rem 0.25rem; color: var(--muted); }
 
 /* ---- panel footer: team filter status ---- */
-.panel-foot { border-top: 2px solid var(--navy); padding: 0.55rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; min-height: 2.6rem; }
+.panel-foot { border-top: 1px dashed var(--rule); padding: 0.55rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; min-height: 2.6rem; }
 .filter-status { margin: 0; font-size: 0.82rem; color: var(--muted); }
 
 /* ---- rink view ---- */
@@ -303,25 +513,25 @@ input[type="range"]:disabled { cursor: default; opacity: 0.6; }
 
 .rink-ice { fill: var(--aqua); }
 .rink-boards { fill: none; stroke: var(--navy); stroke-width: 1.1; }
-.rink-red { fill: var(--accent); }
-.rink-blue { fill: var(--navy); }
-.rink-ring-red { fill: none; stroke: var(--accent); stroke-width: 0.35; }
-.rink-ring-blue { fill: none; stroke: var(--navy); stroke-width: 0.35; }
-.rink-dot-red { fill: var(--accent); }
-.rink-dot-blue { fill: var(--navy); }
-.rink-crease { fill: var(--paper); stroke: var(--accent); stroke-width: 0.35; }
-.rink-net { fill: none; stroke: var(--navy); stroke-width: 0.35; }
-.rink-conf { font-family: var(--font-display); font-weight: 700; font-size: 3.6px; fill: var(--navy); letter-spacing: 0.15px; }
+.rink-red { fill: var(--red-fixed); }
+.rink-blue { fill: var(--navy-fixed); }
+.rink-ring-red { fill: none; stroke: var(--red-fixed); stroke-width: 0.35; }
+.rink-ring-blue { fill: none; stroke: var(--navy-fixed); stroke-width: 0.35; }
+.rink-dot-red { fill: var(--red-fixed); }
+.rink-dot-blue { fill: var(--navy-fixed); }
+.rink-crease { fill: var(--paper-fixed); stroke: var(--red-fixed); stroke-width: 0.35; }
+.rink-net { fill: none; stroke: var(--navy-fixed); stroke-width: 0.35; }
+.rink-conf { font-family: var(--font-display); font-weight: 700; font-size: 3.6px; fill: var(--navy-fixed); letter-spacing: 0.15px; }
 
 /* team medallions: double-ringed discs that flip to show the fight count */
 .rink-team { position: absolute; transform: translate(-50%, -50%); aspect-ratio: 1; padding: 0; background: none; border: 0; cursor: pointer; perspective: 600px; transition: opacity 0.25s ease; }
 .rink-team .flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.5s ease; }
 .rink-team[aria-pressed="true"] .flip { transform: rotateY(180deg); }
 .rink-team .face { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-.rink-team .front { background: var(--paper); border: 2px solid var(--navy); padding: 14%; box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3.5px var(--navy); }
+.rink-team .front { background: var(--paper-fixed); border: 2px solid var(--navy-fixed); padding: 14%; box-shadow: inset 0 0 0 2px var(--paper-fixed), inset 0 0 0 3.5px var(--navy-fixed); }
 .rink-team:hover .front { background: #fff; }
 .rink-team .front img { width: 100%; height: 100%; object-fit: contain; }
-.rink-team .back { background: var(--accent); color: var(--cream); border: 2px solid var(--navy); transform: rotateY(180deg); align-content: center; line-height: 1; box-shadow: inset 0 0 0 2px var(--accent), inset 0 0 0 3.5px var(--cream); }
+.rink-team .back { background: var(--red-deep-fixed); color: #e9e0c3; border: 2px solid var(--navy-fixed); transform: rotateY(180deg); align-content: center; line-height: 1; box-shadow: inset 0 0 0 2px var(--red-deep-fixed), inset 0 0 0 3.5px #e9e0c3; }
 .rink-team .back b { font-family: var(--font-display); font-weight: 700; font-size: clamp(1rem, 2.4vw, 1.7rem); }
 .rink-team .back i { font: normal 600 clamp(0.5rem, 0.9vw, 0.7rem) var(--font-ui); }
 .rink-teams.has-pick .rink-team[aria-pressed="false"] { opacity: 0.4; }
@@ -335,6 +545,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.6; }
 .roster { margin: 0 0 0.6rem; display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .player-chip { background: var(--navy); color: var(--cream); border-radius: 999px; padding: 0.15rem 0.7rem; font-size: 0.85rem; font-weight: 600; }
 .player-chip b { color: var(--aqua); }
+body[data-tone="dark"] .player-chip b { color: var(--red-deep-fixed); }
 .mini-log { list-style: none; margin: 0; padding: 0; }
 .mini-fight { width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--rule); padding: 0.4rem 0.1rem; font: inherit; font-size: 0.85rem; color: var(--navy); cursor: pointer; }
 .mini-fight:hover { background: var(--aqua-wash); }
@@ -346,62 +557,98 @@ input[type="range"]:disabled { cursor: default; opacity: 0.6; }
 
 /* =====================================================================
    TRADING CARD REVEAL (modal)
-   Two cards side by side, facts underneath each.
+   Sized from the viewport so the whole thing fits with no scrolling:
+   --art-w is the card width, worked out from the height left after the
+   header, the facts under each card and the footer (about 23rem together).
+   On short or narrow screens the cards shrink instead of the dialog scrolling.
    ===================================================================== */
 .card-modal {
-  width: min(780px, 94vw);
-  max-height: 92vh;
+  --gap: clamp(0.6rem, 2.5vw, 1.4rem);
+  --art-w: clamp(5.5rem, calc((100vh - 25rem) * 5 / 7), min(19rem, 42vw));
+  --art-w: clamp(5.5rem, calc((100dvh - 25rem) * 5 / 7), min(19rem, 42vw));
+  width: calc(var(--art-w) * 2 + var(--gap) + 2.6rem);
+  max-width: 96vw;
+  max-height: 98vh;
+  max-height: 98dvh;
   padding: 0;
+  overflow: hidden;
   color: var(--navy);
-  background: var(--cream);
+  background-color: var(--cream);
+  background-image: var(--grain);
   border: 3px solid var(--navy);
   border-radius: 14px;
-  box-shadow: 8px 8px 0 var(--navy);
+  box-shadow: 6px 6px 0 var(--navy);
   font-family: var(--font-ui);
 }
 .card-modal::backdrop { background: rgba(0, 31, 51, 0.74); }
-.modal-body { position: relative; max-height: 92vh; overflow-y: auto; padding: 1.2rem 1.4rem 1.4rem; }
-.modal-close { position: absolute; top: 0.7rem; right: 0.8rem; width: 2.3rem; height: 2.3rem; border-radius: 50%; border: 3px solid var(--navy); background: var(--aqua); color: var(--navy); font-size: 1.3rem; line-height: 1; cursor: pointer; }
-.modal-close:hover { background: var(--accent); color: var(--cream); border-color: var(--accent); }
-.modal-head h2 { margin: 0 3rem 0.2rem 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.5rem, 3.6vw, 2.2rem); line-height: 1.05; }
-.modal-head p { margin: 0 0 1.2rem; color: var(--muted); font-size: 0.9rem; }
+.modal-body { position: relative; max-height: 98vh; max-height: 98dvh; overflow-y: auto; padding: 1.1rem 1.3rem 1.1rem; }
+.modal-close { position: absolute; top: 0.6rem; right: 0.7rem; width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 3px solid var(--navy); background: var(--aqua); color: var(--navy); font-size: 1.3rem; line-height: 1; cursor: pointer; }
+.modal-close:hover { background: var(--accent-deep); color: var(--cream); border-color: var(--accent-deep); }
+.modal-head h2 { margin: 0 2.8rem 0.15rem 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.25rem, 3vw, 1.9rem); line-height: 1.05; }
+.modal-head p { margin: 0 0 0.8rem; color: var(--muted); font-size: 0.85rem; line-height: 1.3; }
 
-.card-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(0.8rem, 3vw, 1.8rem); }
+.card-pair { display: grid; grid-template-columns: repeat(2, minmax(0, var(--art-w))); gap: var(--gap); justify-content: center; }
 .tcard { position: relative; min-width: 0; }
-.tcard-win { position: absolute; top: -0.65rem; left: 0.5rem; z-index: 2; background: var(--accent); color: var(--cream); font: 700 0.72rem var(--font-ui); padding: 0.15rem 0.65rem; border: 2px solid var(--navy); border-radius: 999px; }
+.tcard-win { position: absolute; top: -0.6rem; left: 0.4rem; z-index: 2; background: var(--accent-deep); color: var(--cream); font: 700 0.68rem var(--font-ui); padding: 0.1rem 0.6rem; border: 2px solid var(--navy); border-radius: 999px; }
 
-.tcard-art { position: relative; aspect-ratio: 5 / 7; overflow: hidden; background: var(--paper); }
-.tcard-art:not(.tcard-ph) { box-shadow: 4px 4px 0 var(--navy); }
+.tcard-art { position: relative; aspect-ratio: 5 / 7; overflow: hidden; border-radius: 10px; background: var(--paper); container-type: inline-size; }
+.tcard-art:not(.tcard-ph) { box-shadow: 3px 3px 0 var(--navy); }
 .tcard-img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
-/* placeholder card, drawn like the real ones: team-color frame, giant team code, oval portrait, name plate */
-.tcard-ph { --tc: var(--navy); --tc2: var(--aqua); --tcfg: #fff; display: grid; place-items: center; border: 4px solid var(--tc); box-shadow: 4px 4px 0 var(--navy); }
-.ph-code { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: clamp(3.6rem, 14vw, 7.5rem); line-height: 1; color: var(--tc); opacity: 0.5; }
+/* placeholder card, drawn like the real ones: team-color frame, giant team code, oval portrait, name plate.
+   Type is sized in cqw (a share of the card's own width) so it scales with the card. */
+.tcard-ph { --tc: var(--navy); --tc2: var(--aqua); --tcfg: #fff; display: grid; place-items: center; border: 4px solid var(--tc); box-shadow: 3px 3px 0 var(--navy); }
+.ph-code { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: 4rem; font-size: 36cqw; line-height: 1; color: var(--tc); opacity: 0.5; }
 .ph-oval { position: relative; width: 70%; height: 58%; border-radius: 50%; background: var(--paper); border: 3px solid var(--tc2); box-shadow: 0 0 0 2px #111; display: grid; place-items: center; }
-.ph-oval b { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 6vw, 3rem); color: var(--tc); }
-.ph-plate { position: absolute; right: 0; bottom: 0; max-width: 92%; padding: 0.2rem 0.55rem; background: var(--tc); color: var(--tcfg); font-family: var(--font-display); font-weight: 700; font-size: clamp(0.7rem, 1.9vw, 0.95rem); text-align: right; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ph-soon { position: absolute; top: 0.35rem; left: 0.4rem; padding: 0.05rem 0.4rem; background: var(--paper); border-radius: 3px; font: 600 0.6rem var(--font-ui); color: var(--muted); }
+.ph-oval b { font-family: var(--font-display); font-weight: 700; font-size: 2rem; font-size: 15cqw; color: var(--tc); }
+.ph-plate { position: absolute; right: 0; bottom: 0; max-width: 92%; padding: 0.15rem 0.5rem; background: var(--tc); color: var(--tcfg); font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; font-size: max(0.6rem, 6.5cqw); text-align: right; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ph-soon { position: absolute; top: 0.3rem; left: 0.35rem; padding: 0.05rem 0.35rem; background: var(--paper); border-radius: 3px; font: 600 0.58rem var(--font-ui); color: var(--muted); }
 
-.tcard-info { margin: 0.8rem 0 0; display: grid; gap: 0.1rem; font-size: 0.82rem; line-height: 1.3; }
-.tcard-info > div { display: grid; grid-template-columns: 4.4rem minmax(0, 1fr); gap: 0.4rem; padding: 0.15rem 0; border-bottom: 1px dotted var(--rule); }
-.tcard-info dt { color: var(--muted); font-weight: 600; }
+/* facts under each card: name across the top, then team, position, number and PIM in a tight 2 x 2 grid */
+.tcard-info { margin: 0.55rem 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.25rem 0.6rem; font-size: 0.8rem; line-height: 1.2; }
+.tcard-info > div { min-width: 0; padding-bottom: 0.2rem; border-bottom: 1px dotted var(--rule); }
+.tcard-info > div:first-child { grid-column: 1 / -1; }
+.tcard-info dt { color: var(--muted); font-size: 0.64rem; font-weight: 600; line-height: 1.1; }
 .tcard-info dd { margin: 0; overflow-wrap: anywhere; }
-.tcard-info dd.nm { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; line-height: 1.15; }
+.tcard-info dd.nm { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; line-height: 1.1; }
 
-.modal-foot { margin-top: 1.2rem; padding-top: 0.8rem; border-top: 2px solid var(--navy); font-size: 0.88rem; }
-.modal-foot p { margin: 0 0 0.4rem; }
+.modal-foot { margin-top: 0.8rem; padding-top: 0.55rem; border-top: 2px solid var(--navy); font-size: 0.82rem; line-height: 1.35; }
+.modal-foot p { margin: 0 0 0.25rem; }
+.modal-foot .pim-note { font-size: 0.7rem; line-height: 1.3; margin: 0.2rem 0 0; }
+
+/* short but wide screens (laptops, phones on their side): each card puts its facts beside it instead of
+   underneath, so the cards can use the full height. Card width is also capped by the screen width. */
+@media (min-width: 520px) and (max-height: 760px) {
+  .card-modal {
+    --info-w: 8.5rem;
+    --art-w: clamp(4.5rem, calc((100vh - 14rem) * 5 / 7), calc(48vw - 11rem));
+    --art-w: clamp(4.5rem, calc((100dvh - 14rem) * 5 / 7), calc(48vw - 11rem));
+    width: calc(2 * (var(--art-w) + var(--info-w) + 0.7rem) + var(--gap) + 2.6rem);
+  }
+  .card-pair { grid-template-columns: repeat(2, auto); }
+  .tcard { display: grid; grid-template-columns: var(--art-w) minmax(0, var(--info-w)); gap: 0.7rem; align-items: start; }
+  .tcard-info { margin: 0; grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
+  .tcard-win { top: -0.5rem; }
+}
+@media (min-width: 520px) and (max-height: 420px) {
+  .card-modal { --art-w: clamp(4rem, calc((100dvh - 16rem) * 5 / 7), calc(48vw - 11rem)); }
+  .modal-foot .pim-note { display: none; }
+}
 
 /* ---- footer ---- */
-.site-foot { max-width: 44rem; margin: 0 auto; padding: 3rem 1rem 4rem; font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); }
+.site-foot {
+  padding: 3rem max(1rem, calc((100% - 44rem) / 2)) 4rem;
+  font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted);
+  background-color: var(--cream); background-image: var(--grain);
+  border-top: 4px solid var(--navy);
+}
 
 /* =====================================================================
    MOBILE: chart pinned on top, text scrolls beneath
    ===================================================================== */
 @media (max-width: 900px) {
   #scrolly { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 0.75rem; }
-  .sticky-canvas { order: -1; top: 0; height: 58vh; z-index: 10; padding-top: 0.4rem; background: var(--cream); }
-  .panel { border-radius: 10px; box-shadow: 4px 4px 0 var(--navy); }
-  .sticky-canvas { padding-right: 4px; padding-bottom: 4px; }
+  .sticky-canvas { order: -1; top: 0; height: 58vh; z-index: 10; padding-top: 0.4rem; background-color: var(--stage-bg); background-image: var(--grain); }
   .panel-head h3 { font-size: 0.95rem; }
   .panel-head { padding-top: 0.5rem; }
   .viz-view { padding: 0.5rem 0.75rem; }
@@ -412,12 +659,11 @@ input[type="range"]:disabled { cursor: default; opacity: 0.6; }
   .log-date { grid-column: 1 / -1; }
   .log-detail { padding-left: 0.5rem; }
   .rink-team .back b { font-size: 1.1rem; }
-  .hero { padding-bottom: 2rem; }
-  .hero-dots { width: 80%; opacity: 0.55; }
-  .tcard-info > div { grid-template-columns: 3.4rem minmax(0, 1fr); }
-  .tcard-info { font-size: 0.76rem; }
-  .card-modal { width: 96vw; box-shadow: 5px 5px 0 var(--navy); }
-  .modal-body { padding: 1rem 0.9rem 1.2rem; }
+  .intro-lockup { width: min(86vw, 70svh, 26rem); }
+  .hero-sub { font-size: 1.15rem; }
+  .card-modal { --art-w: clamp(5rem, calc((100dvh - 27rem) * 5 / 7), 42vw); box-shadow: 4px 4px 0 var(--navy); }
+  .modal-body { padding: 0.9rem 0.8rem 0.9rem; }
+  .tcard-info { font-size: 0.74rem; }
 }
 
 /* =====================================================================
@@ -425,5 +671,7 @@ input[type="range"]:disabled { cursor: default; opacity: 0.6; }
    ===================================================================== */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .intro *, .intro.play * { animation: none !important; }
+  .js .intro:not(.play) .tape-pile li { visibility: visible; }
   *, *::before, *::after { transition-duration: 0.01ms !important; transition-delay: 0s !important; }
 }
