@@ -176,7 +176,7 @@ body:has(dialog[open]) { overflow: hidden; }
 .tape-pile {
   position: relative;
   container-type: inline-size;
-  width: 87.4%;
+  width: 97.4%;
   aspect-ratio: 472 / 232;
   margin: 4cqw auto 0;
   padding: 0;
@@ -273,7 +273,7 @@ html { scroll-behavior: smooth; }
 @keyframes unhide { to { visibility: visible; } }
 
 /* ---- part 2: the title block below the intro ---- */
-.hero-inner { max-width: 1360px; margin: 0 auto; padding: clamp(3rem, 10svh, 6rem) clamp(1rem, 5vw, 4rem); }
+.hero-inner { max-width: 1360px; margin: 0 auto; padding: clamp(3rem, 10rem, 6rem) clamp(1rem, 5vw, 4rem); }
 .hero-copy { max-width: 60rem; }
 .hero h1 {
   font-family: var(--font-display);
