@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Five Seasons of Fights </title>
+  <title>The Disappearing Playoff Enforcer</title>
   <meta name="description" content="Playoff fights in the NHL have nearly vanished. An interactive look at who still fights, and when, from 2021-22 to 2025-26.">
-  <meta property="og:title" content="Five Seasons of Fights">
-  <meta property="og:description" content="Playoff fights in the NHL have nearly vanished. Thirteen playoff fights in 2022-23. Two in 2024-25. An interactive look at who still fights, and when, from 2021-22 to 2025-26.">
+  <meta property="og:title" content="The Disappearing Playoff Enforcer">
+  <meta property="og:description" content="Thirteen playoff fights in 2022-23. Two in 2024-25. Click any fight to see the trading cards.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,28 +70,56 @@
 
   <div class="hero-inner">
     <div class="hero-copy" id="hero-copy">
-      <h1>Do teams that fight more win more?</h1>
-      <p class="hero-lede">Playoff fights are fading in the NHL.</p>
-      <p class="hero-sub">From Thirteen playoff fights in 2022-23 to two in 2024-25, it made us wonder. Here's a look at the decreasing post-season brawl, and the players who still drop the mitts.</p>
+      <h1>The Disappearing Playoff Enforcer</h1>
+      <p class="hero-lede">Thirteen playoff fights in 2022-23. Two in 2024-25.</p>
+      <p class="hero-sub">A look at the fading post-season brawl, and the players who still drop the mitts.</p>
       <p class="hero-note">Fight counts from HockeyFights.com's NHL postseason logs, 2021-22 through 2025-26.</p>
     </div>
 
   </div>
 </header>
 
+<!-- =====================================================================
+     CARD DECK
+     Every trading card, stacked and fanned. Drag the front card off the stack,
+     click a card in the fan to bring it forward, use the slider or arrow buttons,
+     or press the left and right arrow keys while the stack is focused.
+     The cards themselves are built by buildDeck() in app.js from the same card data
+     as the pop-up, so the images come from cards.json. Cards without an image yet
+     show the drawn placeholder.
+     ===================================================================== -->
+<section class="deck" id="deck" aria-labelledby="deck-title">
+  <h2 class="deck-title" id="deck-title">Meet the fighters</h2>
+
+  <div class="deck-stage" id="deck-stage" tabindex="0" role="group" aria-roledescription="carousel"
+       aria-label="Trading cards. Drag a card away, use the left and right arrow keys, or use the slider below.">
+    <ol class="deck-cards" id="deck-cards"></ol>
+  </div>
+
+  <div class="deck-caption" aria-live="polite" aria-atomic="true">
+    <p class="deck-name" id="deck-name"></p>
+    <p class="deck-meta" id="deck-meta"></p>
+  </div>
+
+  <div class="deck-controls">
+    <button type="button" class="deck-btn" id="deck-prev" aria-label="Previous card">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M20 12 H5 M11 5 L4 12 L11 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg>
+    </button>
+    <input type="range" class="deck-range" id="deck-range" min="0" max="0" value="0" step="1" aria-label="Choose a card">
+    <button type="button" class="deck-btn" id="deck-next" aria-label="Next card">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M4 12 H19 M13 5 L20 12 L13 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg>
+    </button>
+  </div>
+  <p class="deck-hint"><output id="deck-count" for="deck-range"></output> &middot; Drag a card off the stack, click one in the fan, or use the slider.</p>
+</section>
+
 <noscript><p class="noscript">This story is interactive and needs JavaScript turned on.</p></noscript>
-  <section class="intro" aria-labelledby="intro">
-    <div class="hero-inner" id="hero-inner">  
-      <h1>Fights For the Fans</h1>
-      <p class="hero-lede">
-        There is a spectrum of hockey fans: those who hate fighting, and those who love it. We're focusing on those who love it.
-      </p>
-  </section>
+
 <main id="scrolly">
 
   <!-- SCROLLING TEXT -->
   <article class="scroll-text">
-    
+
     <section class="step" data-step="1" aria-labelledby="s1">
       <h2 id="s1">The icebreaker</h2>
       <p>

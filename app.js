@@ -116,9 +116,31 @@ function readableOn(hex) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.4 ? "#111111" : "#ffffff";
 }
 
-// Drawn stand-in used until a real card PNG is linked (or if a link fails to load).
+// PLACEHOLDER CARD: this image stands in for every card that has no art of its own yet
+// (no link for it in cards.json), in both the pop-up and the card deck. Save the file at this
+// path, or change the path. A small "Card art coming" tag is laid over it so it reads as a
+// stand-in. If the file can't be loaded, the drawn card below is used instead.
+const PLACEHOLDER_CARD = "images/2021-22_CGY_Matthew-Tkachuk.png";
+
 function placeholderCard(c) {
+  const who = `${c.name || "this player"}${c.team ? ", " + (TEAMS[c.team] || c.team) : ""}`;
+  return `<div class="tcard-art tcard-art-ph">
+    <img class="ph-img" src="${esc(PLACEHOLDER_CARD)}" alt="Placeholder trading card. Card art for ${esc(who)} is coming." draggable="false" data-card-id="${esc(c.id || "")}">
+    <span class="ph-soon" aria-hidden="true">Card art coming</span>
+  </div>`;
+}
+// Image errors do not bubble, so listen in the capture phase for a placeholder that fails to load.
+document.addEventListener("error", e => {
+  const img = e.target;
+  if (!(img instanceof HTMLImageElement) || !img.classList.contains("ph-img")) return;
+  const art = img.closest(".tcard-art");
+  if (art) art.outerHTML = drawnPlaceholder({ id: img.dataset.cardId, ...(DATA.cards[img.dataset.cardId] || {}) });
+}, true);
+
+// Backup stand-in, drawn in the team's colors, used only if the placeholder image is missing.
+function drawnPlaceholder(c) {
   const [c1, c2] = TEAM_COLORS[c.team] || ["#001f33", "#99e2e0"];
+  c = { ...c, name: c.name || "Player" };
   const last = c.name.split(" ").slice(1).join(" ") || c.name;
   return `<div class="tcard-art tcard-ph" role="img" aria-label="Placeholder card for ${esc(c.name)}, ${esc(TEAMS[c.team] || c.team)}" style="--tc:${c1};--tc2:${c2};--tcfg:${readableOn(c1)}">
     <span class="ph-code" aria-hidden="true">${c.team}</span>
@@ -534,9 +556,9 @@ const VIEWS = [
 ];
 
 // Each step gets its own background (see SECTION THEMES in styles.css).
-// "light" keeps the base cream palette, "color" is a saturated light background
-// that needs darker muted text, and "dark" swaps ink and surface colors.
-const TONES = ["light", "dark", "color", "color", "color", "color", "dark"];
+// The palette is cream, navy and red. "light" is the base cream palette; "dark" (navy) and
+// "red" swap ink and surface colors so text reads cream. Keep in step with SECTION THEMES in styles.css.
+const TONES = ["light", "dark", "red", "light", "dark", "red", "light"];
 
 function setStep(i) {
   if (i === state.step) return;
@@ -585,15 +607,166 @@ function initIntro() {
 }
 
 /* ---------------------------------------------------------------------
+   CARD DECK (the stacked cards between the title and the first step)
+   state.a is the index of the front card. For every card, d = its index minus state.a:
+     d = 0          the front card (draggable)
+     d = 1 to 4     fanned behind it, up and to the left, each a little more tilted
+     d > 4          tucked under the fan, invisible
+     d < 0          already thrown: flung off to the left or right, invisible
+   CSS does the motion; this code only sets each card's --dx, --dy, --rot and --sc.
+   --------------------------------------------------------------------- */
+// [dx, dy, tilt in degrees, scale]. dx and dy are in card widths; negative dy is up.
+const DECK_FAN = [
+  [0, 0, 3, 1],
+  [-0.2, -0.05, -4, 0.97],
+  [-0.4, -0.1, 6, 0.94],
+  [-0.58, -0.17, -7, 0.91],
+  [-0.74, -0.25, 10, 0.88]
+];
+
+function buildDeck() {
+  const stage = $("#deck-stage"), list = $("#deck-cards");
+  if (!stage || !list) return;
+
+  // Story order: cards appear in the order their fights happen, then any card not in a fight.
+  const ids = [], seen = new Set();
+  DATA.fights.forEach(f => [f.c1, f.c2].forEach(id => {
+    if (id && DATA.cards[id] && !seen.has(id)) { seen.add(id); ids.push(id); }
+  }));
+  Object.keys(DATA.cards).forEach(id => { if (!seen.has(id)) ids.push(id); });
+  const n = ids.length;
+  if (!n) { $("#deck").hidden = true; return; }
+
+  const seasonOf = id => id.split("_")[0];
+  list.innerHTML = ids.map((id, i) => {
+    const c = { id, ...DATA.cards[id] };
+    const alt = `Trading card: ${c.name}, ${TEAMS[c.team] || c.team}, ${seasonOf(id)}`;
+    const art = c.img
+      ? `<div class="tcard-art"><img class="tcard-img" src="${esc(c.img)}" alt="${esc(alt)}" draggable="false" decoding="async"${i < 6 ? "" : ' loading="lazy"'}></div>`
+      : placeholderCard(c);
+    return `<li class="deck-card" data-i="${i}">${art}</li>`;
+  }).join("");
+  const cards = $$(".deck-card", list);
+  // If a linked image fails to load, swap in the drawn placeholder instead of a broken image.
+  cards.forEach((el, i) => {
+    const img = $("img.tcard-img", el);
+    if (img) img.addEventListener("error", () => { img.closest(".tcard-art").outerHTML = placeholderCard({ id: ids[i], ...DATA.cards[ids[i]] }); });
+  });
+
+  const range = $("#deck-range"), prev = $("#deck-prev"), next = $("#deck-next");
+  const count = $("#deck-count"), nameEl = $("#deck-name"), metaEl = $("#deck-meta");
+  range.max = String(n - 1);
+  const state = { a: 0, dir: {} };   // dir[i] is the side (-1 left, +1 right) card i was thrown to
+
+  function render() {
+    const a = state.a;
+    cards.forEach((el, i) => {
+      const d = i - a;
+      let f, op, z;
+      if (d >= 0) {
+        f = DECK_FAN[Math.min(d, DECK_FAN.length - 1)];
+        op = d < DECK_FAN.length ? 1 : 0;
+        z = 100 - d;
+      } else {
+        const dir = state.dir[i] ?? (i % 2 ? 1 : -1);
+        f = [dir * 1.9, 0.1, dir * 24, 1];
+        op = 0;
+        z = 200 + i;
+      }
+      el.style.setProperty("--dx", f[0]);
+      el.style.setProperty("--dy", f[1]);
+      el.style.setProperty("--rot", f[2] + "deg");
+      el.style.setProperty("--sc", f[3]);
+      el.style.opacity = op;
+      el.style.zIndex = z;
+      el.classList.toggle("is-front", d === 0);
+      el.classList.toggle("is-out", op === 0);
+      el.setAttribute("aria-hidden", String(d !== 0));
+    });
+    range.value = String(a);
+    prev.disabled = a === 0;
+    next.disabled = a === n - 1;
+    count.textContent = `Card ${a + 1} of ${n}`;
+    const c = DATA.cards[ids[a]];
+    nameEl.textContent = c.name;
+    metaEl.textContent = [TEAMS[c.team] || c.team, seasonOf(ids[a]), POS[c.pos] || c.pos].filter(Boolean).join(" \u00b7 ");
+  }
+  const go = i => { state.a = Math.max(0, Math.min(n - 1, i)); render(); };
+
+  // Dragging. Pull the front card away: past 30% of its width, or a quick flick, throws it.
+  let drag = null;
+  stage.addEventListener("pointerdown", e => {
+    const li = e.target.closest(".deck-card");
+    if (!li || (e.pointerType === "mouse" && e.button !== 0)) return;
+    const i = +li.dataset.i, d = i - state.a;
+    if (d < 0 || d >= DECK_FAN.length) return;
+    drag = { i, d, li, id: e.pointerId, x0: e.clientX, y0: e.clientY, t0: performance.now(), dx: 0, moved: false };
+    if (d === 0) li.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener("pointermove", e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    drag.dx = dx;
+    if (!drag.moved && Math.hypot(dx, dy) > 6) {
+      drag.moved = true;
+      if (drag.d === 0) drag.li.classList.add("dragging");
+    }
+    if (drag.moved && drag.d === 0) {
+      drag.li.style.setProperty("--px", dx + "px");
+      drag.li.style.setProperty("--py", dy * 0.5 + "px");
+      drag.li.style.setProperty("--pr", dx / 18 + "deg");
+    }
+  });
+  function endDrag(e, cancelled) {
+    if (!drag || e.pointerId !== drag.id) return;
+    const { li, d, i, dx, moved, t0 } = drag;
+    drag = null;
+    li.classList.remove("dragging");
+    ["--px", "--py", "--pr"].forEach(p => li.style.removeProperty(p));
+    if (cancelled) return;
+    if (d === 0) {
+      const speed = Math.abs(dx) / Math.max(1, performance.now() - t0);
+      if (moved && (Math.abs(dx) > li.offsetWidth * 0.3 || speed > 0.7)) {
+        if (state.a < n - 1) { state.dir[state.a] = dx >= 0 ? 1 : -1; go(state.a + 1); }
+      } else if (!moved) {
+        go(state.a === n - 1 ? 0 : state.a + 1);   // a plain click advances, and loops at the end
+      }
+    } else if (!moved) {
+      go(i);                                       // clicking a card in the fan brings it forward
+    }
+  }
+  stage.addEventListener("pointerup", e => endDrag(e, false));
+  stage.addEventListener("pointercancel", e => endDrag(e, true));
+
+  // Slider, buttons and keyboard
+  range.addEventListener("input", () => go(+range.value));
+  prev.addEventListener("click", () => go(state.a - 1));
+  next.addEventListener("click", () => go(state.a + 1));
+  stage.addEventListener("keydown", e => {
+    const k = e.key;
+    if (k === "ArrowRight") go(state.a + 1);
+    else if (k === "ArrowLeft") go(state.a - 1);
+    else if (k === "Home") go(0);
+    else if (k === "End") go(n - 1);
+    else return;
+    e.preventDefault();
+  });
+
+  render();
+}
+
+/* ---------------------------------------------------------------------
    INIT
    --------------------------------------------------------------------- */
 function init() {
   initIntro();
+  // The deck needs only the card data, not d3. Wait for cards.json (image links) so the
+  // cards open with their images; if it is missing, the drawn placeholders are used.
+  loadCardOverrides().then(buildDeck);
   if (typeof d3 === "undefined") {
     $("#panel-title").textContent = "The chart library did not load. Check your connection and reload.";
     return;
   }
-  loadCardOverrides();
   fillStats();
   buildRink();
   buildDecline();
