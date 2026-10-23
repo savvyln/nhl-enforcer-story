@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Five Seasons of Fights</title>
-  <meta name="description" content="Do playoff teams that fight more win more? ">
-  <meta property="og:title" content="Five Seasons of Fights">
-  <meta property="og:description" content="An interactive data story of the disappearing NHL Playoff Enforcer.">
+  <title>The Disappearing Playoff Enforcer</title>
+  <meta name="description" content="Playoff fights in the NHL have nearly vanished. An interactive look at who still fights, and when, from 2021-22 to 2025-26.">
+  <meta property="og:title" content="The Disappearing Playoff Enforcer">
+  <meta property="og:description" content="Thirteen playoff fights in 2022-23. Two in 2024-25. Click any fight to see the trading cards.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://use.typekit.net/eip6bzg.css">
   <!-- Newsreader (body text) -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap">
+  <script>document.documentElement.classList.add("js")</script>
   <link rel="stylesheet" href="styles.css">
 
   <!-- d3 first, then the story. Both are deferred, so they run in this order after the page is parsed. -->
@@ -23,18 +24,63 @@
 <body>
 
 <header class="hero">
+
+  <!-- =====================================================================
+       INTRO: one full screen of ice with a taped-up title.
+       Sequence: "Five seasons of" is already on screen, strips of tape fly in,
+       then the big FIGHTS bar rises from the bottom and settles on top of the pile.
+       ===================================================================== -->
+  <section class="intro" id="intro">
+
+    <!-- ICE BACKGROUND SLOT
+         The ice photo is set in styles.css, on the .intro rule, as  --ice-image: url("images/Ice.png").
+         Change that one line to use another file or folder. If the file is missing, a CSS-drawn
+         icy background is used instead. -->
+
+    <div class="intro-lockup" role="img" aria-label="Five seasons of fights, also known as dances, tilts, donnybrooks, trading blows and scraps">
+      <p class="intro-kicker" aria-hidden="true">Five seasons of</p>
+
+      <!-- TAPE IMAGE SLOTS
+           One <li> per strip, listed bottom to top (the last one sits on top).
+           To use your own tape art, save a PNG for each strip in your /images folder
+           with the file name in its data-tape attribute (or change the path). Paths are
+           relative to this index.html. A strip whose file is missing keeps its CSS-drawn
+           flat color, so you can add them one at a time.
+           The image is stretched to the strip's box, so for best results use a PNG with a
+           transparent background and about these width:height ratios:
+             tape-donnybrook 3.1:1   tape-trading-blows 3.3:1   tape-scrap 2.9:1
+             tape-tilt 2.75:1        tape-dance 4.35:1          tape-fights 4:1
+           Strip size, position and tilt are set per strip in styles.css (TAPE PILE).
+           Text is drawn on top of the image, so leave the art free of lettering. -->
+      <ul class="tape-pile" aria-hidden="true">
+        <li class="t-donnybrook"    data-tape="images/tape-donnybrook.png">donnybrooks</li>
+        <li class="t-trading-blows" data-tape="images/tape-trading-blows.png">trading blows</li>
+        <li class="t-scrap"         data-tape="images/tape-scrap.png">scraps</li>
+        <li class="t-tilt"          data-tape="images/tape-tilt.png">tilts</li>
+        <li class="t-dance"         data-tape="images/tape-dance.png">dances</li>
+        <li class="t-fights"        data-tape="images/tape-fights.png">fights</li>
+      </ul>
+    </div>
+
+    <a class="scroll-cue" href="#hero-copy">
+      <span>Scroll to continue</span>
+      <svg viewBox="0 0 24 32" width="26" height="34" aria-hidden="true" focusable="false"><path d="M12 2 V28 M3 19 L12 29 L21 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg>
+    </a>
+  </section>
+
   <div class="hero-inner">
-  <h1>Five Seasons of Fights</h1>
-  <p class="hero-lede">Do playoff teams that fight more win more?</p>
-  <p class="hero-sub">An interactive data story of the disappearing NHL Playoff Enforcer from 2021-2026.</p>
-  <br>
-  <p class="hero-note">Scroll for more.</p>
+    <div class="hero-copy" id="hero-copy">
+      <h1>The Disappearing Playoff Enforcer</h1>
+      <p class="hero-lede">Thirteen playoff fights in 2022-23. Two in 2024-25.</p>
+      <p class="hero-sub">A look at the fading post-season brawl, and the players who still drop the mitts.</p>
+      <p class="hero-note">Fight counts from HockeyFights.com's NHL postseason logs, 2021-22 through 2025-26.</p>
+    </div>
+
   </div>
 </header>
 
 <noscript><p class="noscript">This story is interactive and needs JavaScript turned on.</p></noscript>
 
-  <br> 
 <main id="scrolly">
 
   <!-- SCROLLING TEXT -->
