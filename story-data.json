@@ -1,0 +1,733 @@
+{
+ "cards": {
+  "2021-22_CAR_Steven-Lorentz": {
+   "img": "images/2021-22_CAR_Steven-Lorentz.png",
+   "pos": "C",
+   "pim": 21,
+   "alt": "Steven Lorentz"
+  },
+  "2021-22_CGY_Matthew-Tkachuk": {
+   "img": "images/2021-22_CGY_Matthew-Tkachuk.png",
+   "pos": "L",
+   "pim": 158,
+   "alt": "Matthew Tkachuk"
+  },
+  "2021-22_CGY_Rasmus-Andersson": {
+   "img": "images/2021-22_CGY_Rasmus-Andersson.png",
+   "pos": "D",
+   "pim": 41,
+   "alt": "Rasmus Andersson"
+  },
+  "2021-22_COL_Logan-O-Connor": {
+   "img": "images/2021-22_COL_Logan-O-Connor.png",
+   "pos": "R",
+   "pim": 31,
+   "alt": "Logan O'Connor"
+  },
+  "2021-22_DAL_John-Klingberg": {
+   "img": "images/2021-22_DAL_John-Klingberg.png",
+   "pos": "D",
+   "pim": 28,
+   "alt": "John Klingberg"
+  },
+  "2021-22_DAL_Michael-Raffl": {
+   "img": "images/2021-22_DAL_Michael-Raffl.png",
+   "pos": "L",
+   "pim": 19,
+   "alt": "Michael Raffl"
+  },
+  "2021-22_FLA_Aaron-Ekblad": {
+   "img": "images/2021-22_FLA_Aaron-Ekblad.png",
+   "pos": "D",
+   "pim": 85,
+   "alt": "Aaron Ekblad"
+  },
+  "2021-22_NYR_Alexis-Lafreniere": {
+   "img": "images/2021-22_NYR_Alexis-Lafreniere.png",
+   "pos": "L",
+   "pim": 17,
+   "alt": "Alexis Lafrenière"
+  },
+  "2021-22_NYR_Frank-Vatrano": {
+   "img": "images/2021-22_NYR_Frank-Vatrano.png",
+   "pos": "R",
+   "pim": 13,
+   "alt": "Frank Vatrano"
+  },
+  "2021-22_NYR_Jacob-Trouba": {
+   "img": "images/2021-22_NYR_Jacob-Trouba.png",
+   "pos": "D",
+   "pim": 57,
+   "alt": "Jacob Trouba"
+  },
+  "2021-22_TBL_Brandon-Hagel": {
+   "img": "images/2021-22_TBL_Brandon-Hagel.png",
+   "pos": "L",
+   "pim": 45,
+   "alt": "Brandon Hagel"
+  },
+  "2021-22_TBL_Jan-Rutta": {
+   "img": "images/2021-22_TBL_Jan-Rutta.png",
+   "pos": "D",
+   "pim": 17,
+   "alt": "Jan Rutta"
+  },
+  "2021-22_TBL_Ross-Colton": {
+   "img": "images/2021-22_TBL_Ross-Colton.png",
+   "pos": "C",
+   "pim": 35,
+   "alt": "Ross Colton"
+  },
+  "2021-22_TBL_Steven-Stamkos": {
+   "img": "images/2021-22_TBL_Steven-Stamkos.png",
+   "pos": "C",
+   "pim": 36,
+   "alt": "Steven Stamkos"
+  },
+  "2021-22_TOR_Morgan-Rielly": {
+   "img": "images/2021-22_TOR_Morgan-Rielly.png",
+   "pos": "D",
+   "pim": 27,
+   "alt": "Morgan Rielly"
+  },
+  "2021-22_WSH_Anthony-Mantha": {
+   "img": "images/2021-22_WSH_Anthony-Mantha.png",
+   "pos": "R",
+   "pim": 35,
+   "alt": "Anthony Mantha"
+  },
+  "2022-23_BOS_Derek-Forbort": {
+   "img": "images/2022-23_BOS_Derek-Forbort.png",
+   "pos": "D",
+   "pim": 31,
+   "alt": "Derek Forbort"
+  },
+  "2022-23_CAR_Stefan-Noesen": {
+   "img": "images/2022-23_CAR_Stefan-Noesen.png",
+   "pos": "R",
+   "pim": 42,
+   "alt": "Stefan Noesen"
+  },
+  "2022-23_EDM_Brett-Kulak": {
+   "img": "images/2022-23_EDM_Brett-Kulak.png",
+   "pos": "D",
+   "pim": 49,
+   "alt": "Brett Kulak"
+  },
+  "2022-23_EDM_Darnell-Nurse": {
+   "img": "images/2022-23_EDM_Darnell-Nurse.png",
+   "pos": "D",
+   "pim": 94,
+   "alt": "Darnell Nurse"
+  },
+  "2022-23_EDM_Klim-Kostin": {
+   "img": "images/2022-23_EDM_Klim-Kostin.png",
+   "pos": "C",
+   "pim": 9,
+   "alt": "Klim Kostin"
+  },
+  "2022-23_FLA_Brandon-Montour": {
+   "img": "images/2022-23_FLA_Brandon-Montour.png",
+   "pos": "D",
+   "pim": 57,
+   "alt": "Brandon Montour"
+  },
+  "2022-23_NJD_Erik-Haula": {
+   "img": "images/2022-23_NJD_Erik-Haula.png",
+   "pos": "L",
+   "pim": 25,
+   "alt": "Erik Haula"
+  },
+  "2022-23_NJD_Kevin-Bahl": {
+   "img": "images/2022-23_NJD_Kevin-Bahl.png",
+   "pos": "D",
+   "pim": 31,
+   "alt": "Kevin Bahl"
+  },
+  "2022-23_NJD_Michael-McLeod": {
+   "img": "images/2022-23_NJD_Michael-McLeod.png",
+   "pos": "C",
+   "pim": 15,
+   "alt": "Michael McLeod"
+  },
+  "2022-23_NYR_Barclay-Goodrow": {
+   "img": "images/2022-23_NYR_Barclay-Goodrow.png",
+   "pos": "C",
+   "pim": 47,
+   "alt": "Barclay Goodrow"
+  },
+  "2022-23_NYR_Braden-Schneider": {
+   "img": "images/2022-23_NYR_Braden-Schneider.png",
+   "pos": "D",
+   "pim": 31,
+   "alt": "Braden Schneider"
+  },
+  "2022-23_TBL_Corey-Perry": {
+   "img": "images/2022-23_TBL_Corey-Perry.png",
+   "pos": "R",
+   "pim": 61,
+   "alt": "Corey Perry"
+  },
+  "2022-23_TBL_Nikita-Kucherov": {
+   "img": "images/2022-23_TBL_Nikita-Kucherov.png",
+   "pos": "R",
+   "pim": 39,
+   "alt": "Nikita Kucherov"
+  },
+  "2022-23_TBL_Steven-Stamkos": {
+   "img": "images/2022-23_TBL_Steven-Stamkos.png",
+   "pos": "C",
+   "pim": 36,
+   "alt": "Steven Stamkos"
+  },
+  "2022-23_TBL_Tanner-Jeannot": {
+   "img": "images/2022-23_TBL_Tanner-Jeannot.png",
+   "pos": "L",
+   "pim": 13,
+   "alt": "Tanner Jeannot"
+  },
+  "2022-23_TBL_Zach-Bogosian": {
+   "img": "images/2022-23_TBL_Zach-Bogosian.png",
+   "pos": "D",
+   "pim": 15,
+   "alt": "Zach Bogosian"
+  },
+  "2022-23_TOR_Auston-Matthews": {
+   "img": "images/2022-23_TOR_Auston-Matthews.png",
+   "pos": "C",
+   "pim": 11,
+   "alt": "Auston Matthews"
+  },
+  "2022-23_TOR_Justin-Holl": {
+   "img": "images/2022-23_TOR_Justin-Holl.png",
+   "pos": "D",
+   "pim": 17,
+   "alt": "Justin Holl"
+  },
+  "2022-23_TOR_Luke-Schenn": {
+   "img": "images/2022-23_TOR_Luke-Schenn.png",
+   "pos": "D",
+   "pim": 43,
+   "alt": "Luke Schenn"
+  },
+  "2022-23_TOR_Mark-Giordano": {
+   "img": "images/2022-23_TOR_Mark-Giordano.png",
+   "pos": "D",
+   "pim": 13,
+   "alt": "Mark Giordano"
+  },
+  "2022-23_TOR_Ryan-O-Reilly": {
+   "img": "images/2022-23_TOR_Ryan-O-Reilly.png",
+   "pos": "C",
+   "pim": 7,
+   "alt": "Ryan O'Reilly"
+  },
+  "2022-23_VGK_Brett-Howden": {
+   "img": "images/2022-23_VGK_Brett-Howden.png",
+   "pos": "C",
+   "pim": 41,
+   "alt": "Brett Howden"
+  },
+  "2022-23_VGK_Keegan-Kolesar": {
+   "img": "images/2022-23_VGK_Keegan-Kolesar.png",
+   "pos": "R",
+   "pim": 64,
+   "alt": "Keegan Kolesar"
+  },
+  "2022-23_VGK_Nicolas-Hague": {
+   "img": "images/2022-23_VGK_Nicolas-Hague.png",
+   "pos": "D",
+   "pim": 46,
+   "alt": "Nicolas Hague"
+  },
+  "2022-23_VGK_Zach-Whitecloud": {
+   "img": "images/2022-23_VGK_Zach-Whitecloud.png",
+   "pos": "D",
+   "pim": 31,
+   "alt": "Zach Whitecloud"
+  },
+  "2022-23_WPG_Brenden-Dillon": {
+   "img": "images/2022-23_WPG_Brenden-Dillon.png",
+   "pos": "D",
+   "pim": 13,
+   "alt": "Brenden Dillon"
+  },
+  "2023-24_BOS_David-Pastrnak": {
+   "img": "images/2023-24_BOS_David-Pastrnak.png",
+   "pos": "R",
+   "pim": 37,
+   "alt": "David Pastrnak"
+  },
+  "2023-24_CAR_Stefan-Noesen": {
+   "img": "images/2023-24_CAR_Stefan-Noesen.png",
+   "pos": "R",
+   "pim": 42,
+   "alt": "Stefan Noesen"
+  },
+  "2023-24_COL_Miles-Wood": {
+   "img": "images/2023-24_COL_Miles-Wood.png",
+   "pos": "L",
+   "pim": 27,
+   "alt": "Miles Wood"
+  },
+  "2023-24_EDM_Evander-Kane": {
+   "img": "images/2023-24_EDM_Evander-Kane.png",
+   "pos": "L",
+   "pim": 164,
+   "alt": "Evander Kane"
+  },
+  "2023-24_FLA_Matthew-Tkachuk": {
+   "img": "images/2023-24_FLA_Matthew-Tkachuk.png",
+   "pos": "L",
+   "pim": 158,
+   "alt": "Matthew Tkachuk"
+  },
+  "2023-24_LAK_Andreas-Englund": {
+   "img": "images/2023-24_LAK_Andreas-Englund.png",
+   "pos": "D",
+   "pim": 9,
+   "alt": "Andreas Englund"
+  },
+  "2023-24_NYI_Kyle-MacLean": {
+   "img": "images/2023-24_NYI_Kyle-MacLean.png",
+   "pos": "C",
+   "pim": 5,
+   "alt": "Kyle MacLean"
+  },
+  "2023-24_WPG_Adam-Lowry": {
+   "img": "images/2023-24_WPG_Adam-Lowry.png",
+   "pos": "C",
+   "pim": 25,
+   "alt": "Adam Lowry"
+  },
+  "2024-25_EDM_Darnell-Nurse": {
+   "img": "images/2024-25_EDM_Darnell-Nurse.png",
+   "pos": "D",
+   "pim": 94,
+   "alt": "Darnell Nurse"
+  },
+  "2024-25_EDM_Trent-Frederic": {
+   "img": "images/2024-25_EDM_Trent-Frederic.png",
+   "pos": "C",
+   "pim": 71,
+   "alt": "Trent Frederic"
+  },
+  "2024-25_FLA_Jonah-Gadjovich": {
+   "img": "images/2024-25_FLA_Jonah-Gadjovich.png",
+   "pos": "L",
+   "pim": 33,
+   "alt": "Jonah Gadjovich"
+  },
+  "2024-25_VGK_Nicolas-Hague": {
+   "img": "images/2024-25_VGK_Nicolas-Hague.png",
+   "pos": "D",
+   "pim": 46,
+   "alt": "Nicolas Hague"
+  },
+  "2025-26_ANA_Jeff-Viel": {
+   "img": "images/2025-26_ANA_Jeff-Viel.png",
+   "pos": "L",
+   "pim": 17,
+   "alt": "Jeff Viel"
+  },
+  "2025-26_BOS_Mark-Kastelic": {
+   "img": "images/2025-26_BOS_Mark-Kastelic.png",
+   "pos": "C",
+   "pim": 11,
+   "alt": "Mark Kastelic"
+  },
+  "2025-26_BUF_Logan-Stanley": {
+   "img": "images/2025-26_BUF_Logan-Stanley.png",
+   "pos": "D",
+   "pim": 67,
+   "alt": "Logan Stanley"
+  },
+  "2025-26_CAR_Jordan-Staal": {
+   "img": "images/2025-26_CAR_Jordan-Staal.png",
+   "pos": "C",
+   "pim": 33,
+   "alt": "Jordan Staal"
+  },
+  "2025-26_EDM_Vasily-Podkolzin": {
+   "img": "images/2025-26_EDM_Vasily-Podkolzin.png",
+   "pos": "R",
+   "pim": 35,
+   "alt": "Vasily Podkolzin"
+  },
+  "2025-26_MTL_Juraj-Slafkovsky": {
+   "img": "images/2025-26_MTL_Juraj-Slafkovsky.png",
+   "pos": "L",
+   "pim": 13,
+   "alt": "Juraj Slafkovský"
+  },
+  "2025-26_OTT_Brady-Tkachuk": {
+   "img": "images/2025-26_OTT_Brady-Tkachuk.png",
+   "pos": "L",
+   "pim": 19,
+   "alt": "Brady Tkachuk"
+  },
+  "2025-26_TBL_Brandon-Hagel": {
+   "img": "images/2025-26_TBL_Brandon-Hagel.png",
+   "pos": "L",
+   "pim": 45,
+   "alt": "Brandon Hagel"
+  }
+ },
+ "fights": {
+  "n265400": {
+   "round": 1,
+   "series": "TOR-TBL",
+   "gameNo": 1,
+   "len": 10.0,
+   "instigator": "Jan Rutta",
+   "instSrc": "https://www.hockeyfights.com/fights/n265400",
+   "gameWinner": "TOR"
+  },
+  "n265403": {
+   "round": 1,
+   "series": "CGY-DAL",
+   "gameNo": 1,
+   "len": 15.0,
+   "instigator": "Matthew Tkachuk",
+   "instSrc": "https://www.hockeyfights.com/fights/n265403",
+   "gameWinner": "CGY"
+  },
+  "n265404": {
+   "round": 1,
+   "series": "CGY-DAL",
+   "gameNo": 1,
+   "len": 7.0,
+   "instigator": "None",
+   "gameWinner": "CGY"
+  },
+  "n265410": {
+   "round": 1,
+   "series": "CGY-DAL",
+   "gameNo": 3,
+   "len": 9.0,
+   "instigator": "John Klingberg",
+   "instSrc": "https://www.hockeyfights.com/fights/n265410",
+   "gameWinner": "DAL"
+  },
+  "n265416": {
+   "round": 1,
+   "series": "FLA-WSH",
+   "gameNo": 5,
+   "len": 3.0,
+   "instigator": "None",
+   "gameWinner": "FLA"
+  },
+  "n265426": {
+   "round": 2,
+   "series": "CAR-NYR",
+   "gameNo": 4,
+   "len": 9.0,
+   "instigator": "Steven Lorentz",
+   "instSrc": "https://www.hockeyfights.com/fights/n265426",
+   "gameWinner": "NYR"
+  },
+  "n265432": {
+   "round": 3,
+   "series": "NYR-TBL",
+   "gameNo": 4,
+   "len": 4.0,
+   "instigator": "None",
+   "gameWinner": "TBL"
+  },
+  "n265434": {
+   "round": 3,
+   "series": "NYR-TBL",
+   "gameNo": 5,
+   "len": 14.0,
+   "instigator": "None",
+   "gameWinner": "TBL"
+  },
+  "n265438": {
+   "round": 4,
+   "series": "COL-TBL",
+   "gameNo": 3,
+   "len": 24.0,
+   "instigator": "Logan O'Connor",
+   "instSrc": "https://www.hockeyfights.com/fights/n265438",
+   "gameWinner": "TBL"
+  },
+  "n267508": {
+   "round": 1,
+   "series": "NJD-NYR",
+   "gameNo": 2,
+   "len": 11.0,
+   "instigator": "None",
+   "gameWinner": "NYR"
+  },
+  "n267509": {
+   "round": 1,
+   "series": "VGK-WPG",
+   "gameNo": 3,
+   "len": 24.0,
+   "instigator": "Keegan Kolesar",
+   "instSrc": "https://www.hockeyfights.com/fights/n267509",
+   "gameWinner": "VGK"
+  },
+  "n267510": {
+   "round": 1,
+   "series": "TOR-TBL",
+   "gameNo": 3,
+   "len": 21.0,
+   "instigator": "None",
+   "gameWinner": "TOR"
+  },
+  "n267511": {
+   "round": 1,
+   "series": "TOR-TBL",
+   "gameNo": 3,
+   "len": 6.0,
+   "instigator": "None",
+   "gameWinner": "TOR"
+  },
+  "n267512": {
+   "round": 1,
+   "series": "BOS-FLA",
+   "gameNo": 4,
+   "len": 3.0,
+   "instigator": "Derek Forbort",
+   "instSrc": "https://www.hockeyfights.com/fights/n267512",
+   "gameWinner": "BOS"
+  },
+  "n267513": {
+   "round": 1,
+   "series": "NJD-NYR",
+   "gameNo": 5,
+   "len": 25.0,
+   "instigator": "Barclay Goodrow",
+   "instSrc": "https://www.hockeyfights.com/fights/n267513",
+   "gameWinner": "NJD"
+  },
+  "n267522": {
+   "round": 2,
+   "series": "VGK-EDM",
+   "gameNo": 2,
+   "len": 10.0,
+   "instigator": "None",
+   "gameWinner": "EDM"
+  },
+  "n267523": {
+   "round": 2,
+   "series": "VGK-EDM",
+   "gameNo": 2,
+   "len": 18.0,
+   "instigator": "Zach Whitecloud",
+   "instSrc": "https://www.hockeyfights.com/fights/n267523",
+   "gameWinner": "EDM"
+  },
+  "n267524": {
+   "round": 2,
+   "series": "CAR-NJD",
+   "gameNo": 3,
+   "len": 28.0,
+   "instigator": "None",
+   "gameWinner": "NJD"
+  },
+  "n267560": {
+   "round": 2,
+   "series": "VGK-EDM",
+   "gameNo": 4,
+   "len": 44.0,
+   "instigator": "Darnell Nurse",
+   "instSrc": "https://scoutingtherefs.com/2023/05/39380/oilers-nurse-faces-suspension-after-late-instigator-penalty/",
+   "gameWinner": "EDM"
+  },
+  "n269559": {
+   "round": 1,
+   "series": "CAR-NYI",
+   "gameNo": 2,
+   "len": 10.0,
+   "instigator": "Kyle MacLean",
+   "instSrc": "https://www.hockeyfights.com/fights/n269559",
+   "gameWinner": "CAR"
+  },
+  "n269561": {
+   "round": 1,
+   "series": "EDM-LAK",
+   "gameNo": 3,
+   "len": 7.0,
+   "instigator": "Andreas Englund",
+   "instSrc": "https://www.hockeyfights.com/fights/n269561",
+   "gameWinner": "EDM"
+  },
+  "n269570": {
+   "round": 1,
+   "series": "COL-WPG",
+   "gameNo": 3,
+   "len": 2.0,
+   "instigator": "None",
+   "gameWinner": "COL"
+  },
+  "n269572": {
+   "round": 2,
+   "series": "FLA-BOS",
+   "gameNo": 2,
+   "len": 12.0,
+   "instigator": "None",
+   "gameWinner": "FLA"
+  },
+  "n271733": {
+   "round": 3,
+   "series": "EDM-VGK",
+   "gameNo": 2,
+   "len": 20.0,
+   "instigator": "None",
+   "gameWinner": "EDM"
+  },
+  "n271744": {
+   "round": 4,
+   "series": "FLA-EDM",
+   "gameNo": 2,
+   "len": 23.0,
+   "instigator": "None",
+   "gameWinner": "FLA"
+  },
+  "n273544": {
+   "round": 1,
+   "series": "CAR-OTT",
+   "gameNo": 2,
+   "len": 11.0,
+   "instigator": "None",
+   "gameWinner": "CAR"
+  },
+  "n273550": {
+   "round": 1,
+   "series": "TBL-MTL",
+   "gameNo": 3,
+   "len": 25.0,
+   "instigator": "Brandon Hagel",
+   "instSrc": "https://www.hockeyfights.com/fights/n273550",
+   "gameWinner": "TBL"
+  },
+  "n273551": {
+   "round": 1,
+   "series": "BOS-BUF",
+   "gameNo": 3,
+   "len": 16.0,
+   "instigator": "Mark Kastelic",
+   "instSrc": "https://www.hockeyfights.com/fights/n273551",
+   "gameWinner": "BOS"
+  },
+  "n273553": {
+   "round": 1,
+   "series": "EDM-ANA",
+   "gameNo": 3,
+   "len": 13.0,
+   "instigator": "Vasily Podkolzin",
+   "instSrc": "https://www.hockeyfights.com/fights/n273553",
+   "gameWinner": "ANA"
+  },
+  "p2023-04-20-1": {
+   "round": 1,
+   "series": "TOR-TBL",
+   "gameNo": 2,
+   "len": 12.0,
+   "instigator": "Zach Bogosian",
+   "instSrc": "https://www.hockeyfights.com/fights/n267505",
+   "gameWinner": "TOR",
+   "p1": "Mark Giordano",
+   "t1": "TOR",
+   "p2": "Zach Bogosian",
+   "t2": "TBL",
+   "per": 1,
+   "t": "3:02",
+   "w": "Mark Giordano",
+   "pct": 0.82,
+   "rt": 4.43,
+   "v": 73,
+   "url": "https://www.hockeyfights.com/fights/n267505"
+  },
+  "p2023-04-20-2": {
+   "round": 1,
+   "series": "TOR-TBL",
+   "gameNo": 2,
+   "len": 30.0,
+   "instigator": "Tanner Jeannot",
+   "instSrc": "https://www.hockeyfights.com/fights/n267506",
+   "gameWinner": "TOR",
+   "p1": "Luke Schenn",
+   "t1": "TOR",
+   "p2": "Tanner Jeannot",
+   "t2": "TBL",
+   "per": 3,
+   "t": "8:43",
+   "w": "Tanner Jeannot",
+   "pct": 0.42,
+   "rt": 7.64,
+   "v": 196,
+   "url": "https://www.hockeyfights.com/fights/n267506"
+  },
+  "p2023-04-20-3": {
+   "round": 1,
+   "series": "TOR-TBL",
+   "gameNo": 2,
+   "len": 12.0,
+   "instigator": "Justin Holl",
+   "instSrc": "https://www.hockeyfights.com/fights/n267507",
+   "gameWinner": "TOR",
+   "p1": "Justin Holl",
+   "t1": "TOR",
+   "p2": "Corey Perry",
+   "t2": "TBL",
+   "per": 3,
+   "t": "13:03",
+   "w": "Corey Perry",
+   "pct": 0.85,
+   "rt": 3.48,
+   "v": 50,
+   "url": "https://www.hockeyfights.com/fights/n267507"
+  }
+ },
+ "teamGames": {
+  "2021-22": {
+   "COL": {
+    "g": null,
+    "result": "Won Cup"
+   },
+   "TBL": {
+    "g": null,
+    "result": "Lost Final"
+   }
+  },
+  "2022-23": {
+   "FLA": {
+    "g": null,
+    "result": "Lost Final"
+   },
+   "VGK": {
+    "g": null,
+    "result": "Won Cup"
+   }
+  },
+  "2023-24": {
+   "EDM": {
+    "g": null,
+    "result": "Lost Final"
+   },
+   "FLA": {
+    "g": null,
+    "result": "Won Cup"
+   }
+  },
+  "2024-25": {
+   "EDM": {
+    "g": null,
+    "result": "Lost Final"
+   },
+   "FLA": {
+    "g": null,
+    "result": "Won Cup"
+   }
+  },
+  "2025-26": {
+   "CAR": {
+    "g": null,
+    "result": "Won Cup"
+   }
+  }
+ }
+}
