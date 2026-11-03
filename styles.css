@@ -755,6 +755,192 @@ body[data-tone="dark"] .player-chip b, body[data-tone="red"] .player-chip b { co
   .deck-hint { display: none; }
 }
 
+
+/* =====================================================================
+   SEASON CHAPTERS
+   A red section: a pinned rink, the two fighters' cards, and a timeline, with the page
+   scrolling through the season's fights behind them. Self-contained colors (cream, navy, red).
+   Sizes follow the screen height (svh) so the pinned stage always fits one screen.
+   ===================================================================== */
+.chapter {
+  --ch-bg: #a9272e; --ch-cream: #e9e0c3; --ch-navy: #001f33; --ch-red: #e1343d; --ch-ice: #99e2e0;
+  --rink-h: clamp(6.5rem, 29svh, 20rem);
+  position: relative;
+  background-color: var(--ch-bg);
+  color: var(--ch-cream);
+  border-top: 4px solid var(--ch-cream);
+}
+.ch-head { padding: clamp(2rem, 7svh, 4.5rem) clamp(1rem, 4vw, 3rem) 0; }
+.ch-kicker { margin: 0 0 0.2rem; font: 700 0.85rem var(--font-ui); letter-spacing: 0.04em; }
+.ch-title { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(3rem, 11vw, 9rem); line-height: 0.9; }
+.ch-lede { margin: 0.6rem 0 0; max-width: 34rem; font-family: var(--font-ui); font-size: 1.05rem; }
+
+.ch-body { position: relative; }
+.ch-stage {
+  position: sticky; top: 0;
+  height: 100vh; height: 100svh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(0.4rem, 1.4svh, 0.9rem);
+  padding: 1rem clamp(1rem, 6vw, 5.5rem);
+  box-sizing: border-box;
+}
+.ch-beats { position: relative; z-index: 0; margin: -100vh 0 0; margin: -100svh 0 0; padding: 0; list-style: none; pointer-events: none; }
+.ch-beat { height: 70vh; height: 70svh; }
+.ch-beat:last-child { height: 100vh; height: 100svh; }
+
+/* the rink */
+.ch-rink-wrap { width: calc(var(--rink-h) * 2.26); max-width: 100%; }
+.ch-rink { display: block; width: 100%; height: auto; overflow: visible; }
+.ch-ice { fill: var(--ch-ice); }
+.ch-board { fill: none; stroke: var(--ch-cream); stroke-width: 1.8; }
+.ch-line-red { fill: #e1343d; }
+.ch-line-blue { fill: var(--ch-navy); }
+.ch-goal { stroke: #e1343d; stroke-width: 0.5; }
+.ch-ring { fill: none; stroke: var(--ch-navy); stroke-width: 0.4; }
+.ch-ring-red { stroke: #e1343d; }
+.ch-fo { fill: var(--ch-navy); }
+.ch-fo-red { fill: #e1343d; }
+.ch-crease { fill: #f4eedb; stroke: #e1343d; stroke-width: 0.4; }
+.ch-net { fill: none; stroke: var(--ch-navy); stroke-width: 0.5; }
+.ch-zone-hl { fill: var(--ch-navy); opacity: 0; transition: opacity 0.35s ease, x 0.35s ease, width 0.35s ease; }
+.ch-zone-hl.on { opacity: 0.14; }
+.ch-endlogo { opacity: 0; transition: opacity 0.3s ease; }
+.ch-endlogo.on { opacity: 1; }
+.ch-endlogo circle { fill: #f4eedb; stroke: var(--ch-navy); stroke-width: 0.5; }
+.ch-zones { display: flex; justify-content: space-between; gap: 0.5rem; margin: 0.3rem 0 0; font: 600 0.72rem var(--font-ui); }
+.ch-zones span:nth-child(2) { text-align: center; }
+.ch-zones span:last-child { text-align: right; }
+
+/* dots: hidden until their fight, red when current, gray after */
+.ch-dot { cursor: pointer; outline: none; }
+.ch-dot-in { transform-box: fill-box; transform-origin: center; transition: transform 0.35s cubic-bezier(0.2, 1.3, 0.4, 1), opacity 0.3s ease; }
+.ch-dot.is-hidden { pointer-events: none; }
+.ch-dot.is-hidden .ch-dot-in { opacity: 0; transform: scale(0.3); }
+.ch-dot-ring { fill: none; stroke: var(--ch-navy); stroke-width: 0.5; opacity: 0; }
+.ch-dot-disc { fill: #e1343d; stroke: var(--ch-navy); stroke-width: 0.8; transition: fill 0.3s ease; }
+.ch-dot-core { fill: #f4eedb; }
+.ch-dot.is-active .ch-dot-in { transform: scale(1.35); }
+.ch-dot.is-active .ch-dot-ring { opacity: 1; }
+.ch-dot.is-past .ch-dot-disc { fill: rgba(0, 31, 51, 0.4); stroke: rgba(0, 31, 51, 0.5); }
+.ch-dot.is-past .ch-dot-core { fill: rgba(244, 238, 219, 0.6); }
+.ch-dot.is-team .ch-dot-disc { fill: var(--ch-navy); }
+.ch-dot:focus-visible .ch-dot-ring { opacity: 1; stroke: #f4eedb; stroke-width: 1; }
+.ch-dot:hover .ch-dot-in { transform: scale(1.25); }
+
+/* the two cards and the details between them */
+.ch-intro { align-self: center; margin: 0; font: 600 1.05rem var(--font-ui); text-align: center; }
+.ch-card { min-width: 0; text-align: center; }
+.ch-art .tcard-art { box-shadow: 0 0.6rem 1.2rem rgba(0, 0, 0, 0.4); }
+.ch-pname { margin: 0.5rem 0 0; font: 700 clamp(0.85rem, 1.4vw, 1.05rem) var(--font-display); text-transform: uppercase; line-height: 1.1; }
+.ch-pmeta { margin: 0.15rem 0 0; font: 0.78rem/1.25 var(--font-ui); opacity: 0.85; }
+.ch-badges { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.25rem; margin: 0.3rem 0 0; min-height: 1.3rem; }
+.ch-badges span { font: 700 0.66rem var(--font-ui); padding: 0.1rem 0.5rem; background: var(--ch-cream); color: var(--ch-navy); border-radius: 2px; }
+.ch-info { font-family: var(--font-ui); align-self: center; }
+.ch-meta { margin: 0 0 0.5rem; font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
+.ch-meta i { font-style: normal; opacity: 0.6; padding: 0 0.15rem; }
+.ch-meta span { white-space: nowrap; }
+.ch-facts { margin: 0; display: grid; gap: 0.3rem; font-size: 0.88rem; line-height: 1.3; }
+.ch-facts > div { padding-bottom: 0.25rem; border-bottom: 1px dotted rgba(233, 224, 195, 0.5); }
+.ch-facts dt { font-size: 0.68rem; font-weight: 600; opacity: 0.8; line-height: 1.1; }
+.ch-facts dd { margin: 0; overflow-wrap: anywhere; }
+.ch-flag { display: inline-block; margin: 0.5rem 0 0; padding: 0.1rem 0.6rem; background: var(--ch-navy); color: var(--ch-cream); font: 700 0.75rem var(--font-ui); transform: rotate(-1.5deg); }
+.ch-open { margin-top: 0.6rem; background: var(--ch-cream); color: var(--ch-navy); border-color: var(--ch-cream); }
+.ch-open:hover { background: var(--ch-navy); border-color: var(--ch-navy); color: var(--ch-cream); }
+.ch-fight-inner.enter .ch-card-a { animation: ch-from-left 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+.ch-fight-inner.enter .ch-card-b { animation: ch-from-right 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+.ch-fight-inner.enter .ch-info { animation: ch-rise 0.5s ease 0.1s both; }
+@keyframes ch-from-left { from { opacity: 0; transform: translateX(-3.5rem) rotate(-4deg); } }
+@keyframes ch-from-right { from { opacity: 0; transform: translateX(3.5rem) rotate(4deg); } }
+@keyframes ch-rise { from { opacity: 0; transform: translateY(0.8rem); } }
+
+/* team filter: one logo per team that fought this season, with its fight count */
+.ch-logos { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.35rem; max-width: 100%; }
+.ch-logo { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.15rem 0.5rem 0.15rem 0.2rem; border: 2px solid var(--ch-cream); border-radius: 999px; background: #f4eedb; color: var(--ch-navy); font: 700 0.72rem var(--font-ui); cursor: pointer; }
+.ch-logo img { display: block; width: 1.5rem; height: 1.5rem; }
+.ch-logo[aria-pressed="true"] { background: var(--ch-navy); color: var(--ch-cream); border-color: var(--ch-navy); }
+.ch-logo:focus-visible, .ch-tick:focus-visible { outline: 3px solid var(--ch-cream); outline-offset: 2px; }
+
+/* the timeline: a vertical rail on the right with a tick for each fight, spaced by date */
+.ch-rail { position: absolute; top: 14%; bottom: 14%; right: clamp(0.5rem, 1.6vw, 1.4rem); width: 2px; background: rgba(233, 224, 195, 0.4); }
+.ch-tick { position: absolute; top: var(--p); right: -6px; width: 14px; height: 14px; margin-top: -7px; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.ch-tick::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--ch-cream); transition: transform 0.2s ease, background 0.2s ease; }
+.ch-tick.is-passed::before { background: rgba(233, 224, 195, 0.5); }
+.ch-tick.is-active::before { background: #f4eedb; transform: scale(1.9); box-shadow: 0 0 0 2px var(--ch-navy); }
+.ch-tick.is-dim { opacity: 0.3; }
+.ch-tick-d { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); font: 700 0.68rem var(--font-ui); white-space: nowrap; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
+.ch-tick:hover .ch-tick-d, .ch-tick:focus-visible .ch-tick-d, .ch-tick.is-active .ch-tick-d { opacity: 1; }
+
+/* end of the season */
+.ch-end { padding: clamp(2.5rem, 9svh, 5rem) clamp(1rem, 6vw, 5.5rem) clamp(2.5rem, 9svh, 5rem); border-top: 2px solid rgba(233, 224, 195, 0.5); }
+.ch-end-title { margin: 0 0 1rem; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.8rem, 5vw, 3.6rem); line-height: 1; text-transform: uppercase; }
+.ch-end-stats { display: flex; flex-wrap: wrap; gap: 1.2rem 2.5rem; margin: 0 0 1.5rem; font-family: var(--font-ui); }
+.ch-end-stats dt { font-size: 0.78rem; font-weight: 600; opacity: 0.85; }
+.ch-end-stats dd { margin: 0; font: 700 2.4rem/1.05 var(--font-display); }
+.ch-end-stats small { font: 600 0.8rem var(--font-ui); }
+.ch-bars { list-style: none; margin: 0; padding: 0; max-width: 34rem; display: grid; gap: 0.35rem; font-family: var(--font-ui); }
+.ch-bars li { display: grid; grid-template-columns: 7rem 1fr 1.5rem; align-items: center; gap: 0.6rem; font-size: 0.85rem; font-weight: 700; }
+.ch-bar-team { display: inline-flex; align-items: center; gap: 0.3rem; }
+.ch-bar-team img { background: #f4eedb; border-radius: 50%; padding: 1px; }
+.ch-bar { height: 0.8rem; background: rgba(0, 31, 51, 0.25); }
+.ch-bar span { display: block; height: 100%; background: var(--ch-cream); }
+.ch-bars .is-cup .ch-bar span { background: #f4eedb; box-shadow: 0 0 0 2px var(--ch-navy); }
+.ch-bars .is-cup .ch-bar-team::after { content: "Cup"; margin-left: 0.2rem; padding: 0 0.3rem; background: var(--ch-navy); color: var(--ch-cream); font-size: 0.62rem; }
+
+/* The fight area is whatever height is left after the rink and the team logos. It is a size container,
+   so the cards and details scale to fit inside it (cqh is a share of its height) and never run into the logos. */
+.ch-fight {
+  flex: 1 1 0; min-height: 0; width: 100%;
+  container: chfight / size;
+  display: flex; justify-content: center; align-items: center;
+}
+.ch-fight-inner {
+  --cw: clamp(3.4rem, min(15rem, calc((100cqh - 4.8rem) * 5 / 7), calc((100cqw - 22rem) / 2)), 15rem);
+  display: grid; grid-template-columns: var(--cw) minmax(9.5rem, 17rem) var(--cw);
+  gap: clamp(0.7rem, 2vw, 1.6rem); align-items: start; justify-content: center;
+}
+/* less height: details go to two columns and the least important lines drop out, one step at a time */
+@container chfight (max-height: 370px) {
+  .ch-fight-inner { grid-template-columns: var(--cw) minmax(13rem, 21rem) var(--cw); }
+  .ch-facts { grid-template-columns: 1fr 1fr; gap: 0.2rem 0.9rem; font-size: 0.8rem; }
+  .ch-facts > div:nth-child(3) { grid-column: 1 / -1; }
+  .ch-meta { font-size: 0.82rem; margin-bottom: 0.3rem; }
+  .ch-pmeta, .ch-flag { display: none; }
+  .ch-open { margin-top: 0.4rem; }
+}
+@container chfight (max-height: 250px) { .ch-facts > div:nth-child(n+4) { display: none; } }
+@container chfight (max-height: 175px) { .ch-open { display: none; } }
+
+.chapter { overflow-x: clip; }
+@media (max-height: 460px) { .chapter { --rink-h: clamp(4.5rem, 24svh, 20rem); } }
+
+@media (max-width: 700px) {
+  .chapter { --rink-h: clamp(5rem, 19svh, 12rem); }
+  .ch-stage { padding-inline: 0.7rem 1.9rem; justify-content: flex-start; padding-top: 0.7rem; gap: 0.35rem; }
+  .ch-fight-inner { --cw: clamp(3.4rem, min(10.5rem, calc((100cqh - 12.8rem) * 5 / 7), calc((100cqw - 1rem) / 2)), 10.5rem); grid-template-columns: repeat(2, var(--cw)); gap: 0.5rem 0.8rem; }
+  .ch-info { grid-column: 1 / -1; grid-row: 2; }
+  .ch-facts { grid-template-columns: 1fr 1fr; gap: 0.2rem 0.8rem; font-size: 0.8rem; }
+  .ch-facts > div:nth-child(3) { grid-column: 1 / -1; }
+  .ch-meta { font-size: 0.8rem; margin-bottom: 0.3rem; }
+  .ch-pname { font-size: 0.78rem; margin-top: 0.3rem; }
+  .ch-pmeta { font-size: 0.68rem; }
+  .ch-badges { min-height: 1.1rem; margin-top: 0.15rem; }
+  .ch-badges span { white-space: nowrap; }
+  .ch-flag { margin-top: 0.3rem; }
+  .ch-open { margin-top: 0.35rem; }
+  .ch-rail { top: 30%; bottom: 10%; right: 0.6rem; }
+  .ch-tick-d { display: none; }
+  .ch-zones { font-size: 0.6rem; }
+  .ch-logos { gap: 0.2rem; }
+  .ch-logo { padding: 0.1rem 0.35rem 0.1rem 0.15rem; font-size: 0.66rem; }
+  .ch-logo img { width: 1.15rem; height: 1.15rem; }
+  .ch-fight-inner { --stack: 1; }
+}
+@media (max-width: 700px) {
+  @container chfight (max-height: 470px) { .ch-pmeta, .ch-flag, .ch-facts > div:nth-child(5) { display: none; } }
+  @container chfight (max-height: 330px) { .ch-open { display: none; } }
+  @container chfight (max-height: 270px) { .ch-facts > div:nth-child(n+4) { display: none; } }
+}
+
 /* ---- footer ---- */
 .site-foot {
   padding: 3rem max(1rem, calc((100% - 44rem) / 2)) 4rem;

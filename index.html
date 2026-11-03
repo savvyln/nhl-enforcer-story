@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Five Seasons of Fights</title>
+  <title>The Disappearing Playoff Enforcer</title>
   <meta name="description" content="Playoff fights in the NHL have nearly vanished. An interactive look at who still fights, and when, from 2021-22 to 2025-26.">
-  <meta property="og:title" content="Five Seasons of Fighting">
-  <meta property="og:description" content="Playoff fights in the NHL have nearly vanished. An interactive look at who still fights, and when, from 2021-22 to 2025-26.">
+  <meta property="og:title" content="The Disappearing Playoff Enforcer">
+  <meta property="og:description" content="Thirteen playoff fights in 2022-23. Two in 2024-25. Click any fight to see the trading cards.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,9 +70,9 @@
 
   <div class="hero-inner">
     <div class="hero-copy" id="hero-copy">
-      <h1>Do teams that fight more win more?</h1>
-      <p class="hero-lede">Playoff fights are fading in the NHL.</p>
-      <p class="hero-sub">From thirteen playoff fights in 2022-23 to two in 2024-25, this shift made us wonder. Here's a look at the fading post-season brawl, and the players who still drop the mitts.</p>
+      <h1>The Disappearing Playoff Enforcer</h1>
+      <p class="hero-lede">Thirteen playoff fights in 2022-23. Two in 2024-25.</p>
+      <p class="hero-sub">A look at the fading post-season brawl, and the players who still drop the mitts.</p>
       <p class="hero-note">Fight counts from HockeyFights.com's NHL postseason logs, 2021-22 through 2025-26.</p>
     </div>
 
@@ -113,6 +113,9 @@
   <p class="deck-hint"><output id="deck-count" for="deck-range"></output> &middot; Drag a card off the stack, click one in the fan, or use the slider.</p>
 </section>
 
+<!-- SEASON CHAPTERS: filled in by buildChapters() in app.js (see CHAPTER_SEASONS) -->
+<div id="chapters"></div>
+
 <noscript><p class="noscript">This story is interactive and needs JavaScript turned on.</p></noscript>
 
 <main id="scrolly">
@@ -135,7 +138,7 @@
         Dance, donnybrook, drop the mitts, fisticuffs, have a go, puttin' on the foil, snarl, tilt: whatever you call it, the quintessential playoff brawl is vanishing before our eyes.
       </p>
       <p class="aside">
-        Each dot is one fight. Hover, tap, or tab to a dot to see who fought, and click it to flip up both players' trading cards. This project has full details on <span data-stat="total"></span> of the <span data-stat="listedTotal"></span>; the <span data-stat="pending"></span> hollow dots are 2022-23 fights that are listed but not yet collected.
+        Each dot is one fight. Hover, tap, or tab to a dot to see who fought, and click it to flip up both players' trading cards. This project has full details on all <span data-stat="total"></span> fights HockeyFights.com lists for these five postseasons.
       </p>
     </section>
 
@@ -148,7 +151,7 @@
         The bigger the logo, the more fights that team was in. Your pick carries through the charts that follow.
       </p>
       <p class="aside">
-        Position on the rink does not show where fights happened, because that data is not collected yet. Eastern teams sit left of center ice and Western teams sit right.
+        Position on this rink shows conference, not where fights happened. Eastern teams sit left of center ice and Western teams sit right. The season chapter above places each fight by zone.
       </p>
     </section>
 
@@ -171,7 +174,7 @@
         If the dedicated heavyweights aren't throwing punches, who is? The modern post-season fight is no longer a staged bout between policemen. It is a spontaneous clash between everyday players whose emotions boil over.
       </p>
       <p>
-        The <span data-stat="nF"></span> skaters in the log play a median of <span data-stat="fToi" data-fmt="1"></span> minutes a night, against <span data-stat="bToi" data-fmt="1"></span> for all skaters. Defensemen make up <span data-stat="fD" data-fmt="pct"></span> of the fighters and <span data-stat="bD" data-fmt="pct"></span> of everyone. Only <span data-stat="fUnder"></span> average under 12 minutes, the shaded zone where the classic enforcer lived, and only <span data-stat="fStars"></span> average 0.8 points a game or more, so they are not all stars either.
+        The <span data-stat="nF"></span> skaters in the log with ice-time data play a median of <span data-stat="fToi" data-fmt="1"></span> minutes a night, against <span data-stat="bToi" data-fmt="1"></span> for all skaters. Defensemen make up <span data-stat="fD" data-fmt="pct"></span> of the fighters and <span data-stat="bD" data-fmt="pct"></span> of everyone. Only <span data-stat="fUnder"></span> average under 12 minutes, the shaded zone where the classic enforcer lived, and only <span data-stat="fStars"></span> average 0.8 points a game or more, so they are not all stars either.
       </p>
       <p>
         What does set them apart is penalties: a median of <span data-stat="fPim" data-fmt="2"></span> penalty minutes per game, against <span data-stat="bPim" data-fmt="2"></span> for skaters who never appear in the log.
@@ -198,7 +201,7 @@
     <section class="step" data-step="7" aria-labelledby="s7">
       <h2 id="s7">What this can't tell you</h2>
       <p>
-        <strong>It is incomplete.</strong> Three 2022-23 fights are not in this dataset yet, so the analysis covers <span data-stat="total"></span> fights, not <span data-stat="listedTotal"></span>.
+        <strong>It is a small count.</strong> All <span data-stat="total"></span> fights HockeyFights.com lists for these five postseasons are included, but with so few, a single game can move a season's total.
       </p>
       <p>
         <strong>Fan votes are opinions.</strong> The "winner" and rating on each fight come from site visitors, not from the league.
@@ -222,7 +225,7 @@
         <!-- View 1: decline -->
         <div id="view-decline" class="viz-view active">
           <svg id="svg-decline" class="chart" role="img" aria-label="Unit chart: playoff fights per season. 9, 13, 4, 2, 4."></svg>
-          <p class="legend"><span class="key key-solid"></span> Fight in this dataset <span class="key key-hollow"></span> Listed by HockeyFights.com, not yet collected. Click a collected fight for its trading cards.</p>
+          <p class="legend"><span class="key key-solid"></span> Fight in this dataset. Click a fight for its trading cards.</p>
         </div>
 
         <!-- View 2: rink -->
