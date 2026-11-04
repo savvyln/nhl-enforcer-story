@@ -297,7 +297,7 @@ html { scroll-behavior: smooth; }
   color: var(--accent);
   margin-top: 0; margin-bottom: 1rem;
 }
-.hero-sub { max-width: 40rem; font-size: 1.3rem; line-height: 1.45; margin-top: 0; margin-bottom: 1rem; }
+.hero-sub { max-width: 20ch; font-size: 1.3rem; line-height: 1.45; margin-top: 0; margin-bottom: 1rem; }
 .hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; }
 
 /* =====================================================================
