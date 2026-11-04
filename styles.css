@@ -64,9 +64,9 @@ body {
 /* =====================================================================
    SECTION THEMES
    The page palette is three colors: cream, navy and red. app.js sets body[data-step]
-   (1 to 7) and body[data-tone] (light, dark or red) as each scrolly step becomes
+   (1 to 8) and body[data-tone] (light, dark or red) as each scrolly step becomes
    active, and the background fades to that step's color:
-     1 cream   2 navy   3 red   4 cream   5 navy   6 red   7 cream
+     1 cream   2 navy   3 red   4 cream   5 navy   6 cream (fighter file)   7 red   8 cream
    On navy and red steps the ink and surface tokens swap inside #scrolly, so text,
    chart marks and rules flip to cream automatically. To change a step's color, edit its
    --stage-bg below and make sure its tone in TONES (app.js) matches.
@@ -76,8 +76,9 @@ body[data-step="2"] { --stage-bg: #001f33; }   /* navy: the rink */
 body[data-step="3"] { --stage-bg: #a9272e; }   /* red: the mirage */
 body[data-step="4"] { --stage-bg: #e9e0c3; }   /* cream: the regulars */
 body[data-step="5"] { --stage-bg: #001f33; }   /* navy: the clock */
-body[data-step="6"] { --stage-bg: #a9272e; }   /* red: the log */
-body[data-step="7"] { --stage-bg: #e9e0c3; }   /* cream: limits */
+body[data-step="6"] { --stage-bg: #e9e0c3; }   /* cream: the fighter file (opens when a card is clicked) */
+body[data-step="7"] { --stage-bg: #a9272e; }   /* red: the log */
+body[data-step="8"] { --stage-bg: #e9e0c3; }   /* cream: limits */
 
 #scrolly {
   color: var(--navy);   /* re-resolve ink here so the swap reaches inherited text */
@@ -184,7 +185,7 @@ body:has(dialog[open]) { overflow: hidden; }
   width: 87.4%;
   aspect-ratio: 472 / 232;
   margin: 4cqw auto 0;
-  padding: 10px;
+  padding: 0;
   list-style: none;
   filter: drop-shadow(0 0.5cqw 0.9cqw rgba(0, 31, 51, 0.3));
 }
@@ -297,7 +298,7 @@ html { scroll-behavior: smooth; }
   color: var(--accent);
   margin-top: 0; margin-bottom: 1rem;
 }
-.hero-sub { max-width: 34rem; font-size: 1.3rem; line-height: 1.45; margin-top: 0; margin-bottom: 1rem; }
+.hero-sub { max-width: 36rem; font-size: 1.3rem; line-height: 1.45; margin-top: 0; margin-bottom: 1rem; }
 .hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; }
 
 /* =====================================================================
@@ -349,6 +350,34 @@ html { scroll-behavior: smooth; }
   transition: background 0.3s ease;
 }
 .step.active h2::before { background: var(--accent-deep); }
+
+/* The Fighter file step: hidden until a card is clicked, and not numbered, so the other steps keep 1 to 7. */
+.step[hidden] { display: none; }
+.step-fighter { scroll-margin-top: 8vh; }
+.step-fighter h2::before { counter-increment: none; content: "\2605"; content: "\2605" / ""; }
+.step-fighter h2:focus { outline: none; }
+.fighter-card { margin: 0.25rem 0 1.1rem; }
+.fighter-card .tcard-art { width: min(15rem, 70%); }
+.fighter-card .tcard-art:not(.tcard-ph) { box-shadow: 4px 4px 0 var(--navy); }
+.fighter-card .tcard-info { max-width: 20rem; margin-top: 0.7rem; font-family: var(--font-ui); }
+
+/* A clickable trading card: the art is a button. It lifts on hover and says what it does. */
+.card-link {
+  position: relative; display: block; width: 100%; margin: 0; padding: 0;
+  border: 0; border-radius: 10px; background: none; color: inherit; font: inherit;
+  cursor: pointer; transition: transform 0.2s ease;
+}
+.card-link:hover { transform: translateY(-3px); }
+.card-link:focus-visible { outline: 3px solid var(--navy-fixed); outline-offset: 3px; box-shadow: 0 0 0 6px #f4eedb; }
+.card-link::after {
+  content: "See their fights"; position: absolute; left: 50%; bottom: 0.5rem;
+  max-width: 92%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  padding: 0.15rem 0.7rem; background: var(--navy-fixed); color: #f4eedb;
+  font: 700 0.72rem var(--font-ui); border-radius: 2px; pointer-events: none;
+  opacity: 0; transform: translate(-50%, 0.3rem); transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.card-link:hover::after, .card-link:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+.ch-art .card-link::after { display: none; }   /* chapter cards are small: the cursor and aria-label do the talking */
 
 .step p { margin: 0 0 1rem; }
 .step .aside { font-size: 1rem; color: var(--muted); border-left: 4px solid var(--aqua); padding-left: 0.9rem; }
@@ -656,7 +685,7 @@ body[data-tone="dark"] .player-chip b, body[data-tone="red"] .player-chip b { co
      (--cw) is whatever height is left after the headline, the name, the slider and the hint,
      so the whole section sits inside the viewport on any screen. */
   --tf: clamp(2.2rem, min(7.6vw, 11svh), 8rem);
-  --cw: clamp(7rem, min(26vw, calc((100svh - 14.5rem - var(--tf) * 0.4) / 1.75)), 20rem);
+  --cw: clamp(7rem, min(26vw, calc((100svh - 17rem - var(--tf) * 0.4) / 1.75)), 20rem);
   --fan: 1;
   position: relative;
   overflow: clip;
@@ -719,6 +748,16 @@ body[data-tone="dark"] .player-chip b, body[data-tone="red"] .player-chip b { co
 }
 .deck-meta { margin: 0.25rem 0 0; font-family: var(--font-ui); font-size: 1rem; color: rgba(233, 224, 195, 0.78); }
 
+.deck-open {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  margin-top: 0.6rem; padding: 0.4rem 1.1rem;
+  font: 700 0.9rem var(--font-ui);
+  border: 0; border-radius: 2px;
+  background: var(--red-deep-fixed); color: var(--paper-fixed);
+  cursor: pointer; transform: rotate(-1deg);
+}
+.deck-open:hover { background: var(--cream); color: var(--navy-fixed); }
+.deck-open:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
 .deck-controls { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1rem; padding-inline: 1rem; }
 .deck-btn {
   flex: none; display: grid; place-items: center;
@@ -742,7 +781,7 @@ body[data-tone="dark"] .player-chip b, body[data-tone="red"] .player-chip b { co
 
 @media (max-width: 700px) {
   /* the headline wraps to two lines here, so it takes more of the height */
-  .deck { --tf: clamp(2.2rem, min(13vw, 8svh), 5rem); --cw: clamp(7rem, min(58vw, calc((100svh - 16.5rem - var(--tf) * 1.7) / 1.75)), 16rem); --fan: 0.55; }
+  .deck { --tf: clamp(2.2rem, min(13vw, 8svh), 5rem); --cw: clamp(7rem, min(58vw, calc((100svh - 19.5rem - var(--tf) * 1.7) / 1.75)), 16rem); --fan: 0.55; }
   .deck-title { line-height: 0.92; margin-bottom: calc(var(--tf) * -0.25); }
 }
 /* short screens (laptops with toolbars, phones on their side): tighten everything */
@@ -752,7 +791,7 @@ body[data-tone="dark"] .player-chip b, body[data-tone="red"] .player-chip b { co
   .deck-name { font-size: 1.2rem; }
   .deck-meta { font-size: 0.85rem; margin-top: 0.1rem; }
   .deck-controls { margin-top: 0.4rem; }
-  .deck-hint { display: none; }
+  .deck-hint, .deck-open { display: none; }
 }
 
 
