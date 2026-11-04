@@ -158,19 +158,9 @@
     </section>
 
     <section class="step" data-step="3" aria-labelledby="s3">
-      <h2 id="s3">The Disappearing Enforcer</h2>
+      <h2 id="s3">The Disappearing Enforcer and the Accidental Gladiators</h2>
       <p>
-        If you clicked through the teams, you likely noticed a glaring absence: the heavyweights.
-      </p>
-      <p>
-        The modern NHL still has feared, dedicated enforcers like Mathieu Olivier, Ryan Reaves, Nicolas Deslauriers, and Arber Xhekaj. But when the playoffs arrive, they stay quiet.
-      </p>
-    </section>
-
-    <section class="step" data-step="4" aria-labelledby="s4">
-      <h2 id="s4">The Accidental Gladiators</h2>
-      <p>
-        If the dedicated heavyweights aren't throwing punches, who is? The modern post-season fight is no longer a staged bout between policemen. It is a spontaneous clash between everyday players whose emotions boil over.
+        If you clicked through the teams, you likely noticed a glaring absence: the heavyweights. The modern NHL still has feared, dedicated enforcers like Mathieu Olivier, Ryan Reaves, Nicolas Deslauriers, and Arber Xhekaj. But when the playoffs arrive, they stay quiet. If the dedicated heavyweights aren't throwing punches, who is? The modern post-season fight is no longer a staged bout between policemen. It is a spontaneous clash between everyday players whose emotions boil over.
       </p>
       <p>
         The <span data-stat="nF"></span> skaters in the log with ice-time data play a median of <span data-stat="fToi" data-fmt="1"></span> minutes a night, against <span data-stat="bToi" data-fmt="1"></span> for all skaters. Defensemen make up <span data-stat="fD" data-fmt="pct"></span> of the fighters and <span data-stat="bD" data-fmt="pct"></span> of everyone. Only <span data-stat="fUnder"></span> average under 12 minutes, the shaded zone where the classic enforcer lived, and only <span data-stat="fStars"></span> average 0.8 points a game or more, so they are not all stars either.
@@ -180,8 +170,8 @@
       </p>
     </section>
 
-    <section class="step" data-step="5" aria-labelledby="s5">
-      <h2 id="s5">Fights Come Late</h2>
+    <section class="step" data-step="4" aria-labelledby="s4">
+      <h2 id="s4">Fights Come Late</h2>
       <p>
         <span data-stat="third"></span> of the <span data-stat="total"></span> fights happened in the third period, and <span data-stat="late"></span> of those in the last four minutes of regulation. Only <span data-stat="first"></span> came in the first period and <span data-stat="second"></span> in the second.
       </p>
@@ -190,8 +180,8 @@
       </p>
     </section>
 
-    <section class="step" data-step="6" aria-labelledby="s6">
-      <h2 id="s6">Every Fight, Logged</h2>
+    <section class="step" data-step="5" aria-labelledby="s5">
+      <h2 id="s5">Every Fight, Logged</h2>
       <p>
         Open any fight for the fan vote, then click View trading cards to see both players side by side. If you picked a team on the rink, the list shows only that team's fights. Clear the team filter to see all teams again.
       </p>
@@ -226,35 +216,20 @@
           <div id="rink-detail" class="rink-detail" aria-live="polite"></div>
         </div>
 
-        <!-- View 3: mirage -->
-        <div id="view-mirage" class="viz-view">
-          <div class="guess-box">
-            <label for="guess">Your guess: <output id="guess-out" for="guess">8</output> fights</label>
-            <input id="guess" type="range" min="0" max="20" value="8">
-            <div class="guess-actions">
-              <button id="lock-guess" type="button" class="btn">Lock in my guess</button>
-              <button id="reset-guess" type="button" class="btn btn-quiet" hidden>Try again</button>
-            </div>
-          </div>
-          <div id="enforcer-cards" class="enforcer-cards"></div>
-          <p id="guess-result" class="guess-result" aria-live="polite"></p>
-          <p class="pim-note">*PIM = the player's total playoff penalty minutes across the five postseasons, 2021-22 to 2025-26.</p>
-        </div>
-
-        <!-- View 4: regulars -->
+        <!-- View 3: regulars -->
         <div id="view-regulars" class="viz-view">
           <svg id="svg-regulars" class="chart" role="img" aria-label="Scatter plot of average ice time against penalty minutes per game. Skaters who fought are highlighted and spread across the full range of ice time."></svg>
           <p class="legend"><span class="key key-red"></span> Skater with a fight in the log <span class="key key-grey"></span> All other skaters</p>
           <p id="regulars-note" class="chart-note"></p>
         </div>
 
-        <!-- View 5: clock -->
+        <!-- View 4: clock -->
         <div id="view-clock" class="viz-view">
           <svg id="svg-clock" class="chart" role="img" aria-label="Chart of when each fight happened, by period and minute elapsed. Most are in the third period."></svg>
           <p class="legend">Each disc is one fight. Click a disc to see both players' trading cards.</p>
         </div>
 
-        <!-- Views 6 and 7: log -->
+        <!-- Views 5: log -->
         <div id="view-log" class="viz-view">
           <div class="log-controls">
             <div id="season-chips" class="chips" role="group" aria-label="Filter by season"></div>
@@ -273,40 +248,6 @@
     </div>
   </figure>
 </main>
-
-    <!-- =====================================================================
-     CARD DECK
-     Every trading card, stacked and fanned. Drag the front card off the stack,
-     click a card in the fan to bring it forward, use the slider or arrow buttons,
-     or press the left and right arrow keys while the stack is focused.
-     The cards themselves are built by buildDeck() in app.js from the same card data
-     as the pop-up, so the images come from cards.json. Cards without an image yet
-     show the drawn placeholder.
-     ===================================================================== -->
-<section class="deck" id="deck" aria-labelledby="deck-title">
-  <h2 class="deck-title" id="deck-title">Meet the fighters</h2>
-
-  <div class="deck-stage" id="deck-stage" tabindex="0" role="group" aria-roledescription="carousel"
-       aria-label="Trading cards. Drag a card away, use the left and right arrow keys, or use the slider below.">
-    <ol class="deck-cards" id="deck-cards"></ol>
-  </div>
-
-  <div class="deck-caption" aria-live="polite" aria-atomic="true">
-    <p class="deck-name" id="deck-name"></p>
-    <p class="deck-meta" id="deck-meta"></p>
-  </div>
-
-  <div class="deck-controls">
-    <button type="button" class="deck-btn" id="deck-prev" aria-label="Previous card">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M20 12 H5 M11 5 L4 12 L11 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg>
-    </button>
-    <input type="range" class="deck-range" id="deck-range" min="0" max="0" value="0" step="1" aria-label="Choose a card">
-    <button type="button" class="deck-btn" id="deck-next" aria-label="Next card">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M4 12 H19 M13 5 L20 12 L13 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg>
-    </button>
-  </div>
-  <p class="deck-hint"><output id="deck-count" for="deck-range"></output> &middot; Drag a card off the stack, click one in the fan, or use the slider.</p>
-</section>
   
 <footer class="site-foot">
   <p><strong>Sources.</strong> Team logos belong to their teams and load from the NHL's public asset host. We own no rights to the individual player photographs. Graphics designed by Fletcher Grause. Fight data was collected from HockeyFights.com NHL postseason fight logs, 2021-22 to 2025-26. Skater statistics were collected from NHL core stats. Fan votes and ratings were read in October 2026 and change as people keep voting.</p>
