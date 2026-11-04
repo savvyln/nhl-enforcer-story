@@ -367,39 +367,6 @@ function enterDecline() {
   declineDots.attr("opacity", 0).transition().delay(d => d.si * 260 + d.i * 40).duration(280).attr("opacity", 1);
 }
 
-/* ---- View: mirage (guess, then reveal) ------------------------------ */
-const fightsFor = name => DATA.fights.filter(f => f.p1 === name || f.p2 === name).length;
-function buildMirage() {
-  const wrap = $("#enforcer-cards");
-  wrap.innerHTML = DATA.enforcers.map(p => `
-    <div class="enf-card">
-      <div class="monogram" aria-hidden="true">${esc(initials(p.n))}</div>
-      <div>
-        <strong>${esc(p.n)}</strong>
-        <span class="enf-meta">${POS[p.pos] || p.pos}, ${p.gp} playoff games, ${p.pim} PIM*</span>
-        <span class="enf-fights" data-n="${fightsFor(p.n)}">Fights in the log: ?</span>
-      </div>
-    </div>`).join("");
-
-  const slider = $("#guess"), out = $("#guess-out"), lock = $("#lock-guess"), reset = $("#reset-guess"), result = $("#guess-result");
-  slider.addEventListener("input", () => { out.textContent = slider.value; });
-
-  lock.addEventListener("click", () => {
-    const total = DATA.enforcers.reduce((a, p) => a + fightsFor(p.n), 0);
-    const games = DATA.enforcers.reduce((a, p) => a + p.gp, 0);
-    const g = +slider.value;
-    $$(".enf-fights", wrap).forEach(el => { el.textContent = `Fights in the log: ${el.dataset.n}`; });
-    $$(".enf-card", wrap).forEach(el => el.classList.add("revealed"));
-    result.textContent = `You guessed ${g}. The log shows ${total}. Together, these four played ${games} playoff games over five seasons.`;
-    slider.disabled = true; lock.hidden = true; reset.hidden = false; reset.focus();
-  });
-  reset.addEventListener("click", () => {
-    $$(".enf-fights", wrap).forEach(el => { el.textContent = "Fights in the log: ?"; });
-    $$(".enf-card", wrap).forEach(el => el.classList.remove("revealed"));
-    result.textContent = "";
-    slider.disabled = false; lock.hidden = false; reset.hidden = true; lock.focus();
-  });
-}
 
 /* ---- View: regulars (ice time vs penalty minutes) ------------------- */
 let regDots;
