@@ -10,14 +10,14 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Pressio (titles and headers) comes from an Adobe Fonts kit. Add your site's domain in the kit's web project settings or it will not load. -->
+  <!-- Pressio (titles and headers) comes from an Adobe Fonts kit. -->
   <link rel="stylesheet" href="https://use.typekit.net/eip6bzg.css">
   <!-- Newsreader (body text) -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap">
   <script>document.documentElement.classList.add("js")</script>
   <link rel="stylesheet" href="styles.css">
 
-  <!-- d3 first, then the story. Both are deferred, so they run in this order after the page is parsed. -->
+  <!-- d3 first, then the story. -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" defer></script>
   <script src="app.js" defer></script>
 </head>
@@ -27,14 +27,12 @@
 
   <!-- =====================================================================
        INTRO: one full screen of ice with a taped-up title.
-       Sequence: "Five seasons of" is already on screen, strips of tape fly in,
-       then the big FIGHTS bar rises from the bottom and settles on top of the pile.
        ===================================================================== -->
   <section class="intro" id="intro">
 
     <!-- ICE BACKGROUND SLOT
          The ice photo is set in styles.css, on the .intro rule, as  --ice-image: url("images/Ice.png").
-         Change that one line to use another file or folder. If the file is missing, a CSS-drawn
+          If the file is missing, a CSS-drawn
          icy background is used instead. -->
 
     <div class="intro-lockup" role="img" aria-label="Five seasons of fights, also known as dances, tilts, donnybrooks, trading blows and scraps">
