@@ -166,7 +166,7 @@ function tcardHTML(c, f) {
       <div><dt>Name</dt><dd class="nm">${esc(c.name)}</dd></div>
       <div><dt>Team</dt><dd>${esc(TEAMS[c.team] || c.team)}</dd></div>
       <div><dt>Position</dt><dd>${esc(POS[c.pos] || c.pos || "Not listed")}</dd></div>
-      <div><dt>Number</dt><dd>${esc(NUM[c.num] || c.num || "Not yet added"}</dd></div>
+      <div><dt>Number</dt><dd>${c.num ? "#" + esc(c.num) : "Not yet added"}</dd></div>
       <div><dt>PIM*</dt><dd>${c.pim ?? "Not listed"}</dd></div>
     </dl>
   </article>`;

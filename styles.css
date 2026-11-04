@@ -184,7 +184,7 @@ body:has(dialog[open]) { overflow: hidden; }
   width: 87.4%;
   aspect-ratio: 472 / 232;
   margin: 4cqw auto 0;
-  padding: 10px;
+  padding: 0;
   list-style: none;
   filter: drop-shadow(0 0.5cqw 0.9cqw rgba(0, 31, 51, 0.3));
 }
@@ -297,7 +297,7 @@ html { scroll-behavior: smooth; }
   color: var(--accent);
   margin-top: 0; margin-bottom: 1rem;
 }
-.hero-sub { max-width: 20ch; font-size: 1.3rem; line-height: 1.45; margin-top: 0; margin-bottom: 1rem; }
+.hero-sub { max-width: 36rem; font-size: 1.3rem; line-height: 1.45; margin-top: 0; margin-bottom: 1rem; }
 .hero-note { font-family: var(--font-ui); font-size: 0.85rem; color: var(--muted); margin: 0; }
 
 /* =====================================================================
