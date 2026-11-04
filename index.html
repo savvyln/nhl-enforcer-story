@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Disappearing Playoff Enforcer</title>
+  <title>Five Seasons of Fights</title>
   <meta name="description" content="Playoff fights in the NHL have nearly vanished. An interactive look at who still fights, and when, from 2021-22 to 2025-26.">
   <meta property="og:title" content="The Disappearing Playoff Enforcer">
   <meta property="og:description" content="Thirteen playoff fights in 2022-23. Two in 2024-25. Click any fight to see the trading cards.">
@@ -70,9 +70,11 @@
 
   <div class="hero-inner">
     <div class="hero-copy" id="hero-copy">
-      <h1>The Disappearing Playoff Enforcer</h1>
-      <p class="hero-lede">Thirteen playoff fights in 2022-23. Two in 2024-25.</p>
-      <p class="hero-sub">A look at the fading post-season brawl, and the players who still drop the mitts.</p>
+      <h1>Do teams that fight more win more?</h1>
+      <p class="hero-sub">The road to the cup has been described by sports author George Vecsey as, "“War of attrition, war of wills. That's what the Stanley Cup playoffs are - more intense, more physical and more prolonged than the playoffs of any other sport.”</p>
+      <p class="hero-lede">"War of attrition, war of wills." — George Vecsey</p>
+      <p class="hero-sub">You can see this action clearly in footage traced back to at least 1925. The grit players bring to the ice determines who gets to lift Lord Stanley. But do fights actually get the W?</p>
+      <p class="hero-sub">We investigated this question across five seasons of Stanley Cup Playoffs, between 2021 to 2026, using game data from NHL EDGE and fights logged on hockeyfights.com.</p>
       <p class="hero-note">Fight counts from HockeyFights.com's NHL postseason logs, 2021-22 through 2025-26.</p>
     </div>
 
@@ -127,12 +129,9 @@
   <article class="scroll-text">
 
     <section class="step" data-step="1" aria-labelledby="s1">
-      <h2 id="s1">The icebreaker</h2>
+      <h2 id="s1">The Icebreaker</h2>
       <p>
-        There is a spectrum of hockey fans: those who hate fighting, and those who love it. We're focusing on those who love it.
-      </p>
-      <p>
-        For these fight fanatics, the best time of year is the playoffs. Sixteen teams a season face off across the five postseasons from 2021-22 to 2025-26, in hundreds of games.
+        There is a spectrum of hockey fans: those who hate fighting, and those who love it. For these fight fanatics, the best time of year is the playoffs. Sixteen teams a season face off across the five postseasons from 2021-22 to 2025-26, in hundreds of games.
       </p>
       <p>
         In all of them, fight fans have witnessed just <strong><span data-stat="listedTotal"></span> fights</strong>. Nine in the first year, thirteen in the second, then four, two, and four.
@@ -146,7 +145,7 @@
     </section>
 
     <section class="step" data-step="2" aria-labelledby="s2">
-      <h2 id="s2">Who dropped the mitts</h2>
+      <h2 id="s2">Who dropped the mitts?</h2>
       <p>
         So who is involved? This rink puts every team that took part in a playoff fight on the ice. <strong>Click any team logo</strong> to flip it and reveal the players who actually dropped the mitts.
       </p>
@@ -159,22 +158,19 @@
     </section>
 
     <section class="step" data-step="3" aria-labelledby="s3">
-      <h2 id="s3">The heavyweight mirage</h2>
+      <h2 id="s3">The Heavyweight Mirage</h2>
       <p>
         If you clicked through the teams, you likely noticed a glaring absence: the heavyweights.
       </p>
       <p>
-        The modern NHL still has feared, dedicated enforcers like Mathieu Olivier, Ryan Reaves, Nicolas Deslauriers, and Arber Xhekaj. But when the playoffs arrive, they stay quiet.
-      </p>
-      <p>
-        Try guessing how many fights these four logged in our playoff dataset between 2021 and 2026. Set your guess on the slider, then lock it in.
+        The modern NHL still has feared, dedicated enforcers like Mathieu Olivier, Ryan Reaves, Nicolas Deslauriers, and Arber Xhekaj. But when the playoffs arrive, they stay quiet. If the dedicated heavyweights aren't throwing punches, who is? 
       </p>
     </section>
 
     <section class="step" data-step="4" aria-labelledby="s4">
-      <h2 id="s4">The accidental gladiators</h2>
+      <h2 id="s4">The Accidental Gladiators</h2>
       <p>
-        If the dedicated heavyweights aren't throwing punches, who is? The modern post-season fight is no longer a staged bout between policemen. It is a spontaneous clash between everyday players whose emotions boil over.
+       The modern post-season fight is no longer a staged bout between policemen. It is a spontaneous clash between everyday players whose emotions boil over.
       </p>
       <p>
         The <span data-stat="nF"></span> skaters in the log with ice-time data play a median of <span data-stat="fToi" data-fmt="1"></span> minutes a night, against <span data-stat="bToi" data-fmt="1"></span> for all skaters. Defensemen make up <span data-stat="fD" data-fmt="pct"></span> of the fighters and <span data-stat="bD" data-fmt="pct"></span> of everyone. Only <span data-stat="fUnder"></span> average under 12 minutes, the shaded zone where the classic enforcer lived, and only <span data-stat="fStars"></span> average 0.8 points a game or more, so they are not all stars either.
@@ -209,19 +205,6 @@
       <h2 id="s6">Every fight, logged</h2>
       <p>
         Open any fight for the fan vote, then use View trading cards to see both players side by side. If you picked a team on the rink, the list shows only its fights.
-      </p>
-    </section>
-
-    <section class="step" data-step="8" aria-labelledby="s7">
-      <h2 id="s7">What this can't tell you</h2>
-      <p>
-        <strong>It is a small count.</strong> All <span data-stat="total"></span> fights HockeyFights.com lists for these five postseasons are included, but with so few, a single game can move a season's total.
-      </p>
-      <p>
-        <strong>Fan votes are opinions.</strong> The "winner" and rating on each fight come from site visitors, not from the league.
-      </p>
-      <p>
-        <strong>It counts fights, not causes.</strong> Rule changes, how rosters are built, and a faster game are all common explanations for the decline. None is tested here, and the log does not show who started a fight or where on the ice it happened.
       </p>
     </section>
 
@@ -311,8 +294,8 @@
 </main>
 
 <footer class="site-foot">
-  <p><strong>Sources.</strong> Fight data: HockeyFights.com NHL postseason fight logs, 2021-22 to 2025-26. Skater statistics: spreadsheets supplied by the author for the same five postseasons, limited here to skaters with at least five playoff games. Fan votes and ratings were read in October 2026 and change as people keep voting.</p>
-  <p>*PIM = the player's total playoff penalty minutes across the five postseasons, 2021-22 to 2025-26. Card frames use approximate team colors until real card images are linked. Fight times are minutes elapsed in the period. Team logos belong to their teams and load from the NHL's public asset host.</p>
+  <p><strong>Sources.</strong> Team logos belong to their teams and load from the NHL's public asset host. We do not own rights to team imagery. Graphics designed by Fletcher Grause. Fight data is sourced from HockeyFights.com NHL postseason fight logs, 2021-22 to 2025-26. Skater statistics were built from NHL core statistics  Fan votes and ratings were read in October 2026 and change as people keep voting.</p>
+  <p>*PIM = the player's total playoff penalty minutes across the five postseasons, 2021-22 to 2025-26.  Fight times are minutes elapsed in the period.</p>
 </footer>
 
 <!-- Trading card reveal: opened by clicking a fight disc or a log row's View trading cards button -->
