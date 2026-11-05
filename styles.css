@@ -379,7 +379,7 @@ html { scroll-behavior: smooth; }
 .card-link:hover::after, .card-link:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
 .ch-art .card-link::after { display: none; }   /* chapter cards are small: the cursor and aria-label do the talking */
 
-.step p { margin: 0 0 1rem; }
+.step p { font-family: var(--font-ui); margin: 0 0 1rem; }
 .step .aside { font-size: 1rem; color: var(--muted); border-left: 4px solid var(--aqua); padding-left: 0.9rem; }
 .step [data-stat] { font-weight: 600; }
 
