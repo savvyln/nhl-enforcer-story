@@ -924,7 +924,7 @@ body[data-tone="dark"] .player-chip b, body[data-tone="red"] .player-chip b { co
 .ch-bar { height: 0.8rem; background: rgba(0, 31, 51, 0.25); }
 .ch-bar span { display: block; height: 100%; background: var(--ch-cream); }
 .ch-bars .is-cup .ch-bar span { background: #f4eedb; box-shadow: 0 0 0 2px var(--ch-navy); }
-.ch-bars .is-cup .ch-bar-team::after { content: "Cup"; margin-left: 0.2rem; padding: 0 0.3rem; background: var(--ch-navy); color: var(--ch-cream); font-size: 0.62rem; }
+.ch-bars .is-cup .ch-bar-team::after { content: "Cup"; margin-left: 0.2rem; padding: 0 0.3rem; background: var(--ch-navy); color: var(--ch-cream); font-size: 0.85rem; }
 
 /* The fight area is whatever height is left after the rink and the team logos. It is a size container,
    so the cards and details scale to fit inside it (cqh is a share of its height) and never run into the logos. */
