@@ -62,6 +62,14 @@
       </ul>
     </div>
 
+    <!-- EASTER EGG: a puck in the bottom right corner of the intro. It opens the fight slang pop-up
+         (the <dialog id="slang-modal"> near the end of this file). Its place is set in styles.css
+         (.slang-egg), in the corner so it never sits on the tape strips or the scroll cue. -->
+    <button type="button" class="slang-egg" id="slang-egg" aria-haspopup="dialog" aria-controls="slang-modal" aria-label="Easter egg: what do all these words mean? Open the hockey fight slang glossary.">
+      <span class="slang-egg-tip" aria-hidden="true">Speak hockey?</span>
+      <span class="slang-egg-puck" aria-hidden="true">?</span>
+    </button>
+
     <a class="scroll-cue" href="#hero-copy">
       <span>Scroll to continue</span>
       <svg viewBox="0 0 24 32" width="26" height="34" aria-hidden="true" focusable="false"><path d="M12 2 V28 M3 19 L12 29 L21 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg>
@@ -83,7 +91,7 @@
 
 <nav class="site-nav" id="site-nav" aria-label="Sections">
   <div class="nav-links">
-    <a href="#deck">Fighters</a><a href="#chapters">Seasons</a><a href="#s1">Decline</a><a href="#s2">Teams</a><a href="#s3">Enforcers</a><a href="#s4">Who fights</a><a href="#s5">Timing</a><a href="#s-answer">Verdict</a><a href="#s6">Fight log</a>
+    <a href="#deck">Fighters</a><a href="#rink-guide">Rink guide</a><a href="#chapter-2021-22">Seasons</a><a href="#s1">Decline</a><a href="#s2">Teams</a><a href="#s3">Enforcers</a><a href="#s4">Who fights</a><a href="#s5">Timing</a><a href="#s-answer">Verdict</a><a href="#s6">Fight log</a>
   </div>
   <label class="nav-team">Team <select id="nav-team"><option value="">All teams</option></select></label>
 </nav>
@@ -125,7 +133,8 @@
   <p class="deck-hint"><output id="deck-count" for="deck-range"></output> &middot; Drag a card off the stack, click one in the fan, or use the slider. Click the top card to see all their fights.</p>
 </section>
 
-<!-- SEASON CHAPTERS: filled in by buildChapters() in app.js (see CHAPTER_SEASONS) -->
+<!-- RINK GUIDE + SEASON CHAPTERS: filled in by buildChapters() in app.js.
+     The guide ("How to read the rink") comes from rinkGuideHTML(); the seasons from CHAPTER_SEASONS. -->
 <div id="chapters"></div>
 
 <noscript><p class="noscript">This story is interactive and needs JavaScript turned on.</p></noscript>
@@ -158,6 +167,12 @@
       </p>
       <p>
         The bigger the logo, the more fights that team was in. Your pick carries through the charts that follow.
+      </p>
+      <p>
+        Now compare the two halves of the ice. <strong><span data-stat="eastTeams"></span> Eastern Conference teams</strong> show up in the fight log, against only <strong><span data-stat="westTeams"></span> from the West</strong>. Each conference sends eight teams to the playoffs every spring, so the East's longer list means more of its clubs were getting in, and getting into it.
+      </p>
+      <p>
+        That may be a sign of a more competitive East, where the playoff field keeps turning over. The West's shorter list could signal the opposite: a less competitive conference, or one controlled by a select few teams. Two clubs, the <span data-stat="westTopNames"></span>, account for <span data-stat="westTopShare" data-fmt="pct"></span> of the West's spots in the log.
       </p>
       <p class="aside">
         Position on this rink shows conference, not where fights happened. Eastern teams sit left of center ice and Western teams sit right. The season chapter above places each fight by zone.
@@ -337,6 +352,22 @@
       <p id="card-vote"></p>
       <p><a id="card-video" href="#" target="_blank" rel="noopener">Watch the video on HockeyFights.com</a></p>
       <p id="pim-note" class="pim-note"></p>
+    </footer>
+  </div>
+</dialog>
+
+<!-- Fight slang pop-up: opened by the puck button in the intro (#slang-egg). The terms are the SLANG list in app.js. -->
+<dialog id="slang-modal" class="card-modal slang-modal" aria-labelledby="slang-title">
+  <div class="modal-body">
+    <button type="button" class="modal-close" aria-label="Close the slang glossary">&times;</button>
+    <header class="modal-head">
+      <p class="slang-kicker">You found the Easter egg</p>
+      <h2 id="slang-title">How to talk about a hockey fight</h2>
+      <p>Hockey has more words for a fight than it has fights these days. Here is what the tape on the title screen is saying.</p>
+    </header>
+    <dl id="slang-list" class="slang-list"></dl>
+    <footer class="modal-foot">
+      <p><button type="button" class="btn btn-small slang-done">Back to the ice</button></p>
     </footer>
   </div>
 </dialog>
