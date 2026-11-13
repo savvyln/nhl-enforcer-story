@@ -229,7 +229,13 @@ function setTeam(team) {
     ? `Highlighting ${TEAMS[team] || team} (${n} fight${n === 1 ? "" : "s"}) in every chart`
     : "No team selected. Pick one on the rink to highlight its fights in every chart.";
   renderRinkDetail();
+  const sel = $("#nav-team"); if (sel) sel.value = team || "";
   refreshers.forEach(fn => fn());
+}
+function buildNav() {
+  const sel = $("#nav-team");
+  [...new Set(DATA.fights.flatMap(f => [f.t1, f.t2]))].sort().forEach(t => sel.add(new Option(TEAMS[t] || t, t)));
+  sel.addEventListener("change", () => setTeam(sel.value || null));
 }
 
 /* ---------------------------------------------------------------------
@@ -570,6 +576,7 @@ const VIEWS = [
   { id: "mirage",   title: "Four well-known fighters, five playoff runs" },
   { id: "regulars", title: "Who fights: ice time against penalty minutes" },
   { id: "clock",    title: "When in the game fights break out" },
+  { id: "answer",   title: "Wins and losses in games with a fight, by team" },
   { id: "fighter",  title: "Every fight for one fighter", enter: () => { $("#panel-title").textContent = fighterTitle(); } },
   { id: "log",      title: "Every fight in the dataset" },
   { id: "log",      title: "Every fight in the dataset" }
@@ -578,7 +585,7 @@ const VIEWS = [
 // Each step gets its own background (see SECTION THEMES in styles.css).
 // The palette is cream, navy and red. "light" is the base cream palette; "dark" (navy) and
 // "red" swap ink and surface colors so text reads cream. Keep in step with SECTION THEMES in styles.css.
-const TONES = ["light", "dark", "red", "light", "dark", "light", "red", "light"];
+const TONES = ["light", "dark", "red", "light", "dark", "red", "light", "red", "light"];
 
 function setStep(i) {
   if (i === state.step) return;
@@ -639,7 +646,7 @@ const playerFights = name => {
   const k = norm(name);
   return DATA.fights.filter(f => norm(f.p1) === k || norm(f.p2) === k).sort((a, b) => (a.date < b.date ? 1 : -1));
 };
-const FIGHTER_STEP = 5;   // its place in VIEWS and TONES
+const FIGHTER_STEP = 6;   // its place in VIEWS and TONES
 
 function renderFighter() {
   const c = state.fighter;
@@ -721,6 +728,47 @@ document.addEventListener("click", e => {
    --------------------------------------------------------------------- */
 const CHAPTER_SEASONS = ["2021-22", "2022-23", "2023-24", "2024-25", "2025-26"];   // remove a season here to hide its chapter
 const CUP = { "2021-22": "COL", "2022-23": "VGK", "2023-24": "FLA", "2024-25": "FLA", "2025-26": "CAR" };
+
+/* ---- View: verdict (do teams that fight more win more?) -------------
+   Games are de-duplicated (several fights can share a game). A game's winner is f.gwx when the data
+   flags one, else f.gw. Only games with a logged fight are counted. */
+const ANS = (() => {
+  const games = {}, rec = {};
+  const R = t => rec[t] || (rec[t] = { t, n: 0, w: 0, l: 0 });
+  DATA.fights.forEach(f => { R(f.t1).n++; R(f.t2).n++; games[f.date + f.home + f.away] = { h: f.home, a: f.away, w: String(f.gwx || f.gw).toUpperCase() }; });
+  Object.values(games).forEach(g => [g.h, g.a].forEach(t => R(t)[t === g.w ? "w" : "l"]++));
+  const rows = Object.values(rec).sort((a, b) => b.n - a.n || a.t.localeCompare(b.t));
+  const sum = l => l.reduce((a, r) => ({ w: a.w + r.w, l: a.l + r.l }), { w: 0, l: 0 });
+  const big = sum(rows.filter(r => r.n >= 3)), small = sum(rows.filter(r => r.n < 3));
+  const cf = Object.entries(CUP).map(([s, c]) => {
+    const cnt = {}; DATA.fights.filter(f => f.s === s).forEach(f => [f.t1, f.t2].forEach(t => (cnt[t] = (cnt[t] || 0) + 1)));
+    return { mine: cnt[c] || 0, top: Math.max(0, ...Object.entries(cnt).filter(([t]) => t !== c).map(e => e[1])) };
+  });
+  Object.assign(STATS, {
+    fightGames: Object.keys(games).length, bigRec: `${big.w}-${big.l}`, smallRec: `${small.w}-${small.l}`,
+    bigPct: big.w / (big.w + big.l), smallPct: small.w / (small.w + small.l),
+    cupMax: Math.max(...cf.map(x => x.mine)), cupLed: cf.filter(x => x.mine > x.top).length
+  });
+  return { rows };
+})();
+
+let ansRows;
+function buildAnswer() {
+  const svg = d3.select("#svg-answer"), rows = ANS.rows, rh = 21, W = 760, H = rows.length * rh + 36, l = 52, r = 150;
+  svg.attr("viewBox", `0 0 ${W} ${H}`);
+  const x = d3.scaleLinear().domain([0, d3.max(rows, d => d.w + d.l)]).range([0, W - l - r]);
+  svg.append("text").attr("class", "axis-title").attr("x", l).attr("y", 14).text("Teams, most fights first");
+  ansRows = svg.selectAll("g.ans-row").data(rows).join("g").attr("class", "ans-row")
+    .attr("transform", (d, i) => `translate(0,${26 + i * rh})`).attr("tabindex", 0).attr("role", "button").style("cursor", "pointer")
+    .attr("aria-label", d => `${TEAMS[d.t] || d.t}: ${d.n} fights, ${d.w} wins and ${d.l} losses in games with a fight. Select to filter every chart.`)
+    .on("click", (e, d) => setTeam(state.team === d.t ? null : d.t))
+    .on("keydown", (e, d) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setTeam(state.team === d.t ? null : d.t); } });
+  ansRows.append("text").attr("class", "col-label").attr("x", l - 8).attr("y", 14).attr("text-anchor", "end").text(d => d.t);
+  ansRows.append("rect").attr("x", l).attr("y", 2).attr("height", rh - 6).attr("width", d => x(d.w)).style("fill", "var(--navy)");
+  ansRows.append("rect").attr("x", d => l + x(d.w)).attr("y", 2).attr("height", rh - 6).attr("width", d => x(d.l)).style("fill", "var(--accent)");
+  ansRows.append("text").attr("class", "col-label").attr("x", d => l + x(d.w + d.l) + 8).attr("y", 14).text(d => `${d.n} fight${d.n === 1 ? "" : "s"} \u00b7 ${d.w}-${d.l}`);
+  refreshers.push(() => ansRows.style("opacity", d => (state.team && d.t !== state.team ? 0.25 : 1)));
+}
 
 // Locations are from the HOME team's point of view. The home team's end of the rink is the LEFT side
 // and the away team's end is the RIGHT side, so a "defensive" fight is in the left zone, an
@@ -817,6 +865,7 @@ function chapterHTML(season) {
   </header>
   <div class="ch-body">
     <div class="ch-stage">
+      <p class="ch-year" aria-hidden="true">${season}</p>
       <div class="ch-rink-wrap">
         ${chapterRinkSVG(uid)}
         <p class="ch-zones" aria-hidden="true"><span>Home end &middot; defensive zone</span><span>Neutral zone</span><span>Away end &middot; offensive zone</span></p>
@@ -1154,7 +1203,9 @@ function init() {
   buildMirage();
   buildRegulars();
   buildClock();
+  buildAnswer();
   buildLog();
+  buildNav();
   setTeam(null);
   setupObserver();
   setStep(0);

@@ -81,6 +81,13 @@
   </div>
 </header>
 
+<nav class="site-nav" id="site-nav" aria-label="Sections">
+  <div class="nav-links">
+    <a href="#deck">Fighters</a><a href="#chapters">Seasons</a><a href="#s1">Decline</a><a href="#s2">Teams</a><a href="#s3">Enforcers</a><a href="#s4">Who fights</a><a href="#s5">Timing</a><a href="#s-answer">Verdict</a><a href="#s6">Fight log</a>
+  </div>
+  <label class="nav-team">Team <select id="nav-team"><option value="">All teams</option></select></label>
+</nav>
+
 <!-- =====================================================================
      CARD DECK
      Every trading card, stacked and fanned. Drag the front card off the stack,
@@ -190,6 +197,19 @@
       </p>
     </section>
 
+    <section class="step" aria-labelledby="s-answer">
+      <h2 id="s-answer">The Verdict</h2>
+      <p>
+        So, do teams that fight more win more? <strong>Not in any way this data can show.</strong> In the <span data-stat="fightGames"></span> games that had a fight, teams with three or more fights in the log went <strong data-stat="bigRec"></strong> (<span data-stat="bigPct" data-fmt="pct"></span>). Teams with fewer went <strong data-stat="smallRec"></strong> (<span data-stat="smallPct" data-fmt="pct"></span>).
+      </p>
+      <p>
+        The Cup tells the same story. No champion logged more than <span data-stat="cupMax"></span> fights in its run, and <span data-stat="cupLed"></span> of the five fought more than every other team that season.
+      </p>
+      <p class="aside">
+        The gaps are a handful of games, which is noise. Playoff game totals per team are not in this dataset, so we only see results in games with a fight, not a fight-free baseline. Click a bar to filter every chart to that team.
+      </p>
+    </section>
+
     <!-- FIGHTER FILE
          Hidden until someone clicks a trading card (in the card deck, a season chapter or the pop-up).
          Then it appears here, just above "Every fight, logged": the chosen card on the left
@@ -263,6 +283,12 @@
         <div id="view-clock" class="viz-view">
           <svg id="svg-clock" class="chart" role="img" aria-label="Chart of when each fight happened, by period and minute elapsed. Most are in the third period."></svg>
           <p class="legend">Each disc is one fight. Click a disc to see both players' trading cards.</p>
+        </div>
+
+        <!-- View: verdict -->
+        <div id="view-answer" class="viz-view">
+          <svg id="svg-answer" class="chart" role="img" aria-label="Bar chart of each team's wins and losses in games that had a fight, sorted by number of fights."></svg>
+          <p class="legend"><span class="key key-solid"></span> Won the game <span class="key key-red"></span> Lost the game. Games with at least one logged fight.</p>
         </div>
 
         <!-- Views 6 and 7: log -->
