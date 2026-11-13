@@ -219,6 +219,22 @@ const refreshers = [];
 const EAST = ["BOS", "BUF", "CAR", "FLA", "MTL", "NJD", "NYI", "NYR", "OTT", "TBL", "TOR", "WSH"];
 const teamFights = t => DATA.fights.filter(f => fightHasTeam(f, t));
 
+// East vs. West numbers for the "Who dropped the mitts?" copy, counted from the fight log so the
+// text can never drift from the rink. A team's "spots" are its appearances in the log (each fight has two).
+(() => {
+  const spots = {};
+  DATA.fights.forEach(f => [f.t1, f.t2].forEach(t => (spots[t] = (spots[t] || 0) + 1)));
+  const teams = Object.keys(spots), sum = l => l.reduce((a, t) => a + spots[t], 0);
+  const east = teams.filter(t => EAST.includes(t)), west = teams.filter(t => !EAST.includes(t));
+  const westTop = [...west].sort((a, b) => spots[b] - spots[a] || a.localeCompare(b)).slice(0, 2);
+  const eastTop = [...east].sort((a, b) => spots[b] - spots[a] || a.localeCompare(b)).slice(0, 2);
+  Object.assign(STATS, {
+    eastTeams: east.length, westTeams: west.length,
+    westTopNames: westTop.map(t => TEAMS[t] || t).join(" and the "),
+    westTopShare: sum(westTop) / sum(west), eastTopShare: sum(eastTop) / sum(east)
+  });
+})();
+
 function setTeam(team) {
   state.team = team;
   $$(".rink-team").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.team === team)));
@@ -273,8 +289,8 @@ function drawRink(svg) {
   svg.append("rect").attr("class", "rink-net").attr("x", 189).attr("y", 39.5).attr("width", 4).attr("height", 6);
 
   svg.append("rect").attr("class", "rink-boards").attr("x", 0).attr("y", 0).attr("width", 200).attr("height", 85).attr("rx", 28);
-  svg.append("text").attr("class", "rink-conf").attr("x", 50).attr("y", 7).attr("text-anchor", "middle").text("Eastern Conference");
-  svg.append("text").attr("class", "rink-conf").attr("x", 150).attr("y", 7).attr("text-anchor", "middle").text("Western Conference");
+  svg.append("text").attr("class", "rink-conf").attr("x", 50).attr("y", 7).attr("text-anchor", "middle").text(`Eastern Conference \u00b7 ${STATS.eastTeams} teams`);
+  svg.append("text").attr("class", "rink-conf").attr("x", 150).attr("y", 7).attr("text-anchor", "middle").text(`Western Conference \u00b7 ${STATS.westTeams} teams`);
 }
 
 function buildRink() {
@@ -634,6 +650,41 @@ function initIntro() {
 }
 
 /* ---------------------------------------------------------------------
+   EASTER EGG: FIGHT SLANG
+   The puck button in the corner of the intro opens a pop-up glossary of the words on the tape.
+   To add, remove or reword a term, edit SLANG. "tape" picks the strip color (see .slang-list in styles.css):
+   navy, aqua, cream, red, deep or paper.
+   --------------------------------------------------------------------- */
+const SLANG = [
+  { term: "Fight", tape: "navy", def: "The plain word. Two players drop their gloves and throw punches, and each one sits for a five-minute major penalty." },
+  { term: "Dance", tape: "aqua", def: "A fight, usually a willing one. Asking someone to dance is inviting them to fight, and the two fighters are dance partners." },
+  { term: "Tilt", tape: "cream", def: "A fight, most often a good, evenly matched one." },
+  { term: "Scrap", tape: "deep", def: "A short, scrappy fight." },
+  { term: "Donnybrook", tape: "paper", def: "A wild brawl, often with more than two players in it. The word comes from Donnybrook Fair in Dublin, which was known for its brawling." },
+  { term: "Trading blows", tape: "red", def: "Both fighters landing punches back and forth, not just wrestling for a grip." },
+  { term: "Drop the mitts", tape: "navy", def: "To throw your gloves to the ice and fight. Mitts are gloves. Also said as drop the gloves." },
+  { term: "Fisticuffs", tape: "aqua", def: "An old-fashioned word for a fist fight that hockey broadcasters still love." },
+  { term: "Have a go", tape: "cream", def: "To fight. \u201cWanna go?\u201d is the standard invitation." },
+  { term: "Puttin\u2019 on the foil", tape: "deep", def: "Getting ready to fight. It comes from the 1977 movie Slap Shot, where the Hanson brothers wrap their knuckles in tinfoil before a game." },
+  { term: "Snarl", tape: "paper", def: "A knot of shoving, jawing players after the whistle. Not every snarl turns into a fight." },
+  { term: "Line brawl", tape: "red", def: "Every skater on the ice pairs off at the same time. This story flags those fights as a full line brawl." },
+  { term: "Enforcer", tape: "navy", def: "A player whose main job is to fight and protect teammates. Also called a heavyweight, tough guy, goon or policeman." },
+  { term: "Instigator", tape: "aqua", def: "The player who starts a fight. In this story it means who started it as seen on HockeyFights.com, not the official instigator penalty." }
+];
+function initSlang() {
+  const btn = $("#slang-egg"), modal = $("#slang-modal"), list = $("#slang-list");
+  if (!btn || !modal || !list) return;
+  list.innerHTML = SLANG.map(s => `<div class="slang-item"><dt><span class="slang-tape slang-${s.tape}">${esc(s.term)}</span></dt><dd>${esc(s.def)}</dd></div>`).join("");
+  btn.addEventListener("click", () => {
+    hideTip();
+    if (typeof modal.showModal === "function") modal.showModal(); else modal.setAttribute("open", "");
+    $(".modal-body", modal).scrollTop = 0;
+  });
+  // Close on the X button, the "Back to the ice" button, or a click on the backdrop. Escape is handled by the dialog itself.
+  modal.addEventListener("click", e => { if (e.target === modal || e.target.closest(".modal-close, .slang-done")) modal.close(); });
+}
+
+/* ---------------------------------------------------------------------
    FIGHTER FILE
    Any trading card can be clicked: the front card in the deck, a card in a season chapter, or a card in
    the pop-up. That calls openFighter(card). It fills in the "Fighter file" step (hidden until now),
@@ -770,13 +821,32 @@ function buildAnswer() {
   refreshers.push(() => ansRows.style("opacity", d => (state.team && d.t !== state.team ? 0.25 : 1)));
 }
 
-// Locations are from the HOME team's point of view. The home team's end of the rink is the LEFT side
-// and the away team's end is the RIGHT side, so a "defensive" fight is in the left zone, an
-// "offensive" fight is in the right zone, and a "neutral" fight is in the middle. Rink drawn at 200 x 85.
-const ZONE_X = { defensive: [17, 67], neutral: [83, 117], offensive: [133, 183] };   // where a dot may land
-const ZONE_BAND = { defensive: [0, 75], neutral: [75, 125], offensive: [125, 200] }; // the zone highlighted
-const zoneText = f => f.zone === "defensive" ? `${f.home}'s defensive zone`
-  : f.zone === "offensive" ? `${f.home}'s offensive zone (${f.away}'s defensive zone)` : "Neutral zone";
+// FIGHT LOCATIONS
+// The rink has FIXED sides: the home team's end is always the LEFT side and the away team's end is
+// always the RIGHT side, for the whole game. Real teams switch ends every period; this drawing does not,
+// so a dot on the left is always at the home team's end. Rink drawn at 200 x 85.
+//
+// ZONE_POV says whose point of view the spreadsheet's "Fight Location Zone" column is read from:
+//   "home"        defensive = the home team's end (left), offensive = the away team's end (right)
+//   "possession"  defensive / offensive are relative to the "Team in Possession" column, so a
+//                 "defensive" fight with the AWAY team in possession lands at the away end (right)
+// Change this one word to switch every chapter rink, label and screen-reader description.
+const ZONE_POV = "home";
+const zoneSide = f => {
+  if (f.zone === "neutral") return "neutral";
+  const pov = ZONE_POV === "possession" && f.poss ? f.poss : f.home;      // whose defensive / offensive zone it is
+  const own = pov === f.home ? "left" : "right";                          // that team's own end
+  return f.zone === "defensive" ? own : own === "left" ? "right" : "left";
+};
+const ZONE_X = { left: [17, 67], neutral: [83, 117], right: [133, 183] };   // where a dot may land
+const ZONE_BAND = { left: [0, 75], neutral: [75, 125], right: [125, 200] }; // the zone highlighted
+// Plain-language location: which end of the rink, then whose defensive zone that is.
+const zoneText = f => {
+  const side = zoneSide(f);
+  return side === "left" ? `Home end (left side): ${f.home}'s defensive zone`
+    : side === "right" ? `Away end (right side): ${f.away}'s defensive zone`
+    : "Neutral zone (middle), between the blue lines";
+};
 const fmtLen = s => (s < 60 ? `${s} seconds` : `${Math.floor(s / 60)} min${s % 60 ? " " + (s % 60) + " sec" : ""}`);
 
 function editDistance(a, b) {
@@ -801,7 +871,7 @@ function seeded(str) {
 function placeDots(fights) {
   const placed = [];
   return fights.map(f => {
-    const rnd = seeded(f.id), [x0, x1] = ZONE_X[f.zone];
+    const rnd = seeded(f.id), [x0, x1] = ZONE_X[zoneSide(f)];
     let best = null;
     for (let k = 0; k < 40; k++) {
       const x = x0 + rnd() * (x1 - x0), y = 14 + rnd() * 57;
@@ -814,9 +884,9 @@ function placeDots(fights) {
   });
 }
 
-function chapterRinkSVG(uid) {
+function chapterRinkSVG(uid, extra = "") {
   const ring = (cx, cy, red) => `<circle class="ch-ring${red ? " ch-ring-red" : ""}" cx="${cx}" cy="${cy}" r="15"/><circle class="ch-fo${red ? " ch-fo-red" : ""}" cx="${cx}" cy="${cy}" r="1.4"/>`;
-  return `<svg class="ch-rink" viewBox="-3 -3 206 91" role="group" aria-label="Hockey rink. The home team's end is on the left and the away team's end is on the right.">
+  return `<svg class="ch-rink" viewBox="-3 -3 206 91" role="group" aria-label="Hockey rink. The home team's end is always on the left and the away team's end is always on the right, in every period.">
     <defs><clipPath id="${uid}-clip"><rect x="0" y="0" width="200" height="85" rx="26"/></clipPath></defs>
     <rect class="ch-ice" x="0" y="0" width="200" height="85" rx="26"/>
     <g clip-path="url(#${uid}-clip)">
@@ -832,14 +902,46 @@ function chapterRinkSVG(uid) {
     <rect class="ch-board" x="0" y="0" width="200" height="85" rx="26"/>
     <g class="ch-endlogo" id="${uid}-home-g"><circle cx="31" cy="42.5" r="12"/><image id="${uid}-home" x="21.5" y="33" width="19" height="19" href=""/></g>
     <g class="ch-endlogo" id="${uid}-away-g"><circle cx="169" cy="42.5" r="12"/><image id="${uid}-away" x="159.5" y="33" width="19" height="19" href=""/></g>
+    ${extra}
     <g id="${uid}-dots"></g>
   </svg>`;
+}
+
+// RINK GUIDE: a short introduction to the rink chart, shown once above the first season chapter.
+// It labels the three zones and says the one thing readers get wrong: the sides do not change at intermission.
+function rinkGuideHTML() {
+  const art = `<g clip-path="url(#chguide-clip)">
+      <rect class="gd-band gd-band-home" x="0" y="0" width="75" height="85"/>
+      <rect class="gd-band gd-band-away" x="125" y="0" width="75" height="85"/>
+    </g>
+    <g class="gd-label"><text x="37.5" y="40">HOME END</text><text class="gd-sub" x="37.5" y="47.5">always the left side</text></g>
+    <g class="gd-label"><text x="100" y="40">NEUTRAL</text><text class="gd-sub" x="100" y="47.5">between the blue lines</text></g>
+    <g class="gd-label"><text x="162.5" y="40">AWAY END</text><text class="gd-sub" x="162.5" y="47.5">always the right side</text></g>
+    <g class="ch-dot is-active" transform="translate(150 66)" aria-hidden="true"><g class="ch-dot-in"><circle class="ch-dot-ring" r="5.6"/><circle class="ch-dot-disc" r="3.7"/><circle class="ch-dot-core" r="1.5"/></g></g>`;
+  return `<section class="ch-guide" id="rink-guide" aria-labelledby="rink-guide-title">
+  <div class="ch-guide-copy">
+    <p class="ch-kicker">Before the puck drops</p>
+    <h2 class="ch-guide-title" id="rink-guide-title">How to read the rink</h2>
+    <p>Each season below plays out on a rink like this one. Every fight is a dot, dropped into the zone where the gloves came off.</p>
+    <ul class="ch-guide-key">
+      <li><b>Left side: home end.</b> The home team's logo sits here. This is the net the home team defends, so it is the home team's defensive zone.</li>
+      <li><b>Middle: neutral zone.</b> The ice between the two blue lines.</li>
+      <li><b>Right side: away end.</b> The away team's logo sits here. This is the away team's defensive zone.</li>
+    </ul>
+    <p class="ch-guide-note"><strong>The sides never change.</strong> In a real game the teams switch ends at every intermission. On this rink they don't. The home team stays on the left and the away team stays on the right for all three periods, so a dot on the left is always at the home team's end, no matter when the fight broke out.</p>
+    <p class="ch-guide-fine">We logged a zone for each fight, not an exact spot, so where a dot sits inside its zone is approximate.</p>
+  </div>
+  <figure class="ch-guide-fig">
+    ${chapterRinkSVG("chguide", art).replace('role="group"', 'role="img"').replace(/aria-label="[^"]*"/, `aria-label="Diagram of the rink used in each season chapter. The left third is labeled home end, the middle is the neutral zone, and the right third is the away end. A red dot in the away end stands for one fight."`)}
+    <figcaption><span class="gd-key-dot" aria-hidden="true"></span> One dot = one fight. The red dot is the fight you are reading about.</figcaption>
+  </figure>
+</section>`;
 }
 
 function buildChapters() {
   const host = $("#chapters");
   if (!host) return;
-  host.innerHTML = CHAPTER_SEASONS.map(s => chapterHTML(s)).join("");
+  host.innerHTML = rinkGuideHTML() + CHAPTER_SEASONS.map(s => chapterHTML(s)).join("");
   CHAPTER_SEASONS.forEach(wireChapter);
 }
 
@@ -862,13 +964,14 @@ function chapterHTML(season) {
     <p class="ch-kicker">Season ${nth} of ${DATA.seasons.length}</p>
     <h2 class="ch-title" id="${uid}-title">${season}</h2>
     <p class="ch-lede">${fights.length} fight${fights.length === 1 ? "" : "s"}. Scroll to walk through them one at a time, or jump to a date on the timeline. Click any card to see every fight that player was in.</p>
+    <p class="ch-lede ch-lede-rink">On the rink, the home team's end is always on the left and the away team's end is always on the right. The sides stay put even though the teams switch ends at each intermission. <a href="#rink-guide">How to read the rink</a></p>
   </header>
   <div class="ch-body">
     <div class="ch-stage">
       <p class="ch-year" aria-hidden="true">${season}</p>
       <div class="ch-rink-wrap">
         ${chapterRinkSVG(uid)}
-        <p class="ch-zones" aria-hidden="true"><span>Home end &middot; defensive zone</span><span>Neutral zone</span><span>Away end &middot; offensive zone</span></p>
+        <p class="ch-zones" id="${uid}-zones" aria-hidden="true"><span><b>&larr; Home end</b><small>Home team defends this net</small></span><span><b>Neutral zone</b><small>Sides stay fixed all game</small></span><span><b>Away end &rarr;</b><small>Away team defends this net</small></span></p>
       </div>
       <div class="ch-fight" id="${uid}-fight"></div>
       <div class="ch-logos" role="group" aria-label="Show only one team's fights">${logos}</div>
@@ -898,6 +1001,12 @@ function wireChapter(season) {
   const beats = $$(".ch-beat", root), dotsG = $(`#${uid}-dots`), fightEl = $(`#${uid}-fight`), rail = $(`#${uid}-rail`);
   const hl = $(`#${uid}-hl`), homeImg = $(`#${uid}-home`), awayImg = $(`#${uid}-away`);
   const homeG = $(`#${uid}-home-g`), awayG = $(`#${uid}-away-g`), status = $(`#${uid}-status`);
+  const zoneSubs = $$(`#${uid}-zones small`);   // the second line of each label under the rink
+  const setZoneLabels = f => {
+    zoneSubs[0].textContent = f ? `${f.home} (home) defends this net` : "Home team defends this net";
+    zoneSubs[2].textContent = f ? `${f.away} (away) defends this net` : "Away team defends this net";
+    $$(`#${uid}-zones span`).forEach((sp, k) => sp.classList.toggle("is-on", !!f && ["left", "neutral", "right"][k] === zoneSide(f)));
+  };
   const involves = (f, t) => f.t1 === t || f.t2 === t;
   let active = -1, team = null, shown = -2;
 
@@ -925,7 +1034,7 @@ function wireChapter(season) {
   // timeline rail: one tick per fight, spaced by date (ticks on the same day are nudged apart)
   const t0 = new Date(fights[0].date), t1 = new Date(fights[n - 1].date), span = Math.max(1, t1 - t0);
   const at = [];
-  fights.forEach((f, i) => { let p = 6 + ((new Date(f.date) - t0) / span) * 88; if (i && p < at[i - 1] + 4.2) p = at[i - 1] + 4.2; at.push(p); });
+  fights.forEach((f, i) => { let p = 6 + ((new Date(f.date) - t0) / span) * 88; if (i && p < at[i - 1] + 5) p = at[i - 1] + 5; at.push(p); });
   const over = Math.max(0, at[n - 1] - 96); if (over) at.forEach((p, i) => (at[i] = p - over * (i / Math.max(1, n - 1))));
   rail.innerHTML = fights.map((f, i) => `<button type="button" class="ch-tick" data-i="${i}" style="--p:${at[i].toFixed(1)}%" aria-label="${esc(fmtDate(f.date))}: ${esc(f.p1)} vs. ${esc(f.p2)}"><span class="ch-tick-d">${shortDate(f.date).replace(/, \d{4}$/, "")}</span></button>`).join("");
   const ticks = $$(".ch-tick", rail);
@@ -955,7 +1064,7 @@ function wireChapter(season) {
     return c.img ? `<div class="tcard-art"><img class="tcard-img" src="${esc(c.img)}" alt="${esc(cardAlt(c, f.s))}"></div>` : placeholderCard(c);
   }
   function renderFight(i) {
-    if (i < 0) { fightEl.innerHTML = `<p class="ch-intro">Scroll to begin. Each fight appears on the rink where it happened.</p>`; return; }
+    if (i < 0) { fightEl.innerHTML = `<p class="ch-intro">Scroll to begin. Each fight appears on the rink in the zone where it happened.<span>Home end on the left, away end on the right, in every period.</span></p>`; return; }
     const f = fights[i], ins = instigatorSide(f), win = norm(f.w) === norm(f.p1) ? 1 : 2;
     const cardCol = side => {
       const c = cardFor(f, side), bits = [TEAMS[c.team] || c.team, POS[c.pos] || c.pos, c.num ? "#" + c.num : ""].filter(Boolean).join(" \u00b7 ");
@@ -1010,13 +1119,14 @@ function wireChapter(season) {
       renderFight(active);
       const f = fights[active];
       if (f) {
-        const [x, w] = [ZONE_BAND[f.zone][0], ZONE_BAND[f.zone][1] - ZONE_BAND[f.zone][0]];
+        const band = ZONE_BAND[zoneSide(f)], [x, w] = [band[0], band[1] - band[0]];
         hl.setAttribute("x", x); hl.setAttribute("width", w); hl.classList.add("on");
         homeImg.setAttribute("href", LOGO_URL(f.home)); awayImg.setAttribute("href", LOGO_URL(f.away));
         homeG.classList.add("on"); awayG.classList.add("on");
+        setZoneLabels(f);
         status.textContent = `Fight ${active + 1} of ${n}: ${f.p1} vs. ${f.p2}, ${fmtDate(f.date)}. ${zoneText(f)}.`;
       } else {
-        hl.classList.remove("on"); homeG.classList.remove("on"); awayG.classList.remove("on"); status.textContent = "";
+        hl.classList.remove("on"); homeG.classList.remove("on"); awayG.classList.remove("on"); status.textContent = ""; setZoneLabels(null);
       }
     }
   }
@@ -1190,6 +1300,7 @@ function buildDeck() {
    --------------------------------------------------------------------- */
 function init() {
   initIntro();
+  initSlang();
   // The deck needs only the card data, not d3. Wait for cards.json (image links) so the
   // cards open with their images; if it is missing, the drawn placeholders are used.
   loadCardOverrides().then(() => { buildDeck(); buildChapters(); });
