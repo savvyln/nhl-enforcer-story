@@ -559,16 +559,24 @@ input[type="range"]:disabled { cursor: default; opacity: 0.6; }
 .rink-conf { font-family: var(--font-display); font-weight: 700; font-size: 3.6px; fill: var(--navy-fixed); letter-spacing: 0.15px; }
 
 /* team medallions: double-ringed discs that flip to show the fight count */
-.rink-team { position: absolute; transform: translate(-50%, -50%); aspect-ratio: 1; padding: 0; background: none; border: 0; cursor: pointer; perspective: 600px; transition: opacity 0.25s ease; }
-.rink-team .flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.5s ease; }
-.rink-team[aria-pressed="true"] .flip { transform: rotateY(180deg); }
-.rink-team .face { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+/* THE FLIP is done flat, in two halves: the front squeezes shut (scaleX 1 to 0), then the back opens
+   (scaleX 0 to 1). The face you end up looking at has NO transform on it, so its text is drawn sharp.
+   (The old version left the back face inside a 3D rotation, which made browsers draw the text as a
+   blurry picture.) The button is a size container so the text on the back scales with the disc (cqw). */
+.rink-team { position: absolute; transform: translate(-50%, -50%); aspect-ratio: 1; padding: 0; background: none; border: 0; cursor: pointer; container-type: inline-size; transition: opacity 0.25s ease; }
+.rink-team .flip { position: absolute; inset: 0; }
+.rink-team .face { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; }
+.rink-team .front { transform: none; transition: transform 0.22s ease-out 0.22s; }                       /* flipping back: opens second */
+.rink-team .back  { transform: scaleX(0); transition: transform 0.22s ease-in; }                          /* flipping back: closes first */
+.rink-team[aria-pressed="true"] .front { transform: scaleX(0); transition: transform 0.22s ease-in; }     /* flipping over: closes first */
+.rink-team[aria-pressed="true"] .back  { transform: none; transition: transform 0.22s ease-out 0.22s; }   /* flipping over: opens second */
 .rink-team .front { background: var(--paper-fixed); border: 2px solid var(--navy-fixed); padding: 14%; box-shadow: inset 0 0 0 2px var(--paper-fixed), inset 0 0 0 3.5px var(--navy-fixed); }
 .rink-team:hover .front { background: #fff; }
 .rink-team .front img { width: 100%; height: 100%; object-fit: contain; }
-.rink-team .back { background: var(--red-deep-fixed); color: #e9e0c3; border: 2px solid var(--navy-fixed); transform: rotateY(180deg); align-content: center; line-height: 1; box-shadow: inset 0 0 0 2px var(--red-deep-fixed), inset 0 0 0 3.5px #e9e0c3; }
-.rink-team .back b { font-family: var(--font-display); font-weight: 700; font-size: clamp(.9rem, 2.4vw, 1.7rem); }
-.rink-team .back i { font: normal 600 clamp(0.5rem, 0.9vw, 0.7rem) var(--font-ui); }
+.rink-team .back { background: var(--red-deep-fixed); color: #e9e0c3; border: 2px solid var(--navy-fixed); align-content: center; line-height: 1; box-shadow: inset 0 0 0 2px var(--red-deep-fixed), inset 0 0 0 3.5px #e9e0c3; }
+.rink-team .back b { font-family: var(--font-display); font-weight: 700; font-size: clamp(0.9rem, 2.4vw, 1.7rem); font-size: max(0.95rem, 40cqw); line-height: 0.95; }
+.rink-team .back i { font: normal 700 clamp(0.6rem, 1vw, 0.8rem) var(--font-ui); font-size: max(0.58rem, 18cqw); line-height: 1.05; letter-spacing: 0.01em; }
+.rink-team .back { padding-bottom: 7cqw; }   /* lifts the number and label a touch so the label clears the inner ring */
 .rink-teams.has-pick .rink-team[aria-pressed="false"] { opacity: 0.4; }
 .logo-fallback { display: none; font: 700 0.7rem var(--font-ui); }
 .front.nologo img { display: none; }
@@ -1134,7 +1142,6 @@ body[data-tone="dark"] .player-chip b, body[data-tone="red"] .player-chip b { co
   .log-row { grid-template-columns: 1fr auto; }
   .log-date { grid-column: 1 / -1; }
   .log-detail { padding-left: 0.5rem; }
-  .rink-team .back b { font-size: 1.1rem; }
   .intro-lockup { width: min(86vw, 70svh, 26rem); }
   .hero-sub { font-size: 1.15rem; }
   .card-modal { --art-w: clamp(5rem, calc((100dvh - 27rem) * 5 / 7), 42vw); box-shadow: 4px 4px 0 var(--navy); }
