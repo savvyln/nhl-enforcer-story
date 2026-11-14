@@ -35,7 +35,7 @@ const POS = { L: "Left wing", R: "Right wing", C: "Center", D: "Defense" };
    --------------------------------------------------------------------- */
 const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const SEASONS = DATA.seasons.map(d => d.s);
-const state = { team: null, season: null, step: -1, fighter: null, returnY: 0 };
+const state = { team: null, season: null, step: -1, fighter: null, returnY: 0, logView: "list" };   // logView: "list" or "grid" (the fight log's List / Cards toggle)
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -239,15 +239,50 @@ function setTeam(team) {
   state.team = team;
   $$(".rink-team").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.team === team)));
   $("#rink-teams").classList.toggle("has-pick", !!team);
+  // the team pills under every chart
+  const bar = $("#team-bar");
+  if (bar) {
+    bar.classList.toggle("has-pick", !!team);
+    $$(".team-pill", bar).forEach(b => b.setAttribute("aria-pressed", String(b.dataset.team === team)));
+    // on small screens the pills are one sideways-scrolling row: bring the picked one into view
+    const on = team && $(`.team-pill[data-team="${team}"]`, bar);
+    if (on && bar.scrollWidth > bar.clientWidth) bar.scrollLeft = on.offsetLeft - (bar.clientWidth - on.offsetWidth) / 2;
+  }
   $("#clear-team").hidden = !team;
   const n = team ? teamFights(team).length : 0;
   $("#filter-status").textContent = team
     ? `Highlighting ${TEAMS[team] || team} (${n} fight${n === 1 ? "" : "s"}) in every chart`
-    : "No team selected. Pick one on the rink to highlight its fights in every chart.";
+    : "No team selected. Pick a team to highlight its fights in every chart.";
   renderRinkDetail();
   const sel = $("#nav-team"); if (sel) sel.value = team || "";
   refreshers.forEach(fn => fn());
 }
+// TEAM FILTER BAR: the row of team pills under every chart (in the sticky panel's footer).
+// One pill per team, most fights first, each with its logo and fight count. Clicking a pill is the same
+// as clicking that team on the rink: it calls setTeam(), so every chart, the rink and the nav menu stay in step.
+// Click the picked pill again (or "Clear team") to go back to all teams.
+function buildTeamBar() {
+  const bar = $("#team-bar");
+  if (!bar) return;
+  const teams = [...new Set(DATA.fights.flatMap(f => [f.t1, f.t2]))]
+    .map(t => ({ t, n: teamFights(t).length }))
+    .sort((a, b) => b.n - a.n || a.t.localeCompare(b.t));
+  bar.innerHTML = teams.map(({ t, n }) => {
+    const name = TEAMS[t] || t, label = `${name}, ${n} fight${n === 1 ? "" : "s"}`;
+    return `<button type="button" class="team-pill" data-team="${t}" aria-pressed="false" aria-label="${esc(label)}. Show only their fights in every chart." title="${esc(label)}"><img src="${LOGO_URL(t)}" alt="" width="30" height="30" loading="lazy"><b aria-hidden="true">${t}</b><span>${n}</span></button>`;
+  }).join("");
+  // If a logo fails to load, the pill shows the team code instead.
+  $$("img", bar).forEach(img => {
+    const fail = () => img.closest(".team-pill").classList.add("nologo");
+    img.addEventListener("error", fail);
+    if (img.complete && img.naturalWidth === 0) fail();
+  });
+  bar.addEventListener("click", e => {
+    const b = e.target.closest(".team-pill");
+    if (b) setTeam(state.team === b.dataset.team ? null : b.dataset.team);
+  });
+}
+
 function buildNav() {
   const sel = $("#nav-team");
   [...new Set(DATA.fights.flatMap(f => [f.t1, f.t2]))].sort().forEach(t => sel.add(new Option(TEAMS[t] || t, t)));
@@ -343,6 +378,7 @@ function renderRinkDetail() {
   const players = {};
   fs.forEach(f => [[f.p1, f.t1], [f.p2, f.t2]].forEach(([p, tt]) => { if (tt === t) players[p] = (players[p] || 0) + 1; }));
   const names = Object.entries(players).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  el.scrollTop = 0;   // a new team starts at the top of its list
   el.innerHTML = `
     <h4>${esc(TEAMS[t] || t)}: ${fs.length} fight${fs.length === 1 ? "" : "s"}</h4>
     <p class="roster">${names.map(([n, c]) => `<span class="player-chip">${esc(n)}${c > 1 ? ` <b>\u00d7${c}</b>` : ""}</span>`).join("")}</p>
@@ -541,7 +577,19 @@ function buildLog() {
     $$(".chip", chips).forEach(c => c.setAttribute("aria-pressed", String(c === b)));
     renderLog();
   });
+  // List / Cards toggle: same fights, two ways of showing them.
+  const toggle = $("#log-view-toggle");
+  if (toggle) toggle.addEventListener("click", e => {
+    const b = e.target.closest(".view-btn"); if (!b || b.dataset.view === state.logView) return;
+    state.logView = b.dataset.view;
+    $$(".view-btn", toggle).forEach(v => v.setAttribute("aria-pressed", String(v === b)));
+    renderLog();
+    $("#view-log").scrollTop = 0;
+  });
   $("#log-list").addEventListener("click", e => {
+    // Cards view: a pair of cards opens the same pop-up as "View trading cards" (both cards, fan vote, video link).
+    const tile = e.target.closest(".log-card");
+    if (tile) { openFightCard(DATA.fights.find(f => f.id === tile.dataset.id)); return; }
     const vc = e.target.closest(".view-cards");
     if (vc) { openFightCard(DATA.fights.find(f => f.id === vc.dataset.id)); return; }
     const row = e.target.closest(".log-row"); if (!row) return;
@@ -557,9 +605,43 @@ function renderLog() {
   const rows = DATA.fights
     .filter(f => fightHasTeam(f, state.team) && (!state.season || f.s === state.season))
     .sort((a, b) => (a.date < b.date ? 1 : -1));
-  $("#log-count").textContent = `Showing ${rows.length} of ${DATA.fights.length} fights`;
+  const grid = state.logView === "grid";
+  list.classList.toggle("is-grid", grid);
+  $("#log-count").textContent = `Showing ${rows.length} of ${DATA.fights.length} fights${grid ? ". Click a pair of cards for the details." : ""}`;
   if (!rows.length) {
     list.innerHTML = `<li class="log-empty">No fights match these filters. Clear the team filter or pick another season.</li>`;
+    return;
+  }
+  // CARDS VIEW: one tile per fight, with both fighters' trading cards (the same cards used in the deck, the season
+  // chapters and the pop-up). The whole tile is one button that opens the fight's pop-up.
+  if (grid) {
+    const art = (f, side) => {
+      const c = cardFor(f, side);
+      return c.img ? `<div class="tcard-art"><img class="tcard-img" src="${esc(c.img)}" alt="" loading="lazy" decoding="async" draggable="false"></div>`
+        : placeholderCard(c).replace(/alt="[^"]*"/, 'alt=""');
+    };
+    list.innerHTML = rows.map(f => {
+      const won = norm(f.w) === norm(f.p1) ? 1 : 2;
+      const who = side => `<span class="lc-name${won === side ? " is-win" : ""}">${esc(side === 1 ? f.p1 : f.p2)} <i>${side === 1 ? f.t1 : f.t2}</i></span>`;
+      return `<li class="log-card-item">
+        <button type="button" class="log-card" data-id="${f.id}" aria-haspopup="dialog"
+          aria-label="${esc(`${f.p1}, ${TEAMS[f.t1] || f.t1}, versus ${f.p2}, ${TEAMS[f.t2] || f.t2}. ${fmtDate(f.date)}${f.rnd ? ", " + f.rnd : ""}. Fan vote: ${f.w}. Open the fight details.`)}">
+          <span class="lc-pair" aria-hidden="true">${art(f, 1)}${art(f, 2)}<b class="lc-vs">vs</b></span>
+          <span class="lc-text" aria-hidden="true">
+            <span class="lc-date">${shortDate(f.date)}${f.rnd ? " \u00b7 " + esc(f.rnd) : ""}</span>
+            ${who(1)}${who(2)}
+          </span>
+        </button>
+      </li>`;
+    }).join("");
+    // If a linked image fails to load, swap in the placeholder card instead of a broken image.
+    $$(".log-card", list).forEach(tile => {
+      const f = DATA.fights.find(x => x.id === tile.dataset.id);
+      $$(".lc-pair > .tcard-art", tile).forEach((el, k) => {
+        const img = $("img.tcard-img", el);
+        if (img) img.addEventListener("error", () => { el.outerHTML = placeholderCard(cardFor(f, k + 1)).replace(/alt="[^"]*"/, 'alt=""'); });
+      });
+    });
     return;
   }
   list.innerHTML = rows.map(f => {
@@ -628,30 +710,65 @@ function setupObserver() {
 }
 
 /* ---------------------------------------------------------------------
-   INTRO (taped-up title)
-   The motion is CSS keyframes in styles.css. This file only:
-   1. loads your tape PNGs if they exist (the ice photo is set in styles.css), and
-   2. starts the animation by adding .play to the intro.
+   INTRO (the puck drop)
+   The motion is CSS keyframes in styles.css (see HERO). This file only:
+   1. builds the puck's thickness (a stack of discs) and the snow spray particles,
+   2. starts the animation by adding .play to the intro, and
+   3. feeds the mouse position (--mx, --my, each -1 to 1) and the scroll position (--sy, 0 to 1)
+      to the intro, which the layers use to move at different speeds (the parallax).
    --------------------------------------------------------------------- */
 function initIntro() {
   const intro = $(".intro");
   if (!intro) return;
 
-  // TAPE IMAGE SLOTS: each <li data-tape="images/..."> in index.html tries to load that PNG.
-  // If it loads, the strip switches from flat CSS color to your image (class "has-img").
-  // If the file is missing, nothing happens and the flat color stays.
-  $$(".tape-pile li[data-tape]").forEach(li => {
-    const img = new Image();
-    img.onload = () => { li.style.backgroundImage = `url("${li.dataset.tape}")`; li.classList.add("has-img"); };
-    img.src = li.dataset.tape;
-  });
+  // 1a. The puck's thickness: 27 dark discs stacked between the back face and the front face.
+  //     Each disc gets --k, its place in the stack (-13 to 13); styles.css turns that into depth.
+  const body = $("#drop-body"), front = $(".drop-face-front", body || document);
+  if (body && front) for (let k = -13; k <= 13; k++) {
+    const disc = document.createElement("i");
+    disc.style.setProperty("--k", k);
+    body.insertBefore(disc, front);
+  }
 
-  intro.classList.add("play");
+  // 1b. Snow spray: 20 flecks thrown up from the landing spot. Each gets how far sideways it goes (--dx) and how
+  //     high (--up), both as a share of the puck's width, plus a size (--s) and a duration (--t).
+  //     The numbers come from a seeded generator, so the spray is the same every visit.
+  const spray = $("#drop-spray");
+  if (spray) {
+    const rnd = seeded("puck-drop");
+    spray.innerHTML = Array.from({ length: 20 }, (_, i) => {
+      const side = i % 2 ? 1 : -1, dx = side * (0.5 + rnd() * 2.2), up = 0.35 + rnd() * 1.4, s = 0.4 + rnd() * 0.9, t = 0.5 + rnd() * 0.4;
+      return `<i style="--dx:calc(var(--pw) * ${dx.toFixed(2)});--up:calc(var(--pw) * ${up.toFixed(2)});--s:${s.toFixed(2)}svh;--t:${t.toFixed(2)}s"></i>`;
+    }).join("");
+  }
+
+  // 2. Start on the next frame, once the discs above are in the page.
+  requestAnimationFrame(() => intro.classList.add("play"));
+
+  // 3. Parallax. Skipped for visitors who ask for reduced motion.
+  if (REDUCE) return;
+  let mx = 0, my = 0, queued = false;
+  const apply = () => {
+    queued = false;
+    intro.style.setProperty("--mx", mx.toFixed(3));
+    intro.style.setProperty("--my", my.toFixed(3));
+    intro.style.setProperty("--sy", Math.max(0, Math.min(1, scrollY / Math.max(1, intro.offsetHeight))).toFixed(3));
+  };
+  const queue = () => { if (!queued) { queued = true; requestAnimationFrame(apply); } };
+  intro.addEventListener("pointermove", e => {
+    if (e.pointerType === "touch") return;
+    const r = intro.getBoundingClientRect();
+    mx = ((e.clientX - r.left) / r.width) * 2 - 1;
+    my = ((e.clientY - r.top) / r.height) * 2 - 1;
+    queue();
+  });
+  intro.addEventListener("pointerleave", () => { mx = 0; my = 0; queue(); });
+  addEventListener("scroll", () => { if (scrollY < intro.offsetHeight * 1.2) queue(); }, { passive: true });
 }
 
 /* ---------------------------------------------------------------------
    EASTER EGG: FIGHT SLANG
-   The puck button in the corner of the intro opens a pop-up glossary of the words on the tape.
+   The puck button in the corner of the intro opens a pop-up glossary of hockey fight slang.
    To add, remove or reword a term, edit SLANG. "tape" picks the strip color (see .slang-list in styles.css):
    navy, aqua, cream, red, deep or paper.
    --------------------------------------------------------------------- */
@@ -816,7 +933,7 @@ function buildAnswer() {
     .on("keydown", (e, d) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setTeam(state.team === d.t ? null : d.t); } });
   ansRows.append("text").attr("class", "col-label").attr("x", l - 8).attr("y", 14).attr("text-anchor", "end").text(d => d.t);
   ansRows.append("rect").attr("x", l).attr("y", 2).attr("height", rh - 6).attr("width", d => x(d.w)).style("fill", "var(--navy)");
-  ansRows.append("rect").attr("x", d => l + x(d.w)).attr("y", 2).attr("height", rh - 6).attr("width", d => x(d.l)).style("fill", "var(--accent)");
+  ansRows.append("rect").attr("x", d => l + x(d.w)).attr("y", 2).attr("height", rh - 6).attr("width", d => x(d.l)).attr("class", "ans-loss");   // losses: navy (see .ans-loss in styles.css)
   ansRows.append("text").attr("class", "col-label").attr("x", d => l + x(d.w + d.l) + 8).attr("y", 14).text(d => `${d.n} fight${d.n === 1 ? "" : "s"} \u00b7 ${d.w}-${d.l}`);
   refreshers.push(() => ansRows.style("opacity", d => (state.team && d.t !== state.team ? 0.25 : 1)));
 }
@@ -1078,6 +1195,7 @@ function wireChapter(season) {
     fightEl.innerHTML = `<div class="ch-fight-inner enter">
       ${cardCol(1)}
       <div class="ch-info">
+        ${f.brawl ? `<p class="ch-flag">Full line brawl</p>` : ""}
         <p class="ch-meta"><span>${esc(fmtDate(f.date))}</span> <i>|</i> <span>${esc(f.rnd)}</span> <i>|</i> <span>${esc(f.gm)}</span></p>
         <dl class="ch-facts">
           <div><dt>Fight time</dt><dd>${ord(f.per)} period, ${f.t}</dd></div>
@@ -1087,7 +1205,6 @@ function wireChapter(season) {
           <div><dt>Fan vote</dt><dd>${esc(f.w)}, ${Math.round(f.pct * 100)}%</dd></div>
           ${gameWinner}
         </dl>
-        ${f.brawl ? `<p class="ch-flag">Full line brawl</p>` : ""}
         <button type="button" class="btn btn-small ch-open">See both cards side by side</button>
       </div>
       ${cardCol(2)}
@@ -1317,6 +1434,7 @@ function init() {
   buildAnswer();
   buildLog();
   buildNav();
+  buildTeamBar();
   setTeam(null);
   setupObserver();
   setStep(0);
